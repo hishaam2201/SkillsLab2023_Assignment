@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\Account.cs" />
     <Compile Include="Entity\Application.cs" />
     <Compile Include="Entity\BaseEntity.cs" />
     <Compile Include="Entity\DocumentUpload.cs" />
@@ -52,6 +53,8 @@
     <Compile Include="Enums\RolesEnum.cs" />
     <Compile Include="Interfaces\INotification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\AccountRepository\AccountRepository.cs" />
+    <Compile Include="Repositories\AccountRepository\IAccountRepository.cs" />
     <Compile Include="Repositories\ApplicationRepository\ApplicationRepository.cs" />
     <Compile Include="Repositories\ApplicationRepository\IApplicationRepository.cs" />
     <Compile Include="Repositories\DataAccessLayer\DataAccessLayer.cs" />
@@ -62,6 +65,8 @@
     <Compile Include="Repositories\TrainingRepository\TrainingRepository.cs" />
     <Compile Include="Repositories\UserRepository\IUserRepository.cs" />
     <Compile Include="Repositories\UserRepository\UserRepository.cs" />
+    <Compile Include="Services\AccountService\AccountService.cs" />
+    <Compile Include="Services\AccountService\IAccountService.cs" />
     <Compile Include="Services\ApplicationService\ApplicationService.cs" />
     <Compile Include="Services\ApplicationService\IApplicationService.cs" />
     <Compile Include="Services\GenericService\GenericService.cs" />
