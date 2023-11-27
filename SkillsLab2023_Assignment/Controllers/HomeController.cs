@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkillsLab2023_Assignment_ClassLibrary.Services.UserService;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,13 @@ namespace SkillsLab2023_Assignment.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IUserService _userService;
+
+        public HomeController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         public ActionResult Index()
         {
             return View();

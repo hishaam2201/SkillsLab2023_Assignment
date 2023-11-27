@@ -13,6 +13,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService
     {
         public TrainingService(IGenericRepository<Training> repository) : base(repository)
         {
+
         }
     }
 }
