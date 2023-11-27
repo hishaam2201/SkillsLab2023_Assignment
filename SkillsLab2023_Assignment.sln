@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillsLab2023_Assignment", "SkillsLab2023_Assignment\SkillsLab2023_Assignment.csproj", "{E322D085-B974-4F1A-A83A-462343E648BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillsLab2023_Assignment_ClassLibrary", "SkillsLab2023_Assignment_ClassLibrary\SkillsLab2023_Assignment_ClassLibrary.csproj", "{6E9F2FF8-76C8-44C4-9504-3916ACB0FC9D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E322D085-B974-4F1A-A83A-462343E648BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E322D085-B974-4F1A-A83A-462343E648BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E322D085-B974-4F1A-A83A-462343E648BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E322D085-B974-4F1A-A83A-462343E648BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E9F2FF8-76C8-44C4-9504-3916ACB0FC9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E9F2FF8-76C8-44C4-9504-3916ACB0FC9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E9F2FF8-76C8-44C4-9504-3916ACB0FC9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E9F2FF8-76C8-44C4-9504-3916ACB0FC9D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CEBD7FED-A021-45A4-98FE-769A94AB0158}
+	EndGlobalSection
+EndGlobal
