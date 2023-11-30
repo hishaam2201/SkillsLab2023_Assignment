@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="Entity\Account.cs" />
     <Compile Include="Entity\Application.cs" />
-    <Compile Include="Entity\BaseEntity.cs" />
     <Compile Include="Entity\DocumentUpload.cs" />
     <Compile Include="Entity\PreRequiste.cs" />
     <Compile Include="Entity\Training.cs" />
