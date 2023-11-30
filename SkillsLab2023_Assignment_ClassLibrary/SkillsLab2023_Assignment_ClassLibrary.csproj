@@ -46,7 +46,7 @@
     <Compile Include="Entity\Application.cs" />
     <Compile Include="Entity\BaseEntity.cs" />
     <Compile Include="Entity\DocumentUpload.cs" />
-    <Compile Include="Entity\Employee.cs" />
+    <Compile Include="Entity\PreRequiste.cs" />
     <Compile Include="Entity\Training.cs" />
     <Compile Include="Entity\User.cs" />
     <Compile Include="Enums\ApplicationStatusEnum.cs" />
@@ -59,8 +59,6 @@
     <Compile Include="Repositories\ApplicationRepository\IApplicationRepository.cs" />
     <Compile Include="Repositories\DataAccessLayer\DataAccessLayer.cs" />
     <Compile Include="Repositories\DataAccessLayer\IDataAccessLayer.cs" />
-    <Compile Include="Repositories\GenericRepository\GenericRepository.cs" />
-    <Compile Include="Repositories\GenericRepository\IGenericRepository.cs" />
     <Compile Include="Repositories\TrainingRepository\ITrainingRepository.cs" />
     <Compile Include="Repositories\TrainingRepository\TrainingRepository.cs" />
     <Compile Include="Repositories\UserRepository\IUserRepository.cs" />
@@ -69,8 +67,6 @@
     <Compile Include="Services\AccountService\IAccountService.cs" />
     <Compile Include="Services\ApplicationService\ApplicationService.cs" />
     <Compile Include="Services\ApplicationService\IApplicationService.cs" />
-    <Compile Include="Services\GenericService\GenericService.cs" />
-    <Compile Include="Services\GenericService\IGenericService.cs" />
     <Compile Include="Services\TrainingService\ITrainingService.cs" />
     <Compile Include="Services\TrainingService\TrainingService.cs" />
     <Compile Include="Services\UserService\IUserService.cs" />

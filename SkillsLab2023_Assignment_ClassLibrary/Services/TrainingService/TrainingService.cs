@@ -1,6 +1,5 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.GenericRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Services.GenericService;
+using SkillsLab2023_Assignment_ClassLibrary.Repositories.TrainingRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService
 {
-    public class TrainingService : GenericService<Training>, ITrainingService
+    public class TrainingService : ITrainingService
     {
-        public TrainingService(IGenericRepository<Training> repository) : base(repository)
-        {
+        private readonly ITrainingRepository _trainingRepository;
 
+        public TrainingService(ITrainingRepository trainingRepository)
+        {
+            _trainingRepository = trainingRepository;
         }
     }
 }

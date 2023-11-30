@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Entity
 {
-    public class DocumentUpload : BaseEntity
+    public class DocumentUpload
     {
         public int ApplicationId { get; private set; } // FK
         public string Url { get; set; }
 
-        // TODO
-        public override string TableName => throw new NotImplementedException();
+/*        public override string TableName => "DocumentUpload";
 
-        public override string PrimaryKeyColumn => throw new NotImplementedException();
+        public override string PrimaryKeyColumn => "Id";
 
-        public override string InsertSqlTemplate => throw new NotImplementedException();
+        public override string InsertSqlTemplate => $@"INSERT INTO {TableName} (ApplicationId, Url) VALUES (@ApplicationId, @Url)";
 
-        public override string UpdateSqlTemplate => throw new NotImplementedException();
+        public override string UpdateSqlTemplate => $@"UPDATE {TableName} SET ApplicationId=@ApplicationId, Url=@Url WHERE Id=@Id";*/
     }
 }

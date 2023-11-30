@@ -1,6 +1,5 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.GenericRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Services.GenericService;
+using SkillsLab2023_Assignment_ClassLibrary.Repositories.ApplicationRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Services.ApplicationService
 {
-    public class ApplicationService : GenericService<Application>, IApplicationService
+    public class ApplicationService : IApplicationService
     {
-        public ApplicationService(IGenericRepository<Application> repository) : base(repository)
+        private readonly IApplicationRepository _applicationRepository;
+
+        public ApplicationService(IApplicationRepository applicationRepository)
         {
-            
+            _applicationRepository = applicationRepository;
         }
     }
 }

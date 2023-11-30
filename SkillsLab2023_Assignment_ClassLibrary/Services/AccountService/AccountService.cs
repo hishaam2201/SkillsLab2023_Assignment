@@ -1,8 +1,5 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.GenericRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.UserRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Services.GenericService;
-using SkillsLab2023_Assignment_ClassLibrary.Services.UserService;
+using SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,26 +8,35 @@ using System.Threading.Tasks;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Services.AccountService
 {
-    public class AccountService : GenericService<Account>, IAccountService
+    public class AccountService : IAccountService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IAccountRepository _accountRepository;
 
-        public AccountService(IGenericRepository<Account> repository, IUserRepository userRepository) : base(repository)
+        public AccountService(IAccountRepository accountRepository)
         {
-            _userRepository = userRepository;
+            _accountRepository = accountRepository;
         }
 
-        public bool Login(Account account)
+        public bool ValidateLoginCredentials(string email, string password)
         {
-            throw new NotImplementedException();
+            return _accountRepository.ValidateLoginCredentials(email, password);
         }
 
-        public bool Register(User user)
+        public bool RegisterUser(User user)
         {
-            // Example
-            string message;
-            message = "jwbhk";
-            return _userRepository.Create(user, out message);
+            if (!DoesEmailExist(user.Email))
+            {
+                return _accountRepository.RegisterUser(user);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool DoesEmailExist(string email)
+        {
+            return _accountRepository.DoesEmailExist(email);
         }
     }
 }

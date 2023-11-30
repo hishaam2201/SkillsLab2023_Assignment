@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewBag.Title = "Register";
+}
+
+<link href="~/Content/app/login_register.css" rel="stylesheet" />
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h2 class="card-title text-center">Register</h2>
+                    <!-- Register Form -->
+                    <form class="g-3 mt-2 text-center" method="post">
+                        <div class="col-12">
+                            <label for="firstName" class="form-label">
+                                <input type="text" name="firstName" class="form-control" id="firstName" placeholder="First Name">
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label for="lastName" class="form-label">
+                                <input type="text" name="lastName" class="form-control" id="lastName" placeholder="Last Name">
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label for="mobileNumber" class="form-label">
+                                <input type="number" name="mobileNumber" class="form-control" id="mobileNumber" placeholder="Mobile Number">
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label for="nic" class="form-label">
+                                <input type="text" name="nic" class="form-control" id="nic" placeholder="National Id">
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label for="managerName" class="form-label">
+                                <input type="text" name="managerName" class="form-control" id="managerName" placeholder="Manager Name">
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label for="department" class="form-label">
+                                <select id="department" class="form-select" aria-label="Select Department" name="Department">
+                                    <option selected>Select your Department</option>
+                                    <option value="1">Product and Technology</option>
+                                    <option value="2">Customer Support</option>
+                                    <option value="3">Finance</option>
+                                    <option value="4">Payroll</option>
+                                    <option value="5">Services</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label for="email" class="form-label">
+                                <input type="email" name="email" class="form-control" id="email" placeholder="Email">
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label for="password" class="form-label">
+                                <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label for="confirmPassword" class="form-label">
+                                <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm Password">
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary" onclick="submitRegistration(event)">Sign Up</button>
+                        </div>
+                        <div class="mt-3">
+                            <a href="/Account/Login">Already have an account? Login</a>
+                        </div>
+                    </form>
+
+                    <div id="error-container" style="display: none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/app/register.js"></script>

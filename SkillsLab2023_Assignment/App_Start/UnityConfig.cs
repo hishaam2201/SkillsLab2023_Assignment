@@ -1,8 +1,8 @@
 
+using SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.GenericRepository;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.UserRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Services.GenericService;
+using SkillsLab2023_Assignment_ClassLibrary.Services.AccountService;
 using SkillsLab2023_Assignment_ClassLibrary.Services.UserService;
 using System.Web.Mvc;
 using Unity;
@@ -21,10 +21,12 @@ namespace SkillsLab2023_Assignment
 
             
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
-            container.RegisterType(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            container.RegisterType(typeof(IGenericService<>), typeof(GenericService<>));
-            container.RegisterType<IUserService, UserService>();
+
             container.RegisterType<IUserRepository, UserRepository>();
+            container.RegisterType<IUserService, UserService>();
+
+            container.RegisterType<IAccountRepository, AccountRepository>();
+            container.RegisterType<IAccountService, AccountService>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }

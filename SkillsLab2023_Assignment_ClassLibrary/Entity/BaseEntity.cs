@@ -8,11 +8,6 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Entity
 {
     public abstract class BaseEntity
     {
-        public abstract string TableName { get; }
-        public abstract string PrimaryKeyColumn { get; }
-        public abstract string InsertSqlTemplate { get; }
-        public abstract string UpdateSqlTemplate { get; }
-
         private static readonly Dictionary<string, BaseEntity> _entities
                             = new Dictionary<string, BaseEntity>();
 
