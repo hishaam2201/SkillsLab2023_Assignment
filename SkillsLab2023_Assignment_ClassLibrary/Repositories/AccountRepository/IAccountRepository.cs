@@ -9,8 +9,8 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
 {
     public interface IAccountRepository
     {
-        bool ValidateLoginCredentials(string email, string password);
-        bool RegisterUser(User user);
-        bool DoesEmailExist(string email);
+        bool AuthenticateLoginCredentials(string email, string password);
+        bool EmailExists(string email);
+        bool Register(User user);
     }
 }

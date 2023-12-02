@@ -14,7 +14,7 @@ namespace SkillsLab2023_Assignment.Controllers
         {
             
         }
-
+        [HttpGet]
         public ActionResult Index()
         {
             return View();

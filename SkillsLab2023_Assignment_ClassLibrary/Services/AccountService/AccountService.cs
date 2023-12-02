@@ -11,32 +11,24 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Services.AccountService
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
-
         public AccountService(IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
         }
 
-        public bool ValidateLoginCredentials(string email, string password)
+        public bool AuthenticateLoginCredentials(string email, string password)
         {
-            return _accountRepository.ValidateLoginCredentials(email, password);
+            return _accountRepository.AuthenticateLoginCredentials(email, password);
         }
 
-        public bool RegisterUser(User user)
+        public bool EmailExists(string email)
         {
-            if (!DoesEmailExist(user.Email))
-            {
-                return _accountRepository.RegisterUser(user);
-            }
-            else
-            {
-                return false;
-            }
-        }
+            return _accountRepository.EmailExists(email);
+        }     
 
-        public bool DoesEmailExist(string email)
+        public bool Register(User user)
         {
-            return _accountRepository.DoesEmailExist(email);
+            return !EmailExists(user.Email) ? _accountRepository.Register(user) : false;
         }
     }
 }

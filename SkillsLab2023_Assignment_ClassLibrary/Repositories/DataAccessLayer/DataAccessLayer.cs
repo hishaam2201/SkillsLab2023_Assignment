@@ -12,7 +12,6 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer
     public class DataAccessLayer : IDataAccessLayer
     {
         private SqlConnection _connection;
-
         public SqlConnection CreateConnection()
         {
             try
@@ -29,7 +28,6 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer
             {
                 throw new ApplicationException("Unable to find the connection string", ex);
             }
-
             throw new ApplicationException("Unable to find the connection string");
         }
 

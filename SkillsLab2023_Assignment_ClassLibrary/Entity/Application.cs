@@ -9,10 +9,10 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Entity
 {
     public class Application
     {
-        public int Id { get; private set; }
-        public int UserId { get; private set; } // FK
-        public int TrainingId { get; private set; } // FK
-        public ApplicationStatusEnum Status { get; set; }
+        public int ApplicationId { get; private set; }
+        public int UserId { get; set; } 
+        public int TrainingId { get; set; } 
+        public string ApplicationStatus { get; set; }
         public DateTime ApplicationDateTime { get; set; }
     }
 }

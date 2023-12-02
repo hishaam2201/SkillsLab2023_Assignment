@@ -11,10 +11,14 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.TrainingRepository
     public class TrainingRepository : ITrainingRepository
     {
         private readonly IDataAccessLayer _dataAccessLayer;
-
         public TrainingRepository(IDataAccessLayer dataAccessLayer)
         {
             _dataAccessLayer = dataAccessLayer;
+        }
+
+        public IEnumerable<Training> GetAllTrainings()
+        {
+            throw new NotImplementedException();
         }
     }
 }

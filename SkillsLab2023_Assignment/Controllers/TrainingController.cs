@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,11 +9,18 @@ namespace SkillsLab2023_Assignment.Controllers
 {
     public class TrainingController : Controller
     {
-        // GET: Training/Browse
+        [HttpGet]
         public ActionResult Browse()
         {
-            // TODO: Need to Return a list of trainings in db to work with
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetAllTrainings()
+        {
+            // TODO: Need to Return a list of trainings in db to work with
+            List<Training> list = new List<Training>();
+            return Json(new { list }, JsonRequestBehavior.AllowGet);
         }
     }
 }

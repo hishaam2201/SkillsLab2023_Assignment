@@ -1,6 +1,5 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
 using SkillsLab2023_Assignment_ClassLibrary.Services.AccountService;
-using SkillsLab2023_Assignment_ClassLibrary.Services.UserService;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,13 +12,11 @@ namespace SkillsLab2023_Assignment.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
-
         public AccountController(IAccountService accountService)
         {
             _accountService = accountService;
         }
 
-        // GET: Account/Login
         [HttpGet]
         public ActionResult Login()
         {
@@ -29,9 +26,10 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public ActionResult Login(Account account)
         {
+            // Do not put exception in this (exception handling is at the exit)
             try
             {
-                bool isValid = _accountService.ValidateLoginCredentials(account.Email, account.Password);
+                bool isValid = _accountService.AuthenticateLoginCredentials(account.Email, account.Password);
 
                 if (isValid)
                 {
@@ -46,12 +44,12 @@ namespace SkillsLab2023_Assignment.Controllers
             }
             catch (Exception ex)
             {
+                // Normally we log it here then display meaningful message to user
                 return Json(new { success = false, message = "An error occurred during login: " + ex.Message });
             }
+
         }
 
-
-        // GET: Account/Register
         [HttpGet]
         public ActionResult Register()
         {
@@ -63,7 +61,7 @@ namespace SkillsLab2023_Assignment.Controllers
         {
             try
             {
-                bool isRegistered = _accountService.RegisterUser(user);
+                bool isRegistered = _accountService.Register(user);
 
                 if (isRegistered)
                 {

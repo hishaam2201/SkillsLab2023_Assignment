@@ -9,6 +9,6 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService
 {
     public interface ITrainingService
     {
-
+        IEnumerable<Training> GetAllTrainings();
     }
 }

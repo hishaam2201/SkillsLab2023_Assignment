@@ -1,14 +1,20 @@
-function submitForm(event) {
+function submitLoginForm(event) {
 
     event.preventDefault();
-    var formData = new FormData()
 
-    formData.append("Email", document.getElementById("email").value)
-    formData.append("Password", document.getElementById("password").value)
+    var email = document.getElementById("email").value
+    var password = document.getElementById("password").value
+
+    var formData = new FormData()
+    formData.append("Email", email)
+    formData.append("Password", password)
 
     fetch('/Account/Login', {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'Content-Type': 'application/json',
+        }
     })
         .then(response => {
             if (response.ok) {
@@ -25,7 +31,13 @@ function submitForm(event) {
                 }, 1500)
             }
             else {
-                console.error(data.message)
+                let errorContainer = document.getElementById('error-container')
+                errorContainer.style.display = 'block'
+                errorContainer.innerHTML =
+                    `<div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                    ${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`
             }
         })
         .catch(error => {
