@@ -22,7 +22,7 @@ namespace SkillsLab2023_Assignment
 
             
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
-            container.RegisterType<IDbCommand, DbCommand>();
+            container.RegisterType<IDatabaseCommand, DatabaseCommand>();
 
             container.RegisterType<IUserRepository, UserRepository>();
             container.RegisterType<IUserService, UserService>();
