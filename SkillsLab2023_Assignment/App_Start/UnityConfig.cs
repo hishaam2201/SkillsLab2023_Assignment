@@ -1,6 +1,7 @@
 
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer;
+using SkillsLab2023_Assignment_ClassLibrary.Repositories.DAL;
+using SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.UserRepository;
 using SkillsLab2023_Assignment_ClassLibrary.Services.AccountService;
 using SkillsLab2023_Assignment_ClassLibrary.Services.UserService;
@@ -21,6 +22,7 @@ namespace SkillsLab2023_Assignment
 
             
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
+            container.RegisterType<IDbCommand, DbCommand>();
 
             container.RegisterType<IUserRepository, UserRepository>();
             container.RegisterType<IUserService, UserService>();

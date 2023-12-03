@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Reflection;
 
-namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer
+namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DAL
 {
     public class DataAccessLayer : IDataAccessLayer
     {
@@ -40,7 +40,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer
             }
         }
 
-        public int ReturnNumOfRowsAffected(string query, SqlParameter[] parameters = null)
+        /*public int ReturnNumOfRowsAffected(string query, SqlParameter[] parameters = null)
         {
             using (SqlConnection sqlConnection = CreateConnection())
             {
@@ -71,7 +71,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer
             }
         }
 
-        public void ExecuteTransaction(out bool isSuccessful,SqlCommand command, SqlParameter[] parameters)
+        public void ExecuteTransaction(out bool isSuccessful, SqlCommand command, SqlParameter[] parameters)
         {
             using (SqlConnection sqlConnection = CreateConnection())
             {
@@ -87,7 +87,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer
                             command.Parameters.AddRange(parameters);
                         }
                         command.ExecuteNonQuery();
-                        
+
                         sqlTransaction.Commit();
                         isSuccessful = true;
                     }
@@ -146,6 +146,6 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DataAccessLayer
                     }
                 }
             }
-        }
+        }*/
     }
 }
