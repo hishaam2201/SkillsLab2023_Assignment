@@ -56,8 +56,10 @@
     <Compile Include="Repositories\AccountRepository\IAccountRepository.cs" />
     <Compile Include="Repositories\ApplicationRepository\ApplicationRepository.cs" />
     <Compile Include="Repositories\ApplicationRepository\IApplicationRepository.cs" />
-    <Compile Include="Repositories\DataAccessLayer\DataAccessLayer.cs" />
-    <Compile Include="Repositories\DataAccessLayer\IDataAccessLayer.cs" />
+    <Compile Include="Repositories\DAL\DataAccessLayer.cs" />
+    <Compile Include="Repositories\DAL\IDataAccessLayer.cs" />
+    <Compile Include="Repositories\DatabaseCommand\DbCommand.cs" />
+    <Compile Include="Repositories\DatabaseCommand\IDbCommand.cs" />
     <Compile Include="Repositories\TrainingRepository\ITrainingRepository.cs" />
     <Compile Include="Repositories\TrainingRepository\TrainingRepository.cs" />
     <Compile Include="Repositories\UserRepository\IUserRepository.cs" />
