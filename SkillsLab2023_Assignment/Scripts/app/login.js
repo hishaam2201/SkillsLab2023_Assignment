@@ -1,20 +1,22 @@
 function submitLoginForm(event) {
 
     event.preventDefault();
+    var formData = new FormData()
 
     var email = document.getElementById("email").value
     var password = document.getElementById("password").value
 
-    var formData = new FormData()
+    console.log(email)
+    console.log(password)
+
     formData.append("Email", email)
     formData.append("Password", password)
 
+    console.log(formData)
+
     fetch('/Account/Login', {
         method: 'POST',
-        body: formData,
-        headers: {
-            'Content-Type': 'application/json',
-        }
+        body: formData
     })
         .then(response => {
             if (response.ok) {

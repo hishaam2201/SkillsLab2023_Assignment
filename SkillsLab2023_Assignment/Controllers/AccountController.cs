@@ -74,7 +74,7 @@ namespace SkillsLab2023_Assignment.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "An error occurred during registration: " + ex.Message });
+                return Json(new { success = false, message = "An error occurred during registration: " + ex.Message + " " + ex.StackTrace });
             }
         }
     }
