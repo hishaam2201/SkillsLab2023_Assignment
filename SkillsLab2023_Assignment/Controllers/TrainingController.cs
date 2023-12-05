@@ -1,4 +1,5 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
+using SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,12 @@ namespace SkillsLab2023_Assignment.Controllers
 {
     public class TrainingController : Controller
     {
+        private readonly ITrainingService _trainingService;
+        public TrainingController(ITrainingService trainingService)
+        {
+            _trainingService = trainingService;
+        }
+
         [HttpGet]
         public ActionResult Browse()
         {
@@ -18,9 +25,8 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpGet]
         public JsonResult GetAllTrainings()
         {
-            // TODO: Need to Return a list of trainings in db to work with
-            List<Training> list = new List<Training>();
-            return Json(new { list }, JsonRequestBehavior.AllowGet);
+            List<Training> list = _trainingService.GetAllTrainings().ToList();
+            return Json(new { trainings = list }, JsonRequestBehavior.AllowGet);
         }
     }
 }
