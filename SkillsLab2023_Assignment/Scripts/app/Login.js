@@ -1,6 +1,4 @@
-function submitLoginForm(event) {
-
-    event.preventDefault();
+function submitLoginForm() {
     var formData = new FormData()
 
     var email = document.getElementById("email").value
@@ -28,21 +26,26 @@ function submitLoginForm(event) {
         })
         .then(data => {
             if (data.success) {
+                displayMessageToUser("success", data.message)
                 setTimeout(() => {
                     window.location.href = data.redirectUrl
                 }, 1500)
             }
             else {
-                let errorContainer = document.getElementById('error-container')
-                errorContainer.style.display = 'block'
-                errorContainer.innerHTML =
-                    `<div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
-                    ${data.message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>`
+                displayMessageToUser("danger", data.message)
             }
         })
         .catch(error => {
             console.error('Error: ', error)
         })
+}
+
+function displayMessageToUser(category, message) {
+    let messageContainer = document.getElementById('message-container')
+    messageContainer.style.display = 'block'
+    messageContainer.innerHTML =
+        `<div class="alert alert-${category} alert-dismissible fade show mt-4" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`
 }

@@ -22,9 +22,10 @@ namespace SkillsLab2023_Assignment
             bundles.Add(new Bundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js"));
 
+            // TODO: Global css, load it here
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/Site.css"));
         }
     }
 }

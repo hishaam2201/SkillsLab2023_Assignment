@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Reflection;
-
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
 {
-    public class DatabaseCommand :IDatabaseCommand
+    public class DatabaseCommand<T> :IDatabaseCommand<T>
     {
         private readonly IDataAccessLayer _dataAccessLayer;
         public DatabaseCommand(IDataAccessLayer dataAccessLayer)
@@ -37,6 +39,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
                     }
                     catch (Exception exception)
                     {
+
                         sqlTransaction.Rollback();
                         isSuccessful = false;
                         // TODO: Log error
@@ -121,6 +124,58 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
                     return sqlCommand.ExecuteNonQuery();
                 }
             }
+        }
+
+        public IEnumerable<T> GetAll()
+        {
+            List<T> list = new List<T>();
+
+            using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
+            {
+                string GET_ALL_QUERY = $@"SELECT * FROM [{typeof(T).Name}]";
+
+                using (SqlCommand sqlCommand = new SqlCommand(GET_ALL_QUERY, sqlConnection))
+                {
+                    T item;
+                    using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            var properties = typeof(T).GetProperties();
+                            while (reader.Read())
+                            {
+                                item = Activator.CreateInstance<T>();
+                                
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    var property = properties.FirstOrDefault(p => p.Name == reader.GetName(i));
+
+                                    if (property != null)
+                                    {
+                                        property.SetValue(item, reader[i] == DBNull.Value ? null : reader[i]);
+                                    }
+                                }
+                                list.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+        private string GetFields()
+        {
+            PropertyInfo[] props = typeof(T).GetProperties();
+            var propsList = props.Where(prop => !Attribute.IsDefined(prop, typeof(Attribute))).ToList();
+            StringBuilder columnName = new StringBuilder();
+
+            foreach(PropertyInfo property in propsList)
+            {
+                columnName.Append(property.Name + ",");
+            }
+            columnName.Remove(columnName.Length - 1, 1); // Remove last comma
+            return columnName.ToString();
         }
     }
 }

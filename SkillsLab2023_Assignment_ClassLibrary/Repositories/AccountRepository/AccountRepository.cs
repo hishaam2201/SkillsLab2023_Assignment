@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand;
-
+using System;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly IDatabaseCommand _dbCommand;
-        public AccountRepository(IDatabaseCommand dbCommand)
+        private readonly IDatabaseCommand<Account> _dbCommand;
+        public AccountRepository(IDatabaseCommand<Account> dbCommand)
         {
             _dbCommand = dbCommand;
         }
@@ -40,8 +40,9 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
 
         public bool Register(User user)
         {
+
             string INSERT_INTO_USER_AND_ACCOUNT_QUERY =
-               $@"INSERT INTO [User] 
+                  $@"INSERT INTO [User] 
                   (FirstName, LastName, NIC, MobileNumber, DepartmentId, RoleId, ManagerName, Email, [Password])
                   VALUES (@FirstName, @LastName, @NationalIdentityCard, @MobileNumber, @DepartmentId, 
                   {GetRoleId("Employee")}, @ManagerName, @Email, @Password); 
@@ -50,11 +51,11 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
                   SET @UserId = SCOPE_IDENTITY()
 
                   INSERT INTO Account (Email, [Password], UserId) 
-                  SELECT Email, [Password], Id FROM [User] WHERE Id = @UserId";
+                  SELECT Email, [Password], UserId FROM [User] WHERE UserId = @UserId";
 
             List<string> excludedUserProperties = new List<string> { "UserId", "RoleId" };
             SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
-            _dbCommand.ExecuteTransaction(out bool isSuccessful, 
+            _dbCommand.ExecuteTransaction(out bool isSuccessful,
                 new SqlCommand(INSERT_INTO_USER_AND_ACCOUNT_QUERY), userQueryParams);
 
             return isSuccessful;

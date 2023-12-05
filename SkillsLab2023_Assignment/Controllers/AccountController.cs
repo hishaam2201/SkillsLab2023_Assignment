@@ -26,7 +26,6 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public ActionResult Login(Account account)
         {
-            // Do not put exception in this (exception handling is at the exit)
             try
             {
                 bool isValid = _accountService.AuthenticateLoginCredentials(account.Email, account.Password);
@@ -44,7 +43,7 @@ namespace SkillsLab2023_Assignment.Controllers
             }
             catch (Exception ex)
             {
-                // Normally we log it here then display meaningful message to user
+                // TODO: Normally we log it here then display meaningful message to user
                 return Json(new { success = false, message = "An error occurred during login: " + ex.Message });
             }
 
@@ -62,10 +61,11 @@ namespace SkillsLab2023_Assignment.Controllers
             try
             {
                 bool isRegistered = _accountService.Register(user);
-
+                // TODO: When registering, store user data in session
                 if (isRegistered)
                 {
-                    return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Account/Login" });
+                    Session["isAuthenticated"] = true;
+                    return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Index" });
                 }
                 else
                 {
@@ -74,7 +74,7 @@ namespace SkillsLab2023_Assignment.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "An error occurred during registration: " + ex.Message + " " + ex.StackTrace });
+                return Json(new { success = false, message = "An error occurred during registration"});
             }
         }
     }
