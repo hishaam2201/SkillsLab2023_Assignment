@@ -125,17 +125,24 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
-    <Compile Include="CustomExceptionHandler\AppLogger\ILogger.cs" />
-    <Compile Include="CustomExceptionHandler\AppLogger\Logger.cs" />
-    <Compile Include="CustomExceptionHandler\GlobalExceptionFilter.cs" />
+    <Compile Include="Custom\CustomAuthorizationAttribute.cs" />
+    <Compile Include="Custom\CustomHandleErrorAttribute.cs" />
+    <Compile Include="Custom\UserSessionAttribute.cs" />
+    <Compile Include="Custom\AppLogger\ILogger.cs" />
+    <Compile Include="Custom\AppLogger\Logger.cs" />
+    <Compile Include="Custom\GlobalExceptionFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\app\Common.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -157,7 +164,8 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Scripts\app\ViewTraining.js" />
+    <Content Include="Scripts\app\Details.js" />
+    <Content Include="Scripts\app\ViewTrainings.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -215,11 +223,17 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Training\Browse.cshtml" />
+    <Content Include="Views\Training\ViewTrainings.cshtml" />
+    <Content Include="Views\Common\AccessDenied.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Common\InternalServerError.cshtml" />
+    <Content Include="Views\Shared\_ErrorLayout.cshtml" />
+    <Content Include="Views\Training\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Application\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

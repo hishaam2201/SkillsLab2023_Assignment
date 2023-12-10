@@ -1,3 +1,22 @@
+(function () {
+    fetch('/Training/GetAllTrainings', {
+        method: 'POST'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                populateTable(data.trainings)
+            }
+            else {
+                setTimeout(() => {
+                    window.location.href = data.redirectUrl
+                }, 500)
+            }
+        })
+        .catch(() => {
+            window.location.href = '/Common/InternalServerError'
+        })
+})()
 function populateTable(trainings) {
     const tableBody = document.getElementById('tableBody')
 
@@ -11,10 +30,6 @@ function populateTable(trainings) {
         const departmentCell = document.createElement('td')
         departmentCell.textContent = training.DepartmentName
         row.appendChild(departmentCell)
-
-        const startingDateCell = document.createElement('td')
-        startingDateCell.textContent = formatTimestamp(training.StartingDate)
-        row.appendChild(startingDateCell)
 
         const deadlineCell = document.createElement('td')
         deadlineCell.textContent = formatTimestamp(training.Deadline)
@@ -30,7 +45,7 @@ function populateTable(trainings) {
         viewButton.classList.add('btn-primary');
         viewButton.textContent = 'View more'
         viewButton.addEventListener('click', () => {
-            alert(`Viewing details for training with ID: ${training.TrainingId}`)
+            window.location.href = `/Training/Details/${training.TrainingId}`;
         })
         viewButtonCell.appendChild(viewButton)
         row.appendChild(viewButtonCell)
@@ -52,7 +67,3 @@ function formatTimestamp(timestamp) {
 
     return formattedDate
 }
-
-/*Deadline
-:
-"/Date(1701288000000)/"*/

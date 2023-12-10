@@ -1,4 +1,5 @@
-﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
+﻿using SkillsLab2023_Assignment.Custom;
+using SkillsLab2023_Assignment_ClassLibrary.DTO;
 using SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
+    //[UserSession]
     public class TrainingController : Controller
     {
         private readonly ITrainingService _trainingService;
@@ -17,16 +19,38 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpGet]
-        public ActionResult Browse()
+        public ActionResult ViewTrainings()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult GetAllTrainings()
+        {
+            List<TrainingDTO> listOfTrainings = _trainingService.GetAllTrainings().ToList();
+            return Json(new { success = true, trainings = listOfTrainings }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpGet]
+        public ActionResult Details()
         {
             return View();
         }
 
         [HttpGet]
-        public JsonResult GetAllTrainings()
+        public JsonResult GetTrainingById(int id)
         {
-            List<Training> list = _trainingService.GetAllTrainings().ToList();
-            return Json(new { trainings = list }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                TrainingDTO trainingDTO = _trainingService.GetTrainingById(id);
+                return Json(new { success = true, training = trainingDTO }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, redirectUrl = Url.Action("InternalServerError", "Error") },
+                    JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

@@ -1,10 +1,6 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
 using SkillsLab2023_Assignment_ClassLibrary.Services.AccountService;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
@@ -26,27 +22,19 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public ActionResult Login(Account account)
         {
-            try
+            bool isValid = _accountService.AuthenticateLoginCredentials(account.Email, account.Password);
+
+            if (isValid)
             {
-                bool isValid = _accountService.AuthenticateLoginCredentials(account.Email, account.Password);
-
-                if (isValid)
-                {
-                    Session["isAuthenticated"] = true;
-                    return Json(new { success = true, message = "Login Successful", redirectUrl = "/Home/Index" });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Invalid email or password" });
-                }
-
+                Session["isAuthenticated"] = true;
+                Session["CurrentUser"] = account.Email;
+                Session["CurrentRole"] = "Employee";
+                return Json(new { success = true, message = "Login Successful", redirectUrl = "/Home/Index" });
             }
-            catch (Exception ex)
+            else
             {
-                // TODO: Normally we log it here then display meaningful message to user
-                return Json(new { success = false, message = "An error occurred during login: " + ex.Message });
+                return Json(new { success = false, message = "Invalid email or password" });
             }
-
         }
 
         [HttpGet]
@@ -58,24 +46,25 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public ActionResult Register(User user)
         {
-            try
+            bool isRegistered = _accountService.Register(user);
+            // TODO: When registering, store user data in session
+            if (isRegistered)
             {
-                bool isRegistered = _accountService.Register(user);
-                // TODO: When registering, store user data in session
-                if (isRegistered)
-                {
-                    Session["isAuthenticated"] = true;
-                    return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Index" });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Email already exists!" });
-                }
+                Session["isAuthenticated"] = true;
+                return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Index" });
             }
-            catch (Exception ex)
+            else
             {
-                return Json(new { success = false, message = "An error occurred during registration"});
-            }
+                return Json(new { success = false, message = "Email already exists!" });
+            }   
+        }
+
+        [HttpGet]
+        public ActionResult LogOut()
+        {
+            Session.Clear();
+            Session.Abandon();
+            return RedirectToAction("Login", "Account");
         }
     }
 }

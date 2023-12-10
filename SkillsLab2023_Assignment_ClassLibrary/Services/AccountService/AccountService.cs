@@ -24,14 +24,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Services.AccountService
 
         public bool Register(User user)
         {
-            try
-            {
-                return EmailExists(user.Email) ? false : _accountRepository.Register(user);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return EmailExists(user.Email) ? false : _accountRepository.Register(user);   
         }
     }
 }

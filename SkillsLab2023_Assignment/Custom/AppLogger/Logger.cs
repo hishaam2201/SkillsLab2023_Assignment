@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace SkillsLab2023_Assignment.CustomExceptionHandler.AppLogger
+namespace SkillsLab2023_Assignment.AppLogger
 {
     public class Logger : ILogger
     {

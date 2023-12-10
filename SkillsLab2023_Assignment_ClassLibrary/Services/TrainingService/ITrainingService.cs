@@ -1,4 +1,5 @@
-﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
+﻿using SkillsLab2023_Assignment_ClassLibrary.DTO;
+using SkillsLab2023_Assignment_ClassLibrary.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService
 {
     public interface ITrainingService
     {
-        IEnumerable<Training> GetAllTrainings();
+        IEnumerable<TrainingDTO> GetAllTrainings();
+        TrainingDTO GetTrainingById(int id);
     }
 }

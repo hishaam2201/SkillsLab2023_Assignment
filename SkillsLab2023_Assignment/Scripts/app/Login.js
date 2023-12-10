@@ -1,16 +1,25 @@
+
+const loginForm = document.getElementById('loginForm')
+
+loginForm.addEventListener('submit', event => {
+    if (!loginForm.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+    }
+    else {
+        submitLoginForm();
+    }
+    loginForm.classList.add('was-validated')
+
+}, false)
+
 function submitLoginForm() {
+    var email = document.getElementById("email");
+    var password = document.getElementById("password");
+
     var formData = new FormData()
-
-    var email = document.getElementById("email").value
-    var password = document.getElementById("password").value
-
-    console.log(email)
-    console.log(password)
-
-    formData.append("Email", email)
-    formData.append("Password", password)
-
-    console.log(formData)
+    formData.append("Email", email.value.trim())
+    formData.append("Password", password.value.trim())
 
     fetch('/Account/Login', {
         method: 'POST',
@@ -39,7 +48,6 @@ function submitLoginForm() {
             console.error('Error: ', error)
         })
 }
-
 function displayMessageToUser(category, message) {
     let messageContainer = document.getElementById('message-container')
     messageContainer.style.display = 'block'

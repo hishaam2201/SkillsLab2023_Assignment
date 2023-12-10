@@ -1,5 +1,5 @@
-﻿using SkillsLab2023_Assignment.CustomExceptionHandler;
-using SkillsLab2023_Assignment.CustomExceptionHandler.AppLogger;
+﻿using SkillsLab2023_Assignment.Custom;
+using SkillsLab2023_Assignment.AppLogger;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,7 +12,7 @@ namespace SkillsLab2023_Assignment
             filters.Add(new HandleErrorAttribute());
 
             var logger = DependencyResolver.Current.GetService<ILogger>();
-            filters.Add(new GlobalExceptionFilter(logger));
+            filters.Add(new CustomHandleErrorAttribute(logger));
         }
     }
 }

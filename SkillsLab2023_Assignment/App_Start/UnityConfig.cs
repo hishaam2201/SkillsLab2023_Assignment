@@ -1,5 +1,5 @@
 
-using SkillsLab2023_Assignment.CustomExceptionHandler.AppLogger;
+using SkillsLab2023_Assignment.AppLogger;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.DAL;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand;
