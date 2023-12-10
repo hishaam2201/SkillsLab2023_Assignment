@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\TrainingDTO.cs" />
     <Compile Include="KeyAttribute\ForeignKeyAttribute.cs" />
     <Compile Include="KeyAttribute\PrimaryKeyAttribute.cs" />
     <Compile Include="Entity\Account.cs" />

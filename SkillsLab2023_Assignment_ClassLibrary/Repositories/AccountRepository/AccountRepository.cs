@@ -16,49 +16,64 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
 
         public bool AuthenticateLoginCredentials(string email, string password)
         {
-            const string AUTHENTICATE_LOGIN_CREDENTIALS_QUERY = @"SELECT Email, Password FROM Account WHERE Email=@Email 
-                                                                And Password=@Password";
-            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email, Password = password });
+            try
+            {
+                const string AUTHENTICATE_LOGIN_CREDENTIALS_QUERY = @"SELECT Email, Password FROM Account WHERE Email=@Email 
+                                                                    And Password=@Password";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email, Password = password });
 
-            return _dbCommand.RecordExists(AUTHENTICATE_LOGIN_CREDENTIALS_QUERY, parameters);
+                return _dbCommand.RecordExists(AUTHENTICATE_LOGIN_CREDENTIALS_QUERY, parameters);
+            }
+            catch (Exception) { throw; }
         }
 
         public bool EmailExists(string email)
         {
-            const string EMAIL_EXISTS_QUERY = @"SELECT 1 FROM [User] WHERE Email=@Email";
-            SqlParameter[] emailExistsParams = _dbCommand.GetSqlParametersFromObject(new { Email = email });
+            try
+            {
+                const string EMAIL_EXISTS_QUERY = @"SELECT 1 FROM [User] WHERE Email=@Email";
+                SqlParameter[] emailExistsParams = _dbCommand.GetSqlParametersFromObject(new { Email = email });
 
-            return _dbCommand.RecordExists(EMAIL_EXISTS_QUERY, emailExistsParams);
+                return _dbCommand.RecordExists(EMAIL_EXISTS_QUERY, emailExistsParams);
+            }
+            catch (Exception) { throw; }
         }
 
         public int GetRoleId(string role)
         {
-            const string GET_ROLE_ID_QUERY = @"SELECT Id FROM [Role] WHERE [Description] = @Role";
-            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Role = role });
-            return (int)_dbCommand.ReturnFirstColumnOfFirstRow(GET_ROLE_ID_QUERY, parameters);
+            try
+            {
+                const string GET_ROLE_ID_QUERY = @"SELECT Id FROM [Role] WHERE [Description] = @Role";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Role = role });
+                return (int)_dbCommand.ReturnFirstColumnOfFirstRow(GET_ROLE_ID_QUERY, parameters);
+            }
+            catch (Exception) { throw; }
         }
 
         public bool Register(User user)
         {
-
-            string INSERT_INTO_USER_AND_ACCOUNT_QUERY =
-                  $@"INSERT INTO [User] 
-                  (FirstName, LastName, NIC, MobileNumber, DepartmentId, RoleId, ManagerName, Email, [Password])
-                  VALUES (@FirstName, @LastName, @NationalIdentityCard, @MobileNumber, @DepartmentId, 
-                  {GetRoleId("Employee")}, @ManagerName, @Email, @Password); 
+            try
+            {
+                string INSERT_INTO_USER_AND_ACCOUNT_QUERY =
+                      $@"INSERT INTO [User] 
+                      (FirstName, LastName, NIC, MobileNumber, DepartmentId, RoleId, ManagerName, Email, [Password])
+                      VALUES (@FirstName, @LastName, @NationalIdentityCard, @MobileNumber, @DepartmentId, 
+                      {GetRoleId("Employee")}, @ManagerName, @Email, @Password); 
                   
-                  DECLARE @UserId INT
-                  SET @UserId = SCOPE_IDENTITY()
+                      DECLARE @UserId INT
+                      SET @UserId = SCOPE_IDENTITY()
 
-                  INSERT INTO Account (Email, [Password], UserId) 
-                  SELECT Email, [Password], UserId FROM [User] WHERE UserId = @UserId";
+                      INSERT INTO Account (Email, [Password], UserId) 
+                      SELECT Email, [Password], UserId FROM [User] WHERE UserId = @UserId";
 
-            List<string> excludedUserProperties = new List<string> { "UserId", "RoleId" };
-            SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
-            _dbCommand.ExecuteTransaction(out bool isSuccessful,
-                new SqlCommand(INSERT_INTO_USER_AND_ACCOUNT_QUERY), userQueryParams);
+                List<string> excludedUserProperties = new List<string> { "UserId", "RoleId" };
+                SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
+                _dbCommand.ExecuteTransaction(out bool isSuccessful,
+                    new SqlCommand(INSERT_INTO_USER_AND_ACCOUNT_QUERY), userQueryParams);
 
-            return isSuccessful;
+                return isSuccessful;
+            }
+            catch (Exception) { throw; }
         }
     }
 }

@@ -1,15 +1,16 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Repositories.DAL;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
 {
-    public class DatabaseCommand<T> :IDatabaseCommand<T>
+    public class DatabaseCommand<T> : IDatabaseCommand<T>
     {
         private readonly IDataAccessLayer _dataAccessLayer;
         public DatabaseCommand(IDataAccessLayer dataAccessLayer)
@@ -37,46 +38,14 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
                         sqlTransaction.Commit();
                         isSuccessful = true;
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     {
-
                         sqlTransaction.Rollback();
                         isSuccessful = false;
-                        // TODO: Log error
                         throw;
                     }
                 }
             }
-        }
-
-        public SqlParameter[] GetSqlParametersFromObject(object obj)
-        {
-            PropertyInfo[] properties = obj.GetType().GetProperties();
-            List<SqlParameter> parameters = new List<SqlParameter>();
-
-            foreach (PropertyInfo property in properties)
-            {
-                parameters.Add(new SqlParameter($"@{property.Name}", property.GetValue(obj)));
-            }
-            return parameters.ToArray();
-        }
-
-        public SqlParameter[] GetSqlParametersFromObject(object obj, List<string> excludedProperties)
-        {
-            PropertyInfo[] properties = obj.GetType().GetProperties();
-            List<SqlParameter> parameters = new List<SqlParameter>();
-
-            foreach (PropertyInfo property in properties)
-            {
-                if (excludedProperties != null)
-                {
-                    if (!excludedProperties.Contains(property.Name))
-                    {
-                        parameters.Add(new SqlParameter($"@{property.Name}", property.GetValue(obj)));
-                    }
-                }
-            }
-            return parameters.ToArray();
         }
 
         public bool RecordExists(string query, SqlParameter[] parameters)
@@ -85,12 +54,20 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
             {
                 using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                 {
-                    sqlCommand.Parameters.AddRange(parameters);
-
-                    using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                    try
                     {
-                        return reader.HasRows;
+                        sqlCommand.Parameters.AddRange(parameters);
+
+                        using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                        {
+                            return reader.HasRows;
+                        }
                     }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+
                 }
             }
         }
@@ -101,11 +78,19 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
             {
                 using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                 {
-                    if (parameters != null && parameters.Length > 0)
+                    try
                     {
-                        sqlCommand.Parameters.AddRange(parameters);
+                        if (parameters != null && parameters.Length > 0)
+                        {
+                            sqlCommand.Parameters.AddRange(parameters);
+                        }
+                        return sqlCommand.ExecuteScalar();
                     }
-                    return sqlCommand.ExecuteScalar();
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+
                 }
             }
         }
@@ -116,61 +101,136 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
             {
                 using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                 {
-                    if (parameters != null && parameters.Length > 0)
+                    try
                     {
-                        sqlCommand.Parameters.AddRange(parameters);
-                    }
+                        if (parameters != null && parameters.Length > 0)
+                        {
+                            sqlCommand.Parameters.AddRange(parameters);
+                        }
 
-                    return sqlCommand.ExecuteNonQuery();
+                        return sqlCommand.ExecuteNonQuery();
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
                 }
             }
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<TResult> ExecuteSelectQuery<TResult>(string query = null, SqlParameter[] parameters = null, 
+            Func<IDataReader, TResult> mapFunction = null)
         {
-            List<T> list = new List<T>();
+            List<TResult> result = new List<TResult>();
 
             using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
             {
-                string GET_ALL_QUERY = $@"SELECT * FROM [{typeof(T).Name}]";
-
-                using (SqlCommand sqlCommand = new SqlCommand(GET_ALL_QUERY, sqlConnection))
+                try
                 {
-                    T item;
-                    using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                    using (SqlCommand sqlCommand = new SqlCommand(query ?? $@"SELECT * FROM [{typeof(T).Name}]", sqlConnection))
                     {
-                        if (reader.HasRows)
+                        if (parameters != null && parameters.Any())
                         {
-                            var properties = typeof(T).GetProperties();
-                            while (reader.Read())
+                            sqlCommand.Parameters.AddRange(parameters);
+                        }
+                        using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                        {
+                            if (reader.HasRows)
                             {
-                                item = Activator.CreateInstance<T>();
-                                
-                                for (int i = 0; i < reader.FieldCount; i++)
+                                while (reader.Read())
                                 {
-                                    var property = properties.FirstOrDefault(p => p.Name == reader.GetName(i));
-
-                                    if (property != null)
+                                    TResult item;
+                                    if (mapFunction != null)
                                     {
-                                        property.SetValue(item, reader[i] == DBNull.Value ? null : reader[i]);
+                                        item = mapFunction(reader);
                                     }
+                                    else
+                                    {
+                                        item = Activator.CreateInstance<TResult>();
+                                        MapColumnsToProperties(item, reader);
+                                    }
+                                    result.Add(item);
                                 }
-                                list.Add(item);
                             }
                         }
                     }
                 }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
-            return list;
+            return result;
         }
 
-        private string GetFields()
+        public T GetById(int id)
+        {
+            using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
+            {
+                string GET_BY_ID_QUERY = $@"SELECT * FROM [{typeof(T).Name}] WHERE Id = @Id";
+                try
+                {
+                    using (SqlCommand sqlCommand = new SqlCommand(GET_BY_ID_QUERY, sqlConnection))
+                    {
+                        sqlCommand.Parameters.AddWithValue("@Id", id);
+                        using(SqlDataReader reader = sqlCommand.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                T item = Activator.CreateInstance<T>();
+                                MapColumnsToProperties(item, reader);
+                                return item;
+                            }
+                            return default; // return null
+                        }
+                    } 
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+
+        // PUBLIC HELPER METHODS
+        public SqlParameter[] GetSqlParametersFromObject(object obj, List<string> excludedProperties = null)
+        {
+            PropertyInfo[] properties = obj.GetType().GetProperties();
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            foreach (PropertyInfo property in properties)
+            {
+                if (excludedProperties == null || !excludedProperties.Contains(property.Name))
+                {
+                    parameters.Add(new SqlParameter($"@{property.Name}", property.GetValue(obj)));
+                }
+            }
+            return parameters.ToArray();
+        }
+
+        // PRIAVTE HELPER METHODS
+        private static void MapColumnsToProperties<T>(T item, IDataReader reader)
+        {
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                string columnName = reader.GetName(i);
+                PropertyInfo property = typeof(T).GetProperty(columnName);
+
+                if (property != null && !reader.IsDBNull(i))
+                {
+                    var value = reader[i] == DBNull.Value ? null : reader[i];
+                    property.SetValue(item, value);
+                }
+            }
+        }
+
+        private static string GetFields()
         {
             PropertyInfo[] props = typeof(T).GetProperties();
             var propsList = props.Where(prop => !Attribute.IsDefined(prop, typeof(Attribute))).ToList();
             StringBuilder columnName = new StringBuilder();
 
-            foreach(PropertyInfo property in propsList)
+            foreach (PropertyInfo property in propsList)
             {
                 columnName.Append(property.Name + ",");
             }
@@ -179,3 +239,4 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand
         }
     }
 }
+

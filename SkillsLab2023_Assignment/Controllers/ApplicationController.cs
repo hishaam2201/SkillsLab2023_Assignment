@@ -1,18 +1,12 @@
-﻿
-using SkillsLab2023_Assignment.Custom;
+﻿using SkillsLab2023_Assignment.Custom;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
     [UserSession]
-    public class HomeController : Controller
+    public class ApplicationController : Controller
     {
-        public HomeController()
-        {
-
-        }
-
-        [HttpGet]
+        // GET: Application
         public ActionResult Index()
         {
             return View();

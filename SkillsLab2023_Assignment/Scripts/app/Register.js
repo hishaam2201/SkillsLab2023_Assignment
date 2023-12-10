@@ -1,14 +1,39 @@
-function submitRegistration() {
+
+const registrationForm = document.getElementById('registrationForm')
+
+registrationForm.addEventListener('submit', event => {
+    if (!registrationForm.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+    }
+    else {
+        submitRegistrationForm();
+    }
+
+    registrationForm.classList.add('was-validated')
+
+}, false)
+
+function submitRegistrationForm() {
+
+    var firstName = document.getElementById("firstName").value.trim()
+    var lastName = document.getElementById("lastName").value.trim()
+    var mobileNumber = document.getElementById("mobileNumber").value.trim()
+    var nationalIdentityCard = document.getElementById("nationalIdentityCard").value.trim()
+    var managerName = document.getElementById("managerName").value.trim()
+    var department = document.getElementById("department").value.trim()
+    var email = document.getElementById("email").value.trim()
+    var password = document.getElementById("password").value.trim()
 
     var formData = new FormData()
-    formData.append("FirstName", document.getElementById("firstName").value)
-    formData.append("LastName", document.getElementById("lastName").value)
-    formData.append("MobileNumber", document.getElementById("mobileNumber").value)
-    formData.append("NationalIdentityCard", document.getElementById("nic").value)
-    formData.append("ManagerName", document.getElementById("managerName").value)
-    formData.append("DepartmentId", document.getElementById("department").value)
-    formData.append("Email", document.getElementById("email").value)
-    formData.append("Password", document.getElementById("password").value)
+    formData.append("FirstName", firstName)
+    formData.append("LastName", lastName)
+    formData.append("MobileNumber", mobileNumber)
+    formData.append("NationalIdentityCard", nationalIdentityCard)
+    formData.append("ManagerName", managerName)
+    formData.append("DepartmentId", department)
+    formData.append("Email", email)
+    formData.append("Password", password)
 
     fetch('/Account/Register', {
         method: 'POST',

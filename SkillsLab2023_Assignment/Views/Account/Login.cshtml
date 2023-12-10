@@ -12,19 +12,20 @@
             <div class="card-body">
                 <h2 class="card-title text-center">Login</h2>
                 <!-- Login Form -->
-                <form @*onsubmit="submitLoginForm(event)"*@ method="post">
+                <form id="loginForm" method="post" onsubmit="return false;" novalidate>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" required>
-                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                        <input type="email" class="form-control" id="email" required>
+                        <div class="invalid-feedback">Please enter a valid email</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" required>
+                        <div class="invalid-feedback">Password field is required</div>
                     </div>
-                    <div class="col-12 text-center">
-                        <button type="button" onclick="submitLoginForm()" class="btn btn-primary">Submit</button>
+                    <div class="col text-center">
+                        <input type="submit" class="btn btn-primary" value="Submit"/>
                     </div>
                     <div class="my-3 text-center">
                         Do not have an account? <a href="/Account/Register">Sign Up</a>
