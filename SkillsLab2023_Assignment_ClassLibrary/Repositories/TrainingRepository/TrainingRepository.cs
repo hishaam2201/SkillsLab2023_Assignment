@@ -100,7 +100,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.TrainingRepository
                 {
                     return new PreRequiste
                     {
-                        Id = (int)reader["Id"],
+                        Id = (int) reader["Id"],
                         Description = reader["Description"].ToString()
                     };
                 };

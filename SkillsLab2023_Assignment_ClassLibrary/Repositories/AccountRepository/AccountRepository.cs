@@ -64,7 +64,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
                       SET @UserId = SCOPE_IDENTITY()
 
                       INSERT INTO Account (Email, [Password], UserId) 
-                      SELECT Email, [Password], UserId FROM [User] WHERE UserId = @UserId";
+                      SELECT Email, [Password], Id FROM [User] WHERE Id = @UserId";
 
                 List<string> excludedUserProperties = new List<string> { "UserId", "RoleId" };
                 SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);

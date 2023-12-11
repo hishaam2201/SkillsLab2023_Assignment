@@ -1,6 +1,7 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
 using SkillsLab2023_Assignment_ClassLibrary.Services.AccountService;
 using System;
+using System.Security.Principal;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
@@ -27,8 +28,8 @@ namespace SkillsLab2023_Assignment.Controllers
             if (isValid)
             {
                 Session["isAuthenticated"] = true;
-                Session["CurrentUser"] = account.Email;
-                Session["CurrentRole"] = "Employee";
+                Session["CurrentUser"] = account.Email; // Testing purposes
+                Session["CurrentRole"] = "Employee"; // Testing purposes
                 return Json(new { success = true, message = "Login Successful", redirectUrl = "/Home/Index" });
             }
             else
@@ -51,6 +52,8 @@ namespace SkillsLab2023_Assignment.Controllers
             if (isRegistered)
             {
                 Session["isAuthenticated"] = true;
+                Session["CurrentUser"] = user; 
+                Session["CurrentRole"] = "Employee";
                 return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Index" });
             }
             else

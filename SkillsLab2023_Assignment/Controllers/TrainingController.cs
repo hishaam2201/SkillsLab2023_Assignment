@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
-    //[UserSession]
+    [UserSession]
     public class TrainingController : Controller
     {
         private readonly ITrainingService _trainingService;
@@ -41,16 +41,8 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpGet]
         public JsonResult GetTrainingById(int id)
         {
-            try
-            {
-                TrainingDTO trainingDTO = _trainingService.GetTrainingById(id);
-                return Json(new { success = true, training = trainingDTO }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception)
-            {
-                return Json(new { success = false, redirectUrl = Url.Action("InternalServerError", "Error") },
-                    JsonRequestBehavior.AllowGet);
-            }
+            TrainingDTO trainingDTO = _trainingService.GetTrainingById(id);
+            return Json(new { success = true, training = trainingDTO }, JsonRequestBehavior.AllowGet);
         }
     }
 }
