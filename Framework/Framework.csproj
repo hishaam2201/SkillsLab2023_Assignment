@@ -46,6 +46,8 @@
     <Compile Include="AppLogger\Logger.cs" />
     <Compile Include="DAL\DataAccessLayer.cs" />
     <Compile Include="DAL\IDataAccessLayer.cs" />
+    <Compile Include="DatabaseCommand\DatabaseCommand.cs" />
+    <Compile Include="DatabaseCommand\IDatabaseCommand.cs" />
     <Compile Include="Enums\ApplicationStatusEnum.cs" />
     <Compile Include="Enums\RolesEnum.cs" />
     <Compile Include="KeyAttribute\ForeignKeyAttribute.cs" />

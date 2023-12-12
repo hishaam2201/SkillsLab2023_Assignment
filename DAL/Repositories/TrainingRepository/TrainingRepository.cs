@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using DAL.DatabaseCommand.DatabaseCommand;
+using Framework.DatabaseCommand.DatabaseCommand;
 using DAL.DTO;
 using DAL.Models;
 

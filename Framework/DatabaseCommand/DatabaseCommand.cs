@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace DAL.DatabaseCommand.DatabaseCommand
+namespace Framework.DatabaseCommand.DatabaseCommand
 {
     public class DatabaseCommand<T> : IDatabaseCommand<T>
     {
