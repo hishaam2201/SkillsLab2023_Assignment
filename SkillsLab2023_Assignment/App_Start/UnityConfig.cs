@@ -1,13 +1,12 @@
-
-using SkillsLab2023_Assignment.AppLogger;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.DAL;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.TrainingRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Repositories.UserRepository;
-using SkillsLab2023_Assignment_ClassLibrary.Services.AccountService;
-using SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService;
-using SkillsLab2023_Assignment_ClassLibrary.Services.UserService;
+using BusinessLayer.Services.AccountService;
+using BusinessLayer.Services.TrainingService;
+using BusinessLayer.Services.UserService;
+using DAL.DatabaseCommand.DatabaseCommand;
+using DAL.Repositories.AccountRepository;
+using DAL.Repositories.TrainingRepository;
+using DAL.Repositories.UserRepository;
+using Framework.AppLogger;
+using Framework.DAL;
 using System.Web.Mvc;
 using Unity;
 using Unity.Mvc5;

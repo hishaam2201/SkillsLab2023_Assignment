@@ -132,8 +132,6 @@
     <Compile Include="Custom\CustomAuthorizationAttribute.cs" />
     <Compile Include="Custom\CustomHandleErrorAttribute.cs" />
     <Compile Include="Custom\UserSessionAttribute.cs" />
-    <Compile Include="Custom\AppLogger\ILogger.cs" />
-    <Compile Include="Custom\AppLogger\Logger.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -237,9 +235,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SkillsLab2023_Assignment_ClassLibrary\SkillsLab2023_Assignment_ClassLibrary.csproj">
-      <Project>{6e9f2ff8-76c8-44c4-9504-3916acb0fc9d}</Project>
-      <Name>SkillsLab2023_Assignment_ClassLibrary</Name>
+    <ProjectReference Include="..\BusinessLayer\BusinessLayer.csproj">
+      <Project>{12e98b1b-1197-4d11-aae6-3c440c1b6a16}</Project>
+      <Name>BusinessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Project>{cfb113c4-ede9-49c7-8a9e-5f6f8ca49afd}</Project>
+      <Name>DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Framework\Framework.csproj">
+      <Project>{f40bbb16-0732-4ccb-8662-83f734ecc6d3}</Project>
+      <Name>Framework</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

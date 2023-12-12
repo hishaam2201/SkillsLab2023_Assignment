@@ -1,5 +1,5 @@
-﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
-using SkillsLab2023_Assignment_ClassLibrary.Services.AccountService;
+﻿using BusinessLayer.Services.AccountService;
+using DAL.Models;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers

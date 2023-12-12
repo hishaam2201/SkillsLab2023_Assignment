@@ -1,6 +1,6 @@
-﻿using SkillsLab2023_Assignment.Custom;
-using SkillsLab2023_Assignment_ClassLibrary.DTO;
-using SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService;
+﻿using BusinessLayer.Services.TrainingService;
+using DAL.DTO;
+using SkillsLab2023_Assignment.Custom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
