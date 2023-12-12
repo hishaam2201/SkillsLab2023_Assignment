@@ -1,4 +1,4 @@
-﻿using SkillsLab2023_Assignment.AppLogger;
+﻿using Framework.AppLogger;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Custom
