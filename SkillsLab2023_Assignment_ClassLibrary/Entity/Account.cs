@@ -1,6 +1,4 @@
-﻿
-
-using SkillsLab2023_Assignment_ClassLibrary.KeyAttribute;
+﻿using SkillsLab2023_Assignment_ClassLibrary.KeyAttribute;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Entity
 {

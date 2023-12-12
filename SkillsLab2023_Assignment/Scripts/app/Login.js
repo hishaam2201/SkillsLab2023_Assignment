@@ -46,6 +46,7 @@ function submitLoginForm() {
         })
         .catch(error => {
             console.error('Error: ', error)
+            window.location.href = '/Common/InternalServerError'
         })
 }
 function displayMessageToUser(category, message) {

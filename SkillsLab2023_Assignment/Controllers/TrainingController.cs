@@ -1,10 +1,8 @@
 ﻿using SkillsLab2023_Assignment.Custom;
 using SkillsLab2023_Assignment_ClassLibrary.DTO;
 using SkillsLab2023_Assignment_ClassLibrary.Services.TrainingService;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers

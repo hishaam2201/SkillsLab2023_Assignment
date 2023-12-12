@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.DatabaseCommand;
 using System;
 
+
 namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
 {
     public class AccountRepository : IAccountRepository
@@ -51,7 +52,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
         }
 
         public bool Register(User user)
-        {
+        { 
             try
             {
                 string INSERT_INTO_USER_AND_ACCOUNT_QUERY =
@@ -64,10 +65,11 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository
                       SET @UserId = SCOPE_IDENTITY()
 
                       INSERT INTO Account (Email, [Password], UserId) 
-                      SELECT Email, [Password], Id FROM [User] WHERE Id = @UserId";
+                      SELECT Email, [Password], Id FROM [User] WHERE Id = @UserId;";
 
                 List<string> excludedUserProperties = new List<string> { "UserId", "RoleId" };
                 SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
+
                 _dbCommand.ExecuteTransaction(out bool isSuccessful,
                     new SqlCommand(INSERT_INTO_USER_AND_ACCOUNT_QUERY), userQueryParams);
 

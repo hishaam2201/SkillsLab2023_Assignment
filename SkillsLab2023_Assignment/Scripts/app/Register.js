@@ -60,6 +60,7 @@ function submitRegistrationForm() {
         })
         .catch(error => {
             console.error('Error: ', error)
+            window.location.href = '/Common/InternalServerError'
         })
 }
 

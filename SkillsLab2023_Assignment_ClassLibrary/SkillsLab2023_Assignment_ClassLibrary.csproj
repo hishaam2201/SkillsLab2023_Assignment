@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\TrainingDTO.cs" />
+    <Compile Include="DTO\TrainingPreRequisteDTO.cs" />
     <Compile Include="KeyAttribute\ForeignKeyAttribute.cs" />
     <Compile Include="KeyAttribute\PrimaryKeyAttribute.cs" />
     <Compile Include="Entity\Account.cs" />

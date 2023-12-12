@@ -1,7 +1,5 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.DTO;
-using SkillsLab2023_Assignment_ClassLibrary.Entity;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.TrainingRepository;
-using System;
 using System.Collections.Generic;
 
 

@@ -83,7 +83,7 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.TrainingRepository
             catch (Exception) { throw; }
         }
 
-        private List<PreRequiste> GetTrainingPreRequisites(int trainingId)
+        private List<TrainingPreRequisteDTO> GetTrainingPreRequisites(int trainingId)
         {
             try
             {
@@ -96,12 +96,12 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Repositories.TrainingRepository
                        WHERE t.Id = @Id";
 
                 SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Id = trainingId });
-                Func<IDataReader, PreRequiste> mapFunction = reader =>
+                Func<IDataReader, TrainingPreRequisteDTO> mapFunction = reader =>
                 {
-                    return new PreRequiste
+                    return new TrainingPreRequisteDTO
                     {
-                        Id = (int) reader["Id"],
-                        Description = reader["Description"].ToString()
+                        TrainingId = (int) reader["Id"],
+                        PreRequisiteDescription = reader["Description"].ToString()
                     };
                 };
 
