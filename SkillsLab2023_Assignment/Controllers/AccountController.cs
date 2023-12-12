@@ -1,6 +1,5 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
 using SkillsLab2023_Assignment_ClassLibrary.Services.AccountService;
-using System;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
@@ -28,7 +27,7 @@ namespace SkillsLab2023_Assignment.Controllers
             {
                 Session["isAuthenticated"] = true;
                 Session["CurrentUser"] = account.Email;
-                Session["CurrentRole"] = "Employee";
+                Session["CurrentRole"] = "Employee"; // Currently logging in as Employee by default
                 return Json(new { success = true, message = "Login Successful", redirectUrl = "/Home/Index" });
             }
             else
@@ -47,23 +46,23 @@ namespace SkillsLab2023_Assignment.Controllers
         public ActionResult Register(User user)
         {
             bool isRegistered = _accountService.Register(user);
-            // TODO: When registering, store user data in session
             if (isRegistered)
             {
                 Session["isAuthenticated"] = true;
+                Session["CurrentUser"] = user;
+                Session["CurrentRole"] = "Employee";
                 return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Index" });
             }
             else
             {
                 return Json(new { success = false, message = "Email already exists!" });
-            }   
+            }
         }
 
-        [HttpGet]
+        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
         public ActionResult LogOut()
         {
             Session.Clear();
-            Session.Abandon();
             return RedirectToAction("Login", "Account");
         }
     }

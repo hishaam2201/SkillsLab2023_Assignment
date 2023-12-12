@@ -1,6 +1,5 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.KeyAttribute;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Entity
 {

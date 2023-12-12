@@ -1,6 +1,6 @@
 ﻿using SkillsLab2023_Assignment_ClassLibrary.Entity;
 using SkillsLab2023_Assignment_ClassLibrary.Repositories.AccountRepository;
-using System;
+
 
 namespace SkillsLab2023_Assignment_ClassLibrary.Services.AccountService
 {
@@ -24,7 +24,10 @@ namespace SkillsLab2023_Assignment_ClassLibrary.Services.AccountService
 
         public bool Register(User user)
         {
-            return EmailExists(user.Email) ? false : _accountRepository.Register(user);   
+            if (EmailExists(user.Email)) return false;
+
+            bool registrationSuccessful = _accountRepository.Register(user);
+            return registrationSuccessful;
         }
     }
 }
