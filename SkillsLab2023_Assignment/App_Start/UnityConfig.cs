@@ -1,7 +1,7 @@
 using BusinessLayer.Services.AccountService;
 using BusinessLayer.Services.TrainingService;
 using BusinessLayer.Services.UserService;
-using DAL.DatabaseCommand.DatabaseCommand;
+using Framework.DatabaseCommand.DatabaseCommand;
 using DAL.Repositories.AccountRepository;
 using DAL.Repositories.TrainingRepository;
 using DAL.Repositories.UserRepository;

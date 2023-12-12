@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using DAL.DatabaseCommand.DatabaseCommand;
+using Framework.DatabaseCommand.DatabaseCommand;
 using System;
 using DAL.Models;
 
