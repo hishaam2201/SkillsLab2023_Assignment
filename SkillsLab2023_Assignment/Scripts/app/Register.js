@@ -1,3 +1,28 @@
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/Account/GetAllDepartments', {
+        method : 'GET'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var departments = data.departments
+
+                var selectElement = document.getElementById('department')
+                selectElement.innerHTML = '<option selected disabled value="">Select your department</option>'
+
+                departments.forEach(function (department) {
+                    var option = document.createElement('option')
+                    option.value = department.Id
+                    option.text = department.DepartmentName
+                    selectElement.appendChild(option)
+                })
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching departments: ', error)
+        })
+})
+
 
 const registrationForm = document.getElementById('registrationForm')
 
@@ -20,8 +45,8 @@ function submitRegistrationForm() {
     var lastName = document.getElementById("lastName").value.trim()
     var mobileNumber = document.getElementById("mobileNumber").value.trim()
     var nationalIdentityCard = document.getElementById("nationalIdentityCard").value.trim()
-    var managerName = document.getElementById("managerName").value.trim()
     var department = document.getElementById("department").value.trim()
+    var manager = document.getElementById("manager").value.trim()
     var email = document.getElementById("email").value.trim()
     var password = document.getElementById("password").value.trim()
 
@@ -30,7 +55,7 @@ function submitRegistrationForm() {
     formData.append("LastName", lastName)
     formData.append("MobileNumber", mobileNumber)
     formData.append("NationalIdentityCard", nationalIdentityCard)
-    formData.append("ManagerName", managerName)
+    formData.append("ManagerId", manager)
     formData.append("DepartmentId", department)
     formData.append("Email", email)
     formData.append("Password", password)

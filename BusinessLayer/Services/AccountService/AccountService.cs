@@ -1,6 +1,7 @@
-﻿using DAL.Models;
+﻿using DAL.DTO;
+using DAL.Models;
 using DAL.Repositories.AccountRepository;
-
+using System.Collections.Generic;
 
 namespace BusinessLayer.Services.AccountService
 {
@@ -22,11 +23,21 @@ namespace BusinessLayer.Services.AccountService
             return _accountRepository.EmailExists(email);
         }
 
-        public bool Register(User user)
+        public IEnumerable<DepartmentDTO> GetAllDepartments()
         {
-            if (EmailExists(user.Email)) return false;
+            return _accountRepository.GetAllDepartments();
+        }
 
-            bool registrationSuccessful = _accountRepository.Register(user);
+        public IEnumerable<ManagerDTO> GetAllManagersFromDepartment()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool Register(User user, string email, string password)
+        {
+            if (EmailExists(email)) return false;
+
+            bool registrationSuccessful = _accountRepository.Register(user, email, password);
             return registrationSuccessful;
         }
     }

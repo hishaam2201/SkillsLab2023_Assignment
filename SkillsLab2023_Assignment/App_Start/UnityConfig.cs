@@ -18,10 +18,6 @@ namespace SkillsLab2023_Assignment
         public static void RegisterComponents()
         {
 			var container = new UnityContainer();
-
-            // register all your components with the container here
-            // it is NOT necessary to register your controllers
-
             
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
             container.RegisterType(typeof(IDatabaseCommand<>), typeof(DatabaseCommand<>));

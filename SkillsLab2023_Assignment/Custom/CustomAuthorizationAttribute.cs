@@ -17,10 +17,10 @@ namespace SkillsLab2023_Assignment.Custom
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var dfController = (Controller) filterContext.Controller;
-            if (dfController != null && dfController.Session["CurrentRole"] != null)
+            if (dfController != null && dfController.Session["UserRole"] != null)
             {
-                var currentRole = (string) dfController.Session["CurrentRole"];
-                if (!AuthorizedRoles.Contains(currentRole))
+                var userRole = (string) dfController.Session["UserRole"];
+                if (!AuthorizedRoles.Contains(userRole))
                 {
                     filterContext.Result = new RedirectToRouteResult(
                         new RouteValueDictionary(new { controller = "Common", action = "AccessDenied" }

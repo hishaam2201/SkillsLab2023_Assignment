@@ -24,7 +24,7 @@ function populateTable(trainings) {
         const row = document.createElement('tr')
 
         const trainingProgrammeCell = document.createElement('td')
-        trainingProgrammeCell.textContent = training.ProgrammeName
+        trainingProgrammeCell.textContent = training.TrainingName
         row.appendChild(trainingProgrammeCell)
 
         const departmentCell = document.createElement('td')
