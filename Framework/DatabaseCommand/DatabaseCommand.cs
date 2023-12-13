@@ -56,17 +56,17 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                 {
                     try
                     {
-                        sqlCommand.Parameters.AddRange(parameters);
+                        if (parameters != null && parameters.Any())
+                        {
+                            sqlCommand.Parameters.AddRange(parameters);
+                        }
 
                         using (SqlDataReader reader = sqlCommand.ExecuteReader())
                         {
                             return reader.HasRows;
                         }
                     }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+                    catch (Exception) { throw; }
 
                 }
             }
@@ -118,7 +118,7 @@ namespace Framework.DatabaseCommand.DatabaseCommand
             }
         }
 
-        public IEnumerable<TResult> ExecuteSelectQuery<TResult>(string query = null, SqlParameter[] parameters = null, 
+        public IEnumerable<TResult> ExecuteSelectQuery<TResult>(string query = null, SqlParameter[] parameters = null,
             Func<IDataReader, TResult> mapFunction = null)
         {
             List<TResult> result = new List<TResult>();
@@ -173,7 +173,7 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                     using (SqlCommand sqlCommand = new SqlCommand(GET_BY_ID_QUERY, sqlConnection))
                     {
                         sqlCommand.Parameters.AddWithValue("@Id", id);
-                        using(SqlDataReader reader = sqlCommand.ExecuteReader())
+                        using (SqlDataReader reader = sqlCommand.ExecuteReader())
                         {
                             if (reader.Read())
                             {
@@ -183,7 +183,7 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                             }
                             return default; // return null
                         }
-                    } 
+                    }
                 }
                 catch (Exception)
                 {

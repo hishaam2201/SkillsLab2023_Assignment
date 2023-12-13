@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string userRole = Session["UserRole"] as string;
+    string homeAction = GetHomeActionForRole(userRole);
+    bool isLoginOrRegisterPage = ViewContext.RouteData.Values["controller"].ToString().Equals("Account", StringComparison.OrdinalIgnoreCase)
+        && (ViewContext.RouteData.Values["action"].ToString().Equals("Login", StringComparison.OrdinalIgnoreCase)
+        || ViewContext.RouteData.Values["action"].ToString().Equals("Register", StringComparison.OrdinalIgnoreCase));
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -7,42 +15,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
     @Styles.Render("~/Content/css")
+    <link href="~/Content/toastr.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    @if (Session["isAuthenticated"] != null && Session["CurrentUser"] != null)
+    @if (Session["isAuthenticated"] != null && Session["CurrentUser"] != null && !isLoginOrRegisterPage)
     {
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-            <div class="container">
-                @Html.ActionLink("SkillForge", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark px-5">
+            <div class="container-fluid">
+
+                @Html.ActionLink("SkillForge", homeAction, "Home", new { area = "" }, new { @class = "navbar-brand" })
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Browse Training", "ViewTrainings", "Training", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("LogOut", "LogOut", "Account", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Home", homeAction, "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        @if (Session["UserRole"] as string == Framework.Enums.RoleEnum.Employee.ToString())
+                        {
+                            <li>@Html.ActionLink("Browse Training", "ViewTrainings", "Training", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
+                        <ul class="navbar-nav ms-auto">
+                            <li>@Html.ActionLink("LogOut", "LogOut", "Account", new { area = "" }, new { @class = "nav-link" })</li>
+                        </ul>
                     </ul>
                 </div>
             </div>
         </nav>
     }
 
-<div class="container body-content">
-    @RenderBody()
-    <footer>
-        <hr />
-        <p>&copy; SkillForge 2023. All rights reserved</p>
-    </footer>
+    <div class="container body-content">
+        @RenderBody()
+        <footer>
+            <hr />
+            <p>&copy; SkillForge 2023. All rights reserved</p>
+        </footer>
 
-</div>
+    </div>
 
- 
+
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/toastr.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
+@functions {
+    string GetHomeActionForRole(string userRole)
+    {
+        switch (userRole)
+        {
+            case "Employee":
+                return "EmployeeDashboard";
+            case "Manager":
+                return "ManagerDashboard";
+            case "Administrator":
+                return "AdministratorDashboard";
+            default:
+                return "AccessDenied";
+        }
+    }
+}

@@ -32,11 +32,10 @@ namespace DAL.Repositories.TrainingRepository
                     trainingDTOs.Add(new TrainingDTO
                     {
                         TrainingId = training.Id,
-                        ProgrammeName = training.ProgrammeName,
+                        TrainingName = training.TrainingName,
                         Deadline = training.Deadline,
                         Capacity = training.Capacity,
                         DepartmentName = departmentName?.ToString()
-
                     });
                 }
             }
@@ -56,7 +55,7 @@ namespace DAL.Repositories.TrainingRepository
 
                 return new TrainingDTO
                 {
-                    ProgrammeName = training.ProgrammeName,
+                    TrainingName = training.TrainingName,
                     Description = training.Description,
                     Capacity = training.Capacity,
                     StartingDate = training.StartingDate,
@@ -89,7 +88,7 @@ namespace DAL.Repositories.TrainingRepository
             try
             {
                 string GET_TRAINING_PRE_REQUISITES_QUERY =
-                    $@"SELECT t.Id, p.[description] FROM Training AS t
+                    $@"SELECT t.Id, p.PreRequisiteName FROM Training AS t
                        INNER JOIN TrainingPreRequisites
                        ON TrainingPreRequisites.TrainingId = t.Id
                        INNER JOIN PreRequisite AS p
@@ -101,8 +100,8 @@ namespace DAL.Repositories.TrainingRepository
                 {
                     return new TrainingPreRequisteDTO
                     {
-                        TrainingId = (int)reader["Id"],
-                        PreRequisiteDescription = reader["Description"].ToString()
+                        TrainingId = reader["Id"] == DBNull.Value ? (short)0 : (short)reader["Id"],
+                        PreRequisiteDescription = reader["PreRequisiteName"]?.ToString()
                     };
                 };
 

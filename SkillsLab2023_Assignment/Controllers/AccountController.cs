@@ -1,5 +1,10 @@
 ﻿using BusinessLayer.Services.AccountService;
+using DAL.DTO;
 using DAL.Models;
+using Framework.Enums;
+using Framework.StaticClass;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
@@ -19,16 +24,28 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpPost]
-        public ActionResult Login(Account account)
+        public ActionResult Login(LoginDTO loginDTO)
         {
-            bool isValid = _accountService.AuthenticateLoginCredentials(account.Email, account.Password);
+            bool isValid = _accountService.AuthenticateLoginCredentials(loginDTO.Email, loginDTO.Password);
 
             if (isValid)
             {
-                Session["isAuthenticated"] = true;
-                Session["CurrentUser"] = account.Email;
-                Session["CurrentRole"] = "Employee"; // Currently logging in as Employee by default
-                return Json(new { success = true, message = "Login Successful", redirectUrl = "/Home/Index" });
+                UserDTO userData = _accountService.GetUserData(loginDTO.Email);
+
+                if (userData != null)
+                {
+                    Session["isAuthenticated"] = true;
+                    Session["CurrentUser"] = userData;
+                    Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
+
+                    string dashboardAction = Extensions.GetDashboardAction(userData.RoleId);
+
+                    return Json(new { success = true, message = "Login Successful", redirectUrl = Url.Action(dashboardAction, "Home") });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "User data not found" });
+                }
             }
             else
             {
@@ -42,16 +59,41 @@ namespace SkillsLab2023_Assignment.Controllers
             return View();
         }
 
-        [HttpPost]
-        public ActionResult Register(User user)
+        [HttpGet]
+        public JsonResult GetAllDepartments()
         {
-            bool isRegistered = _accountService.Register(user);
+            List<DepartmentDTO> departmentDTO = _accountService.GetAllDepartments().ToList();
+            return Json(new { success = true, departments = departmentDTO }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetAllManagersFromDepartment(int departmentId)
+        {
+            List<ManagerDTO> managerDTO = _accountService.GetAllManagersFromDepartment(departmentId).ToList();
+            return Json(new { success = true, managers = managerDTO }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult Register(RegistrationDTO registrationDTO)
+        {
+            User user = new User
+            {
+                FirstName = registrationDTO.FirstName,
+                LastName = registrationDTO.LastName,
+                MobileNumber = registrationDTO.MobileNumber,
+                NationalIdentityCard = registrationDTO.NationalIdentityCard,
+                DepartmentId = registrationDTO.DepartmentId,
+                ManagerId = registrationDTO.ManagerId
+            };
+            bool isRegistered = _accountService.Register(user, registrationDTO.Email, registrationDTO.Password);
+
             if (isRegistered)
             {
+                UserDTO userData = _accountService.GetUserData(registrationDTO.Email);
                 Session["isAuthenticated"] = true;
-                Session["CurrentUser"] = user;
-                Session["CurrentRole"] = "Employee";
-                return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Index" });
+                Session["CurrentUser"] = userData;
+                Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
+                return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Dashboard" });
             }
             else
             {

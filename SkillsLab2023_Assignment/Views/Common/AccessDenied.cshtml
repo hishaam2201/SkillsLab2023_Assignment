@@ -1,12 +1,32 @@
 ﻿@{
     ViewBag.Title = "Access Unauthorized";
+    string userRole = Session["UserRole"] as string;
+    string homeAction = GetHomeActionForRole(userRole);
 }
 
 <link href="~/Content/app/Common.css" rel="stylesheet" />
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <h1 id="error-code" class="text-center">401</h1>
-        <h5 class="text-center">You are not authorized</h5>
+    <div class="col-md-6 text-center">
+        <h1 id="error-code">401</h1>
+        <h5>You are not authorized</h5>
+        <h6>Go Back To @Html.ActionLink("Home", homeAction, "Home")</h6>
     </div>
 </div>
+
+@functions {
+    string GetHomeActionForRole(string userRole)
+    {
+        switch (userRole)
+        {
+            case "Employee":
+                return "EmployeeDashboard";
+            case "Manager":
+                return "ManagerDashboard";
+            case "Administrator":
+                return "AdministratorDashboard";
+            default:
+                return "AccessDenied";
+        }
+    }
+}
