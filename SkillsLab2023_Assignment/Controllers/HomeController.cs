@@ -12,8 +12,20 @@ namespace SkillsLab2023_Assignment.Controllers
 
         }
 
-        [HttpGet]
-        public ActionResult Index()
+        [CustomAuthorization("Employee")]
+        public ActionResult EmployeeDashboard()
+        {
+            return View();
+        }
+
+        [CustomAuthorization("Manager")]
+        public ActionResult ManagerDashboard()
+        {
+            return View();
+        }
+
+        [CustomAuthorization("Administrator")]
+        public ActionResult AdministratorDashboard()
         {
             return View();
         }

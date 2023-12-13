@@ -5,6 +5,8 @@ using System;
 using DAL.Models;
 using System.Linq;
 using DAL.DTO;
+using Framework.Enums;
+using System.Data;
 
 namespace DAL.Repositories.AccountRepository
 {
@@ -45,24 +47,67 @@ namespace DAL.Repositories.AccountRepository
         {
             try
             {
-                return _dbCommand.ExecuteSelectQuery<DepartmentDTO>(query: $@"SELECT * FROM Department;");
+                string GET_ALL_DEPARTMENTS_QUERY = $@"SELECT * FROM Department;";
+                Func<IDataReader, DepartmentDTO> mapFunction = reader =>
+                {
+                    return new DepartmentDTO
+                    {
+                        Id = (byte)reader["Id"],
+                        DepartmentName = reader["DepartmentName"]?.ToString(),
+                    };
+                };
+                return _dbCommand.ExecuteSelectQuery(query: GET_ALL_DEPARTMENTS_QUERY, mapFunction: mapFunction);
             }
-            catch(Exception) { throw; }
+            catch (Exception) { throw; }
         }
 
-        public IEnumerable<ManagerDTO> GetAllManagersFromDepartment()
-        {
-            throw new NotImplementedException();
-        }
-
-        // TODO: Need to rework on that, make it retrieve RoleName
-        public int GetRoleId(string role)
+        public IEnumerable<ManagerDTO> GetAllManagersFromDepartment(int departmentId)
         {
             try
             {
-                const string GET_ROLE_ID_QUERY = @"SELECT Id FROM [Role] WHERE RoleName = @Role";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Role = role });
-                return (int)_dbCommand.ReturnFirstColumnOfFirstRow(GET_ROLE_ID_QUERY, parameters);
+                string GET_MANAGERS_FROM_DEPARTMENT_QUERY =
+                    $@"SELECT Id, FirstName, LastName FROM [User] WHERE RoleId = {(int)RoleEnum.Manager}
+                               AND DepartmentId = @DepartmentId";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
+                Func<IDataReader, ManagerDTO> mapFunction = reader =>
+                {
+                    return new ManagerDTO
+                    {
+                        Id = (short)reader["Id"],
+                        FirstName = reader["FirstName"]?.ToString(),
+                        LastName = reader["LastName"]?.ToString(),
+                    };
+                };
+                return _dbCommand.ExecuteSelectQuery
+                    (GET_MANAGERS_FROM_DEPARTMENT_QUERY, parameters, mapFunction);
+            }
+            catch (Exception) { throw; }
+        }
+
+        public UserDTO GetUserData(string email)
+        {
+            try
+            {
+                const string GET_USER_DATA_QUERY = @"SELECT u.Id, u.FirstName, u.LastName, u.DepartmentId, u.RoleId, u.ManagerId, a.Email
+                                                   FROM [User] as u
+                                                   INNER JOIN Account a
+                                                   ON a.Id = u.Id
+                                                   WHERE a.Email = @Email";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email });
+                Func<IDataReader, UserDTO> mapFunction = reader =>
+                {
+                    return new UserDTO
+                    {
+                        Id = (short)reader["Id"],
+                        FirstName = reader["FirstName"]?.ToString(),
+                        LastName = reader["LastName"]?.ToString(),
+                        Email = reader["Email"]?.ToString(),
+                        DepartmentId = reader["DepartmentId"] == DBNull.Value ? (byte?)null : (byte)reader["DepartmentId"],
+                        RoleId = (byte)reader["RoleId"],
+                        ManagerId = reader["ManagerId"] == DBNull.Value ? (short?)null : (short)reader["ManagerId"],
+                    };
+                };
+                return _dbCommand.ExecuteSelectQuery(GET_USER_DATA_QUERY, parameters, mapFunction).FirstOrDefault();
             }
             catch (Exception) { throw; }
         }

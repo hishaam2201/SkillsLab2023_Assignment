@@ -101,7 +101,7 @@ namespace DAL.Repositories.TrainingRepository
                     return new TrainingPreRequisteDTO
                     {
                         TrainingId = reader["Id"] == DBNull.Value ? (short)0 : (short)reader["Id"],
-                        PreRequisiteDescription = reader["PreRequisiteName"].ToString()
+                        PreRequisiteDescription = reader["PreRequisiteName"]?.ToString()
                     };
                 };
 

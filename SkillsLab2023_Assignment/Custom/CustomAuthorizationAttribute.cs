@@ -16,10 +16,10 @@ namespace SkillsLab2023_Assignment.Custom
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var dfController = (Controller) filterContext.Controller;
+            var dfController = filterContext.Controller as Controller;
             if (dfController != null && dfController.Session["UserRole"] != null)
             {
-                var userRole = (string) dfController.Session["UserRole"];
+                var userRole = dfController.Session["UserRole"] as string;
                 if (!AuthorizedRoles.Contains(userRole))
                 {
                     filterContext.Result = new RedirectToRouteResult(

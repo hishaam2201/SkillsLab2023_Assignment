@@ -11,6 +11,7 @@ namespace BusinessLayer.Services.AccountService
         bool EmailExists(string email);
         bool Register(User user, string email, string password);
         IEnumerable<DepartmentDTO> GetAllDepartments();
-        IEnumerable<ManagerDTO> GetAllManagersFromDepartment();
+        IEnumerable<ManagerDTO> GetAllManagersFromDepartment(int departmentId);
+        UserDTO GetUserData(string email);
     }
 }

@@ -2,6 +2,7 @@
 using DAL.DTO;
 using DAL.Models;
 using Framework.Enums;
+using Framework.StaticClass;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -25,19 +26,26 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public ActionResult Login(LoginDTO loginDTO)
         {
-            Account account = new Account
-            {
-                Email = loginDTO.Email,
-                Password = loginDTO.Password,
-            };
-            bool isValid = _accountService.AuthenticateLoginCredentials(account.Email, account.Password);
+            bool isValid = _accountService.AuthenticateLoginCredentials(loginDTO.Email, loginDTO.Password);
 
             if (isValid)
             {
-                Session["isAuthenticated"] = true;
-                Session["CurrentUser"] = account.Email;
-                Session["UserRole"] = "Employee"; // Currently logging in as Employee by default
-                return Json(new { success = true, message = "Login Successful", redirectUrl = "/Home/Index" });
+                UserDTO userData = _accountService.GetUserData(loginDTO.Email);
+
+                if (userData != null)
+                {
+                    Session["isAuthenticated"] = true;
+                    Session["CurrentUser"] = userData;
+                    Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
+
+                    string dashboardAction = Extensions.GetDashboardAction(userData.RoleId);
+
+                    return Json(new { success = true, message = "Login Successful", redirectUrl = Url.Action(dashboardAction, "Home") });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "User data not found" });
+                }
             }
             else
             {
@@ -58,6 +66,13 @@ namespace SkillsLab2023_Assignment.Controllers
             return Json(new { success = true, departments = departmentDTO }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult GetAllManagersFromDepartment(int departmentId)
+        {
+            List<ManagerDTO> managerDTO = _accountService.GetAllManagersFromDepartment(departmentId).ToList();
+            return Json(new { success = true, managers = managerDTO }, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         public ActionResult Register(RegistrationDTO registrationDTO)
         {
@@ -74,10 +89,11 @@ namespace SkillsLab2023_Assignment.Controllers
 
             if (isRegistered)
             {
+                UserDTO userData = _accountService.GetUserData(registrationDTO.Email);
                 Session["isAuthenticated"] = true;
-                Session["CurrentUser"] = user;
-                Session["UserRole"] = (int)RolesEnum.Employee;
-                return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Index" });
+                Session["CurrentUser"] = userData;
+                Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
+                return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Dashboard" });
             }
             else
             {

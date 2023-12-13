@@ -28,9 +28,14 @@ namespace BusinessLayer.Services.AccountService
             return _accountRepository.GetAllDepartments();
         }
 
-        public IEnumerable<ManagerDTO> GetAllManagersFromDepartment()
+        public IEnumerable<ManagerDTO> GetAllManagersFromDepartment(int departmentId)
         {
-            throw new System.NotImplementedException();
+            return _accountRepository.GetAllManagersFromDepartment(departmentId);
+        }
+
+        public UserDTO GetUserData(string email)
+        {
+            return _accountRepository.GetUserData(email);
         }
 
         public bool Register(User user, string email, string password)

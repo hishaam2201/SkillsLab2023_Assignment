@@ -9,9 +9,9 @@ namespace DAL.Repositories.AccountRepository
     {
         bool AuthenticateLoginCredentials(string email, string password);
         bool EmailExists(string email);
-        int GetRoleId(string role); // TODO: Change to not take role as parameter
+        UserDTO GetUserData(string email);
         bool Register(User user, string email, string password);
         IEnumerable<DepartmentDTO> GetAllDepartments();
-        IEnumerable<ManagerDTO> GetAllManagersFromDepartment();
+        IEnumerable<ManagerDTO> GetAllManagersFromDepartment(int departmentId);
     }
 }

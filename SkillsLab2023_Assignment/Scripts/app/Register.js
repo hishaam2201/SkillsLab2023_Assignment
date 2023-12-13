@@ -1,28 +1,64 @@
 document.addEventListener('DOMContentLoaded', function () {
     fetch('/Account/GetAllDepartments', {
-        method : 'GET'
+        method: 'GET'
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 var departments = data.departments
 
-                var selectElement = document.getElementById('department')
-                selectElement.innerHTML = '<option selected disabled value="">Select your department</option>'
+                var departmentSelectElement = document.getElementById('department')
+                departmentSelectElement.innerHTML = '<option selected disabled value="">Select your Department</option>'
 
                 departments.forEach(function (department) {
                     var option = document.createElement('option')
                     option.value = department.Id
                     option.text = department.DepartmentName
-                    selectElement.appendChild(option)
+                    departmentSelectElement.appendChild(option)
+                })
+
+                departmentSelectElement.addEventListener('change', function () {
+                    var selectedDepartmentId = departmentSelectElement.value
+
+                    fetch(`/Account/GetAllManagersFromDepartment?departmentId=${selectedDepartmentId}`, {
+                        method: 'GET'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            var managerSelectElement = document.getElementById('manager')
+                            managerSelectElement.innerHTML = '<option selected disabled value="">Select your Manager</option>'
+
+                            if (data.success && data.managers.length > 0) {
+                                var managers = data.managers;
+
+                                managers.forEach(function (manager) {
+                                    var option = document.createElement('option')
+                                    option.value = manager.Id
+                                    option.text = `${manager.FirstName} ${manager.LastName}`
+                                    managerSelectElement.appendChild(option)
+                                })
+                            }
+                            else {
+                                toastr.warning("No managers available for the selected department", "No Managers Found", {
+                                    progressBar: true,
+                                    timeOut: 3000
+                                })
+                            }
+                        })
+                        .catch(error => {
+                            toastr.error("Error fetching Managers", "Error", {
+                                closeButton: true
+                            })
+                        })
                 })
             }
         })
         .catch(error => {
-            console.error('Error fetching departments: ', error)
+            toastr.error("Error fetching Departments", "Error", {
+                closeButton: true                
+            })
         })
 })
-
 
 const registrationForm = document.getElementById('registrationForm')
 
@@ -64,37 +100,34 @@ function submitRegistrationForm() {
         method: 'POST',
         body: formData
     })
-        .then(response => {
-            if (response.ok) {
-                return response.json()
-            }
-            else {
-                console.error('Response status: ', response.status)
-            }
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
-                displayMessageToUser("success", data.message)
+                displayToastToUser('success', data.message)
                 setTimeout(() => {
                     window.location.href = data.redirectUrl
-                }, 1500)
+                }, 2000)
             }
             else {
-                displayMessageToUser("danger", data.message)
+                displayToastToUser('error', data.message)
             }
         })
         .catch(error => {
-            console.error('Error: ', error)
             window.location.href = '/Common/InternalServerError'
         })
 }
 
-function displayMessageToUser(category, message) {
-    let messageContainer = document.getElementById('message-container')
-    messageContainer.style.display = 'block'
-    messageContainer.innerHTML =
-        `<div class="alert alert-${category} alert-dismissible fade show mt-4" role="alert">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>`
+function displayToastToUser(toastColor, message) {
+    if (toastColor === 'success') {
+        toastr.success(`${message}`, "Success", {
+            timeOut: 1500,
+            progressBar: true
+        })
+    }
+    else {
+        toastr.error(`${message}`, "Error", {
+            timeOut: 5000,
+            progressBar: true
+        })
+    }
 }

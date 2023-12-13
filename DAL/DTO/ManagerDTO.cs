@@ -8,7 +8,7 @@ namespace DAL.DTO
 {
     public class ManagerDTO
     {
-        public int Id { get; set; }
+        public short Id { get; set; }
         public string FirstName { get; set; }
         public string LastName {  get; set; }
     }

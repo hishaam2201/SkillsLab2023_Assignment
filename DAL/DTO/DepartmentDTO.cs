@@ -8,7 +8,7 @@ namespace DAL.DTO
 {
     public class DepartmentDTO
     {
-        public int Id { get; set; }
+        public byte Id { get; set; }
         public string DepartmentName { get; set; }
     }
 }
