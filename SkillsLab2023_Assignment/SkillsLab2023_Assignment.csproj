@@ -12143,7 +12143,7 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Training\ViewTrainings.cshtml" />
     <Content Include="Views\Common\AccessDenied.cshtml" />
-    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Common\NotFound.cshtml" />
     <Content Include="Views\Common\InternalServerError.cshtml" />
     <Content Include="Views\Shared\_ErrorLayout.cshtml" />
     <Content Include="Views\Training\Details.cshtml" />

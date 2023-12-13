@@ -13,5 +13,10 @@ namespace SkillsLab2023_Assignment.Controllers
         {
             return View();
         }
+
+        public ActionResult NotFound()
+        {
+            return View();
+        }
     }
 }
