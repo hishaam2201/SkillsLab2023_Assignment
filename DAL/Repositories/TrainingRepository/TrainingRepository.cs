@@ -33,7 +33,7 @@ namespace DAL.Repositories.TrainingRepository
                     {
                         TrainingId = training.Id,
                         TrainingName = training.TrainingName,
-                        Deadline = training.Deadline,
+                        Deadline = training.Deadline.ToString("d MMMM, yyyy"),
                         Capacity = training.Capacity,
                         DepartmentName = departmentName?.ToString()
                     });
@@ -55,13 +55,14 @@ namespace DAL.Repositories.TrainingRepository
 
                 return new TrainingDTO
                 {
+                    TrainingId = training.Id,
                     TrainingName = training.TrainingName,
                     Description = training.Description,
                     Capacity = training.Capacity,
-                    StartingDate = training.StartingDate,
-                    Deadline = training.Deadline,
+                    StartingDate = training.StartingDate.ToString("d MMMM, yyyy"),
+                    Deadline = training.Deadline.ToString("d MMMM, yyyy"),
                     DepartmentName = departmentName?.ToString(),
-                    PreRequistes = GetTrainingPreRequisites(training.Id)
+                    PreRequisites = GetTrainingPreRequisites(training.Id)
                 };
             }
             catch (Exception)

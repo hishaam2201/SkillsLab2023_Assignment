@@ -1,11 +1,44 @@
-﻿
+﻿@model DAL.DTO.TrainingDTO
+
 @{
     ViewBag.Title = "Training Details";
 }
 
-<h2>Details</h2>
+<h2 id="trainingName" class="mb-3">@Model.TrainingName</h2>
+<div class="fs-5">
+    <p id="description">
+        <strong>Description: </strong>
+        @Model.Description
+    </p>
+    <p id="departmentName">
+        <strong>Department: </strong>
+        @Model.DepartmentName
+    </p>
+    <p id="capacity">
+        <strong>Capacity: </strong>
+        @Model.Capacity
+    </p>
+    <p id="startingDate">
+        <strong>Starting Date: </strong>
+        @Model.StartingDate
+    </p>
+    <p id="deadline">
+        <strong>Deadline: </strong>
+        @Model.Deadline
+    </p>
+</div>
 
-
+<form id="uploadForm" method="post" onsubmit="return false;" enctype="multipart/form-data" novalidate>
+    @for (int index = 0; index < Model.PreRequisites.Count; index++)
+    {
+        <div class="mb-3">
+            <label><strong>PreRequisite @(index + 1)</strong>: @Model.PreRequisites[index].PreRequisiteDescription</label>
+            <input type="file" class="form-control" required />
+            <div class="invalid-feedback">Field is required</div>
+        </div>
+    }
+    <input type="submit" value="Submit" class="btn btn-primary" />
+</form>
 
 <script src="~/Scripts/app/Details.js"></script>
 
