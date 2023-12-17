@@ -13,7 +13,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
     @Styles.Render("~/Content/css")
     <link href="~/Content/toastr.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
@@ -22,23 +21,20 @@
     @if (Session["isAuthenticated"] != null && Session["CurrentUser"] != null && !isLoginOrRegisterPage)
     {
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark px-5">
-            <div class="container-fluid">
-
+            <div class="container">
                 @Html.ActionLink("SkillForge", homeAction, "Home", new { area = "" }, new { @class = "navbar-brand" })
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1 fs-5">
                         <li>@Html.ActionLink("Home", homeAction, "Home", new { area = "" }, new { @class = "nav-link" })</li>
                         @if (Session["UserRole"] as string == Framework.Enums.RoleEnum.Employee.ToString())
                         {
                             <li>@Html.ActionLink("Browse Training", "ViewTrainings", "Training", new { area = "" }, new { @class = "nav-link" })</li>
                         }
-                        <ul class="navbar-nav ms-auto">
-                            <li>@Html.ActionLink("LogOut", "LogOut", "Account", new { area = "" }, new { @class = "nav-link" })</li>
-                        </ul>
+                        <li class=" ms-auto">@Html.ActionLink("Logout", "LogOut", "Account", new { area = "" }, new { @class = "nav-link" })</li>
                     </ul>
                 </div>
             </div>

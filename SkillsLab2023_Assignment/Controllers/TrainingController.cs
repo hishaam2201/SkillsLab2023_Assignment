@@ -30,17 +30,11 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
 
-        [HttpGet]
-        public ActionResult Details()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public JsonResult GetTrainingById(int id)
+        [HttpPost]
+        public ActionResult Details(int id)
         {
             TrainingDTO trainingDTO = _trainingService.GetTrainingById(id);
-            return Json(new { success = true, training = trainingDTO }, JsonRequestBehavior.AllowGet);
+            return View(trainingDTO);
         }
     }
 }
