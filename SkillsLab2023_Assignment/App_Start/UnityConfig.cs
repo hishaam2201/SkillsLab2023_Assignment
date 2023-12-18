@@ -10,6 +10,8 @@ using Framework.DAL;
 using System.Web.Mvc;
 using Unity;
 using Unity.Mvc5;
+using BusinessLayer.Services.ApplicationService;
+using DAL.Repositories.ApplicationRepository;
 
 namespace SkillsLab2023_Assignment
 {
@@ -32,6 +34,9 @@ namespace SkillsLab2023_Assignment
 
             container.RegisterType<ITrainingRepository, TrainingRepository>();
             container.RegisterType<ITrainingService, TrainingService>();
+
+            container.RegisterType<IApplicationService, ApplicationService>();
+            container.RegisterType<IApplicationRepository, ApplicationRepository>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
