@@ -3,6 +3,7 @@ using DAL.DTO;
 using SkillsLab2023_Assignment.Custom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
@@ -23,17 +24,17 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetAllTrainings()
+        public async Task<JsonResult> GetAllTrainings()
         {
-            List<TrainingDTO> listOfTrainings = _trainingService.GetAllTrainings().ToList();
+            List<TrainingDTO> listOfTrainings = (await _trainingService.GetAllTrainingsAsync()).ToList();
             return Json(new { success = true, trainings = listOfTrainings }, JsonRequestBehavior.AllowGet);
         }
 
 
         [HttpPost]
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            TrainingDTO trainingDTO = _trainingService.GetTrainingById(id);
+            TrainingDTO trainingDTO = await _trainingService.GetTrainingByIdAsync(id);
             return View(trainingDTO);
         }
     }

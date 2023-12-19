@@ -1,7 +1,7 @@
 ﻿using DAL.DTO;
 using DAL.Repositories.TrainingRepository;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace BusinessLayer.Services.TrainingService
 {
@@ -13,14 +13,14 @@ namespace BusinessLayer.Services.TrainingService
             _trainingRepository = trainingRepository;
         }
 
-        public IEnumerable<TrainingDTO> GetAllTrainings()
+        public async Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync()
         {
-            return _trainingRepository.GetAllTrainings();
+            return await _trainingRepository.GetAllTrainingsAsync();
         }
 
-        public TrainingDTO GetTrainingById(int id)
+        public async Task<TrainingDTO> GetTrainingByIdAsync(int id)
         {
-            return _trainingRepository.GetTrainingById(id);
+            return await _trainingRepository.GetTrainingByIdAsync(id);
         }
     }
 }

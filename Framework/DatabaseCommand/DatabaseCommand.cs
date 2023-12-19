@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Framework.DatabaseCommand.DatabaseCommand
 {
@@ -18,9 +19,11 @@ namespace Framework.DatabaseCommand.DatabaseCommand
             _dataAccessLayer = dataAccessLayer;
         }
 
-        public void ExecuteTransaction(out bool isSuccessful, SqlCommand command, SqlParameter[] parameters)
+        public async Task<bool> ExecuteTransactionAsync(SqlCommand command, SqlParameter[] parameters)
         {
-            using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
+            bool isSuccessful;
+
+            using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             {
                 using (SqlTransaction sqlTransaction = sqlConnection.BeginTransaction())
                 {
@@ -29,11 +32,11 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                         command.Connection = sqlConnection;
                         command.Transaction = sqlTransaction;
 
-                        if (parameters != null && parameters.Length > 0)
+                        if (parameters != null && parameters.Any())
                         {
                             command.Parameters.AddRange(parameters);
                         }
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
 
                         sqlTransaction.Commit();
                         isSuccessful = true;
@@ -46,98 +49,90 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                     }
                 }
             }
+            return isSuccessful;
         }
 
-        public bool RecordExists(string query, SqlParameter[] parameters)
+        public async Task<bool> IsRecordPresentAsync(string query, SqlParameter[] parameters)
         {
-            using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
+            using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             {
-                using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
+                using (SqlCommand command = new SqlCommand(query, sqlConnection))
                 {
                     try
                     {
                         if (parameters != null && parameters.Any())
                         {
-                            sqlCommand.Parameters.AddRange(parameters);
+                            command.Parameters.AddRange(parameters);
                         }
-
-                        using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                        using(SqlDataReader reader = await command.ExecuteReaderAsync())
                         {
                             return reader.HasRows;
                         }
                     }
-                    catch (Exception) { throw; }
-
+                    catch (Exception) { throw; } 
                 }
             }
         }
 
-        public object ReturnFirstColumnOfFirstRow(string query, SqlParameter[] parameters)
+        public async Task<object> GetScalerResultAsync(string query, SqlParameter[] parameters)
         {
-            using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
+            using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             {
                 using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                 {
                     try
-                    {
-                        if (parameters != null && parameters.Length > 0)
-                        {
-                            sqlCommand.Parameters.AddRange(parameters);
-                        }
-                        return sqlCommand.ExecuteScalar();
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
-
-                }
-            }
-        }
-
-        public int ReturnNumOfRowsAffected(string query, SqlParameter[] parameters = null)
-        {
-            using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
-            {
-                using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
-                {
-                    try
-                    {
-                        if (parameters != null && parameters.Length > 0)
-                        {
-                            sqlCommand.Parameters.AddRange(parameters);
-                        }
-
-                        return sqlCommand.ExecuteNonQuery();
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
-                }
-            }
-        }
-
-        public IEnumerable<TResult> ExecuteSelectQuery<TResult>(string query = null, SqlParameter[] parameters = null,
-            Func<IDataReader, TResult> mapFunction = null)
-        {
-            List<TResult> result = new List<TResult>();
-
-            using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
-            {
-                try
-                {
-                    using (SqlCommand sqlCommand = new SqlCommand(query ?? $@"SELECT * FROM [{typeof(T).Name}]", sqlConnection))
                     {
                         if (parameters != null && parameters.Any())
                         {
                             sqlCommand.Parameters.AddRange(parameters);
                         }
-                        using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                        return await sqlCommand.ExecuteScalarAsync();
+                    }
+                    catch (Exception) { throw; }
+                }
+            }
+        }
+
+        public async Task<int> AffectedRowsCountAsync(string query, SqlParameter[] parameters = null)
+        {
+            using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
+            {
+                using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
+                {
+                    try
+                    {
+                        if (parameters != null && parameters.Length > 0)
+                        {
+                            sqlCommand.Parameters.AddRange(parameters);
+                        }
+
+                        return await sqlCommand.ExecuteNonQueryAsync();
+                    }
+                    catch (Exception) { throw; }
+                }
+            }
+        }
+
+        public async Task<IEnumerable<TResult>> ExecuteSelectQueryAsync<TResult>(string query = null, SqlParameter[] parameters = null,
+            Func<IDataReader, TResult> mapFunction = null)
+        {
+            List<TResult> results = new List<TResult>();
+            using(SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
+            {
+                try
+                {
+                    using (SqlCommand sqlCommand = new SqlCommand(query ?? $@"SELECT * FROM [{typeof(TResult).Name}]", sqlConnection))
+                    {
+                        if (parameters != null && parameters.Any())
+                        {
+                            sqlCommand.Parameters.AddRange(parameters);
+                        }
+
+                        using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
                         {
                             if (reader.HasRows)
                             {
-                                while (reader.Read())
+                                while (await reader.ReadAsync())
                                 {
                                     TResult item;
                                     if (mapFunction != null)
@@ -149,23 +144,20 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                                         item = Activator.CreateInstance<TResult>();
                                         MapColumnsToProperties(item, reader);
                                     }
-                                    result.Add(item);
+                                    results.Add(item);
                                 }
                             }
                         }
                     }
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
+                catch(Exception) { throw; }
             }
-            return result;
+            return results;
         }
 
-        public T GetById(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
-            using (SqlConnection sqlConnection = _dataAccessLayer.CreateConnection())
+            using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             {
                 string GET_BY_ID_QUERY = $@"SELECT * FROM [{typeof(T).Name}] WHERE Id = @Id";
                 try
@@ -173,9 +165,9 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                     using (SqlCommand sqlCommand = new SqlCommand(GET_BY_ID_QUERY, sqlConnection))
                     {
                         sqlCommand.Parameters.AddWithValue("@Id", id);
-                        using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                        using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
                                 T item = Activator.CreateInstance<T>();
                                 MapColumnsToProperties(item, reader);
@@ -185,10 +177,7 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                         }
                     }
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
+                catch (Exception) { throw; }
             }
         }
 
@@ -222,20 +211,6 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                     property.SetValue(item, value);
                 }
             }
-        }
-
-        private static string GetFields()
-        {
-            PropertyInfo[] props = typeof(T).GetProperties();
-            var propsList = props.Where(prop => !Attribute.IsDefined(prop, typeof(Attribute))).ToList();
-            StringBuilder columnName = new StringBuilder();
-
-            foreach (PropertyInfo property in propsList)
-            {
-                columnName.Append(property.Name + ",");
-            }
-            columnName.Remove(columnName.Length - 1, 1); // Remove last comma
-            return columnName.ToString();
         }
     }
 }

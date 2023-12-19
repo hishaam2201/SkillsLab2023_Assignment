@@ -5,6 +5,7 @@ using Framework.Enums;
 using Framework.StaticClass;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
@@ -24,13 +25,13 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpPost]
-        public ActionResult Login(LoginDTO loginDTO)
+        public async Task<ActionResult> Login(LoginDTO loginDTO)
         {
-            bool isValid = _accountService.AuthenticateLoginCredentials(loginDTO.Email, loginDTO.Password);
+            bool isValid = await _accountService.AuthenticateLoginCredentialsAsync(loginDTO.Email, loginDTO.Password);
 
             if (isValid)
             {
-                UserDTO userData = _accountService.GetUserData(loginDTO.Email);
+                UserDTO userData = await _accountService.GetUserDataAsync(loginDTO.Email);
 
                 if (userData != null)
                 {
@@ -60,21 +61,21 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetAllDepartments()
+        public async Task<JsonResult> GetAllDepartments()
         {
-            List<DepartmentDTO> departmentDTO = _accountService.GetAllDepartments().ToList();
+            List<DepartmentDTO> departmentDTO = (await _accountService.GetAllDepartmentsAsync()).ToList();
             return Json(new { success = true, departments = departmentDTO }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
-        public JsonResult GetAllManagersFromDepartment(int departmentId)
+        public async Task<JsonResult> GetAllManagersFromDepartment(int departmentId)
         {
-            List<ManagerDTO> managerDTO = _accountService.GetAllManagersFromDepartment(departmentId).ToList();
+            List<ManagerDTO> managerDTO = (await _accountService.GetAllManagersFromDepartmentAsync(departmentId)) .ToList();
             return Json(new { success = true, managers = managerDTO }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public ActionResult Register(RegistrationDTO registrationDTO)
+        public async Task<ActionResult> Register(RegistrationDTO registrationDTO)
         {
             User user = new User
             {
@@ -85,15 +86,15 @@ namespace SkillsLab2023_Assignment.Controllers
                 DepartmentId = registrationDTO.DepartmentId,
                 ManagerId = registrationDTO.ManagerId
             };
-            bool isRegistered = _accountService.Register(user, registrationDTO.Email, registrationDTO.Password);
+            bool isRegistered = await _accountService.RegisterUserAsync(user, registrationDTO.Email, registrationDTO.Password);
 
             if (isRegistered)
             {
-                UserDTO userData = _accountService.GetUserData(registrationDTO.Email);
+                UserDTO userData = await _accountService.GetUserDataAsync(registrationDTO.Email);
                 Session["isAuthenticated"] = true;
                 Session["CurrentUser"] = userData;
                 Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
-                return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/Dashboard" });
+                return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/EmployeeDashboard" });
             }
             else
             {

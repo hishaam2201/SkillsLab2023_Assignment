@@ -7,6 +7,8 @@ using System.Linq;
 using DAL.DTO;
 using Framework.Enums;
 using System.Data;
+using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DAL.Repositories.AccountRepository
 {
@@ -18,73 +20,33 @@ namespace DAL.Repositories.AccountRepository
             _dbCommand = dbCommand;
         }
 
-        public bool AuthenticateLoginCredentials(string email, string password)
+        public async Task<bool> AuthenticateLoginCredentialsAsync(string email, string password)
         {
             try
             {
                 const string AUTHENTICATE_LOGIN_CREDENTIALS_QUERY = @"SELECT Email, Password FROM Account WHERE Email=@Email 
                                                                     And Password=@Password";
                 SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email, Password = password });
-
-                return _dbCommand.RecordExists(AUTHENTICATE_LOGIN_CREDENTIALS_QUERY, parameters);
+                bool isPresent =  await _dbCommand.IsRecordPresentAsync(AUTHENTICATE_LOGIN_CREDENTIALS_QUERY, parameters);
+                return isPresent;
             }
             catch (Exception) { throw; }
         }
 
-        public bool EmailExists(string email)
+        public async Task<bool> IsEmailInUseAsync(string email)
         {
             try
             {
                 const string EMAIL_EXISTS_QUERY = @"SELECT 1 FROM Account WHERE Email=@Email";
                 SqlParameter[] emailExistsParams = _dbCommand.GetSqlParametersFromObject(new { Email = email });
 
-                return _dbCommand.RecordExists(EMAIL_EXISTS_QUERY, emailExistsParams);
+                bool isPresent = await _dbCommand.IsRecordPresentAsync(EMAIL_EXISTS_QUERY, emailExistsParams);
+                return isPresent;
             }
             catch (Exception) { throw; }
         }
 
-        public IEnumerable<DepartmentDTO> GetAllDepartments()
-        {
-            try
-            {
-                string GET_ALL_DEPARTMENTS_QUERY = $@"SELECT * FROM Department;";
-                Func<IDataReader, DepartmentDTO> mapFunction = reader =>
-                {
-                    return new DepartmentDTO
-                    {
-                        Id = (byte)reader["Id"],
-                        DepartmentName = reader["DepartmentName"]?.ToString(),
-                    };
-                };
-                return _dbCommand.ExecuteSelectQuery(query: GET_ALL_DEPARTMENTS_QUERY, mapFunction: mapFunction);
-            }
-            catch (Exception) { throw; }
-        }
-
-        public IEnumerable<ManagerDTO> GetAllManagersFromDepartment(int departmentId)
-        {
-            try
-            {
-                string GET_MANAGERS_FROM_DEPARTMENT_QUERY =
-                    $@"SELECT Id, FirstName, LastName FROM [User] WHERE RoleId = {(int)RoleEnum.Manager}
-                               AND DepartmentId = @DepartmentId";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
-                Func<IDataReader, ManagerDTO> mapFunction = reader =>
-                {
-                    return new ManagerDTO
-                    {
-                        Id = (short)reader["Id"],
-                        FirstName = reader["FirstName"]?.ToString(),
-                        LastName = reader["LastName"]?.ToString(),
-                    };
-                };
-                return _dbCommand.ExecuteSelectQuery
-                    (GET_MANAGERS_FROM_DEPARTMENT_QUERY, parameters, mapFunction);
-            }
-            catch (Exception) { throw; }
-        }
-
-        public UserDTO GetUserData(string email)
+        public async Task<UserDTO> GetUserDataAsync(string email)
         {
             try
             {
@@ -107,17 +69,18 @@ namespace DAL.Repositories.AccountRepository
                         ManagerId = reader["ManagerId"] == DBNull.Value ? (short?)null : (short)reader["ManagerId"],
                     };
                 };
-                return _dbCommand.ExecuteSelectQuery(GET_USER_DATA_QUERY, parameters, mapFunction).FirstOrDefault();
+                var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_DATA_QUERY, parameters, mapFunction);
+                return result.FirstOrDefault();
             }
             catch (Exception) { throw; }
         }
 
-        public bool Register(User user, string email, string password)
+        public async Task<bool> RegisterUserAsync(User user, string email, string password)
         {
             try
             {
-                string INSERT_INTO_USER_AND_ACCOUNT_QUERY =
-                      $@"INSERT INTO [User] 
+                const string INSERT_INTO_USER_AND_ACCOUNT_QUERY =
+                      @"INSERT INTO [User] 
                       (FirstName, LastName, MobileNumber, NationalIdentityCard, DepartmentId, ManagerId)
                       VALUES (@FirstName, @LastName, @MobileNumber, @NationalIdentityCard, @DepartmentId, @ManagerId); 
                   
@@ -125,7 +88,6 @@ namespace DAL.Repositories.AccountRepository
                       SET @UserId = SCOPE_IDENTITY()
 
                       INSERT INTO Account (Email, [Password], UserId) VALUES (@Email, @Password, @UserId)";
-
                 List<string> excludedUserProperties = new List<string> { "UserId" };
                 SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
                 SqlParameter[] queryParams = userQueryParams.Concat(new[]
@@ -133,13 +95,53 @@ namespace DAL.Repositories.AccountRepository
                     new SqlParameter("@Email", email),
                     new SqlParameter("@Password", password)
                 }).ToArray();
-
-                _dbCommand.ExecuteTransaction(out bool isSuccessful,
-                    new SqlCommand(INSERT_INTO_USER_AND_ACCOUNT_QUERY), queryParams);
-
+                
+                bool isSuccessful = await _dbCommand.ExecuteTransactionAsync
+                    (new SqlCommand(INSERT_INTO_USER_AND_ACCOUNT_QUERY), queryParams);
                 return isSuccessful;
+            }
+            catch(Exception) { throw; }
+        }
+
+        public async Task<IEnumerable<DepartmentDTO>> GetAllDepartmentsAsync()
+        {
+            try
+            {
+                string GET_ALL_DEPARTMENTS_QUERY = $@"SELECT * FROM Department;";
+                Func<IDataReader, DepartmentDTO> mapFunction = reader =>
+                {
+                    return new DepartmentDTO
+                    {
+                        Id = (byte)reader["Id"],
+                        DepartmentName = reader["DepartmentName"]?.ToString(),
+                    };
+                };
+                return await _dbCommand.ExecuteSelectQueryAsync(query: GET_ALL_DEPARTMENTS_QUERY, mapFunction: mapFunction);
             }
             catch (Exception) { throw; }
         }
+
+        public async Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(int departmentId)
+        {
+            try
+            {
+                string GET_MANAGERS_FROM_DEPARTMENT_QUERY =
+                    $@"SELECT Id, FirstName, LastName FROM [User] WHERE RoleId = {(int)RoleEnum.Manager}
+                               AND DepartmentId = @DepartmentId";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
+                Func<IDataReader, ManagerDTO> mapFunction = reader =>
+                {
+                    return new ManagerDTO
+                    {
+                        Id = (short)reader["Id"],
+                        FirstName = reader["FirstName"]?.ToString(),
+                        LastName = reader["LastName"]?.ToString(),
+                    };
+                };
+                return await _dbCommand.ExecuteSelectQueryAsync
+                    (GET_MANAGERS_FROM_DEPARTMENT_QUERY, parameters, mapFunction);
+            }
+            catch (Exception) { throw; }
+        }        
     }
 }

@@ -2,6 +2,7 @@
 using DAL.Models;
 using DAL.Repositories.AccountRepository;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BusinessLayer.Services.AccountService
 {
@@ -13,37 +14,37 @@ namespace BusinessLayer.Services.AccountService
             _accountRepository = accountRepository;
         }
 
-        public bool AuthenticateLoginCredentials(string email, string password)
+        public async Task<bool> AuthenticateLoginCredentialsAsync(string email, string password)
         {
-            return _accountRepository.AuthenticateLoginCredentials(email, password);
+            return await _accountRepository.AuthenticateLoginCredentialsAsync(email, password);
         }
 
-        public bool EmailExists(string email)
+        public async Task<IEnumerable<DepartmentDTO>> GetAllDepartmentsAsync()
         {
-            return _accountRepository.EmailExists(email);
+            return await _accountRepository.GetAllDepartmentsAsync();
         }
 
-        public IEnumerable<DepartmentDTO> GetAllDepartments()
+        public async Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(int departmentId)
         {
-            return _accountRepository.GetAllDepartments();
+            return await _accountRepository.GetAllManagersFromDepartmentAsync(departmentId);
         }
 
-        public IEnumerable<ManagerDTO> GetAllManagersFromDepartment(int departmentId)
+        public async Task<UserDTO> GetUserDataAsync(string email)
         {
-            return _accountRepository.GetAllManagersFromDepartment(departmentId);
+            return await _accountRepository.GetUserDataAsync(email);
         }
 
-        public UserDTO GetUserData(string email)
+        public async Task<bool> IsEmailInUseAsync(string email)
         {
-            return _accountRepository.GetUserData(email);
+            return await _accountRepository.IsEmailInUseAsync(email);
         }
 
-        public bool Register(User user, string email, string password)
+        public async Task<bool> RegisterUserAsync(User user, string email, string password)
         {
-            if (EmailExists(email)) return false;
+            if (await IsEmailInUseAsync(email)) return false;
 
-            bool registrationSuccessful = _accountRepository.Register(user, email, password);
-            return registrationSuccessful;
+            bool isRegistrationSuccessful = await _accountRepository.RegisterUserAsync(user, email, password);
+            return isRegistrationSuccessful;
         }
     }
 }

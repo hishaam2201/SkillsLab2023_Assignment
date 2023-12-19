@@ -1,4 +1,5 @@
 ﻿using Framework.AppLogger;
+using System;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Custom
@@ -15,13 +16,14 @@ namespace SkillsLab2023_Assignment.Custom
         {
             base.OnException(filterContext);
 
-            _logger.LogError(filterContext.Exception);
+            var errorGuid = Guid.NewGuid();
+            _logger.LogError(filterContext.Exception, errorGuid);
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.StatusCode = 500;
             filterContext.Result = new ViewResult()
             {
-                ViewName = "Error",
+                ViewName = "InternalServerError",
                 TempData = filterContext.Controller.TempData
             };
         }
