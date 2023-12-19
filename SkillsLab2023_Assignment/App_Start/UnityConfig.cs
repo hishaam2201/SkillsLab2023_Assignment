@@ -21,9 +21,9 @@ namespace SkillsLab2023_Assignment
         {
 			var container = new UnityContainer();
             
+            container.RegisterType<ILogger, Logger>();
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
             container.RegisterType(typeof(IDatabaseCommand<>), typeof(DatabaseCommand<>));
-            container.RegisterType<ILogger, Logger>();
 
 
             container.RegisterType<IUserRepository, UserRepository>();

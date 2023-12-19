@@ -5,6 +5,6 @@ namespace Framework.AppLogger
     public interface ILogger
     {
         void Log(string message);
-        void LogError(Exception exception);
+        void LogError(Exception exception, Guid errorGuid);
     }
 }

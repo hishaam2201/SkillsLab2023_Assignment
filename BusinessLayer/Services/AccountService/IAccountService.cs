@@ -2,16 +2,17 @@
 using DAL.Models;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BusinessLayer.Services.AccountService
 {
     public interface IAccountService
     {
-        bool AuthenticateLoginCredentials(string email, string password);
-        bool EmailExists(string email);
-        bool Register(User user, string email, string password);
-        IEnumerable<DepartmentDTO> GetAllDepartments();
-        IEnumerable<ManagerDTO> GetAllManagersFromDepartment(int departmentId);
-        UserDTO GetUserData(string email);
+        Task<bool> AuthenticateLoginCredentialsAsync(string email, string password);
+        Task<IEnumerable<DepartmentDTO>> GetAllDepartmentsAsync();
+        Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(int departmentId);
+        Task<UserDTO> GetUserDataAsync(string email);
+        Task<bool> IsEmailInUseAsync(string email);
+        Task<bool> RegisterUserAsync(User user, string email, string password);
     }
 }

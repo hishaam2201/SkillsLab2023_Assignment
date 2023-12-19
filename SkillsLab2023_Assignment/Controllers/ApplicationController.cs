@@ -22,11 +22,11 @@ namespace SkillsLab2023_Assignment.Controllers
         {
             UserDTO user = Session["CurrentUser"] as UserDTO;
             short userId = user.Id;
-            /*if (file != null && file.ContentLength > 0)
+            if (file != null && file.ContentLength > 0)
             {
                 Stream stream = file.InputStream;
                 string downloadLink = await _applicationService.Upload(stream, file.FileName);
-            }*/
+            }
             return RedirectToAction("EmployeeDashboard", "Home");
         }
     }

@@ -1,12 +1,12 @@
 ﻿using DAL.DTO;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace DAL.Repositories.TrainingRepository
 {
     public interface ITrainingRepository
     {
-        IEnumerable<TrainingDTO> GetAllTrainings();
-        TrainingDTO GetTrainingById(int id);
+        Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync();
+        Task<TrainingDTO> GetTrainingByIdAsync(int id);
     }
 }

@@ -2,16 +2,17 @@
 using DAL.Models;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DAL.Repositories.AccountRepository
 {
     public interface IAccountRepository
     {
-        bool AuthenticateLoginCredentials(string email, string password);
-        bool EmailExists(string email);
-        UserDTO GetUserData(string email);
-        bool Register(User user, string email, string password);
-        IEnumerable<DepartmentDTO> GetAllDepartments();
-        IEnumerable<ManagerDTO> GetAllManagersFromDepartment(int departmentId);
+        Task<bool> AuthenticateLoginCredentialsAsync(string email, string password);
+        Task<bool> IsEmailInUseAsync(string email);
+        Task<UserDTO> GetUserDataAsync(string email);
+        Task<bool> RegisterUserAsync(User user, string email, string password);
+        Task<IEnumerable<DepartmentDTO>> GetAllDepartmentsAsync();
+        Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(int departmentId);
     }
 }

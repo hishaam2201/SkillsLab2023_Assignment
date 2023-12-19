@@ -34,9 +34,10 @@ namespace Framework.AppLogger
             }
         }
 
-        public void LogError(Exception exception)
+        public void LogError(Exception exception, Guid errorGuid)
         {
             string fullMessage = "---------------------------------------------------------";
+            fullMessage += Environment.NewLine + $"Id: {errorGuid}";
             fullMessage += Environment.NewLine + $"Timestamp: {DateTime.Now}";
             fullMessage += Environment.NewLine + $"Exception Type: {this.GetType().FullName}";
             fullMessage += Environment.NewLine + $"Message: {exception.Message}";

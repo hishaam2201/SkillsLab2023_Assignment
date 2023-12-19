@@ -6,7 +6,7 @@ using System.Linq;
 using Framework.DatabaseCommand.DatabaseCommand;
 using DAL.DTO;
 using DAL.Models;
-
+using System.Threading.Tasks;
 
 namespace DAL.Repositories.TrainingRepository
 {
@@ -18,16 +18,16 @@ namespace DAL.Repositories.TrainingRepository
             _dbCommand = dbCommand;
         }
 
-        public IEnumerable<TrainingDTO> GetAllTrainings()
+        public async Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync()
         {
             List<TrainingDTO> trainingDTOs = new List<TrainingDTO>();
             try
             {
-                List<Training> trainingList = _dbCommand.ExecuteSelectQuery<Training>().ToList();
+                List<Training> trainingList = (await _dbCommand.ExecuteSelectQueryAsync<Training>()).ToList();
 
                 foreach (Training training in trainingList)
                 {
-                    object departmentName = GetDepartmentNameFromTrainingId(training.Id);
+                    object departmentName = await RetrieveDepartmentNameAsync(training.Id);
 
                     trainingDTOs.Add(new TrainingDTO
                     {
@@ -39,19 +39,16 @@ namespace DAL.Repositories.TrainingRepository
                     });
                 }
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            catch (Exception) { throw; }
             return trainingDTOs;
         }
 
-        public TrainingDTO GetTrainingById(int id)
+        public async Task<TrainingDTO> GetTrainingByIdAsync(int id)
         {
             try
             {
-                Training training = _dbCommand.GetById(id);
-                object departmentName = GetDepartmentNameFromTrainingId(training.Id);
+                Training training = await _dbCommand.GetByIdAsync(id);
+                object departmentName = await RetrieveDepartmentNameAsync(training.Id);
 
                 return new TrainingDTO
                 {
@@ -62,29 +59,26 @@ namespace DAL.Repositories.TrainingRepository
                     StartingDate = training.StartingDate.ToString("d MMMM, yyyy"),
                     Deadline = training.Deadline.ToString("d MMMM, yyyy"),
                     DepartmentName = departmentName?.ToString(),
-                    PreRequisites = GetTrainingPreRequisites(training.Id)
+                    PreRequisites = (await RetrieveTrainingPreRequisitesAsync(training.Id)).ToList()
                 };
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            catch (Exception) { throw; }
         }
 
         // PRIVATE HELPER METHODS
-        private object GetDepartmentNameFromTrainingId(int departmentId)
+        private async Task<object> RetrieveDepartmentNameAsync(int departmentId)
         {
             try
             {
                 string GET_DEPARTMENT_NAME_QUERY = @"SELECT DepartmentName FROM Department WHERE Id = @DepartmentId";
                 SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
 
-                return _dbCommand.ReturnFirstColumnOfFirstRow(GET_DEPARTMENT_NAME_QUERY, parameters);
+                return await _dbCommand.GetScalerResultAsync(GET_DEPARTMENT_NAME_QUERY, parameters);
             }
             catch (Exception) { throw; }
         }
 
-        private List<TrainingPreRequisteDTO> GetTrainingPreRequisites(int trainingId)
+        private async Task<IEnumerable<TrainingPreRequisteDTO>> RetrieveTrainingPreRequisitesAsync(int trainingId)
         {
             try
             {
@@ -107,8 +101,8 @@ namespace DAL.Repositories.TrainingRepository
                     };
                 };
 
-                return _dbCommand.ExecuteSelectQuery
-                    (GET_TRAINING_PRE_REQUISITES_QUERY, parameters, mapFunction).ToList();
+                return await _dbCommand.ExecuteSelectQueryAsync(
+                    GET_TRAINING_PRE_REQUISITES_QUERY, parameters, mapFunction);
             }
             catch (Exception) { throw; }
         }
