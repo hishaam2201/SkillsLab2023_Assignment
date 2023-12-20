@@ -1,9 +1,11 @@
 ﻿@{
-    string userRole = Session["UserRole"] as string;
+    string userRole = SkillsLab2023_Assignment.Custom.SessionManager.UserRole;
+    DAL.DTO.UserDTO currentUser = SkillsLab2023_Assignment.Custom.SessionManager.CurrentUser;
     string homeAction = GetHomeActionForRole(userRole);
-    bool isLoginOrRegisterPage = ViewContext.RouteData.Values["controller"].ToString().Equals("Account", StringComparison.OrdinalIgnoreCase)
+    bool isLoginOrRegisterOrChooseRolePage = ViewContext.RouteData.Values["controller"].ToString().Equals("Account", StringComparison.OrdinalIgnoreCase)
         && (ViewContext.RouteData.Values["action"].ToString().Equals("Login", StringComparison.OrdinalIgnoreCase)
-        || ViewContext.RouteData.Values["action"].ToString().Equals("Register", StringComparison.OrdinalIgnoreCase));
+        || ViewContext.RouteData.Values["action"].ToString().Equals("Register", StringComparison.OrdinalIgnoreCase)
+        || ViewContext.RouteData.Values["action"].ToString().Equals("ChooseRole", StringComparison.OrdinalIgnoreCase));
 }
 
 <!DOCTYPE html>
@@ -18,7 +20,7 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    @if (Session["CurrentUser"] != null && !isLoginOrRegisterPage)
+    @if (currentUser != null && !isLoginOrRegisterOrChooseRolePage)
     {
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark px-5">
             <div class="container">
@@ -30,7 +32,7 @@
                 <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1 fs-5">
                         <li>@Html.ActionLink("Home", homeAction, "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        @if (Session["UserRole"] as string == Framework.Enums.RoleEnum.Employee.ToString())
+                        @if (userRole == Framework.Enums.RoleEnum.Employee.ToString())
                         {
                             <li>@Html.ActionLink("Browse Training", "ViewTrainings", "Training", new { area = "" }, new { @class = "nav-link" })</li>
                         }

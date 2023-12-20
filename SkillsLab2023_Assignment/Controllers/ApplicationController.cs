@@ -20,7 +20,7 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public async Task<ActionResult> Enroll(HttpPostedFileBase file)
         {
-            UserDTO user = Session["CurrentUser"] as UserDTO;
+            UserDTO user = SessionManager.CurrentUser;
             short userId = user.Id;
             if (file != null && file.ContentLength > 0)
             {
