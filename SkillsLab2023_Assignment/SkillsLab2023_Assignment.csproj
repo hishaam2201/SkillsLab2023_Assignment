@@ -272,10 +272,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\app\Common.css" />
+    <Content Include="Content\app\ChooseRole.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -303,6 +304,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="gulpfile.js" />
+    <Content Include="Scripts\app\ChooseRole.js" />
     <Content Include="Scripts\app\Details.js" />
     <Content Include="Scripts\app\ViewTrainings.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -12287,10 +12289,10 @@
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />
     <Content Include="Views\Home\ManagerDashboard.cshtml" />
     <Content Include="Views\Home\AdministratorDashboard.cshtml" />
+    <Content Include="Views\Account\ChooseRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Application\" />
   </ItemGroup>
   <ItemGroup>

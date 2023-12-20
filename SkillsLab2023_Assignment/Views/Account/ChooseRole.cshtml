@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "ChooseRole";
+    @model List<DAL.DTO.UserRoleDTO>
+}
+
+<link href="~/Content/app/ChooseRole.css" rel="stylesheet" />
+
+<div class="row justify-content-center">
+    <div class="card p-5" style="width: 30%; border-radius: 1.2em">
+        <div class="card-body">
+            <h5 class="card-title mb-4"><strong>Select Role</strong></h5>
+            <form id="chooseRoleForm" method="post" onsubmit="return false;">
+                @foreach (var role in Model)
+                {
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="role" id="@($"role_{role.RoleId}")"
+                               value="@role.RoleId" checked="@(role.RoleId == Model.First().RoleId)" />
+                        <label class="form-check-label" for="@($"role_{role.RoleId}")">
+                            @role.RoleName
+                        </label>
+                    </div>
+                }
+                <div class="d-grid">
+                    <input class="btn btn-primary" type="submit" value="Next" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/app/ChooseRole.js"></script>
+

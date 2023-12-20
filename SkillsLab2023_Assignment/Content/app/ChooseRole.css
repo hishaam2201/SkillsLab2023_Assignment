@@ -1,13 +1,8 @@
 ﻿body {
     display: flex;
+    align-items: center;
     min-height: 100vh;
     margin: 0;
     background-color: #E5E6E4;
     font-family: 'Roboto', sans-serif
-}
-
-.body-content {
-    margin-top: 15px;
-    padding-left: 15px;
-    padding-right: 15px;
 }

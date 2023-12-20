@@ -41,6 +41,7 @@ function submitLoginForm() {
             window.location.href = '/Common/InternalServerError'
         })
 }
+
 function displayToastToUser(toastColor, message) {
     if (toastColor === 'success') {
         toastr.success(`${message}`, "Success", {

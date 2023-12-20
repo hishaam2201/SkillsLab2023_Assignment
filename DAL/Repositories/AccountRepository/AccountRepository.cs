@@ -8,7 +8,6 @@ using DAL.DTO;
 using Framework.Enums;
 using System.Data;
 using System.Threading.Tasks;
-using System.Security.Cryptography.X509Certificates;
 
 namespace DAL.Repositories.AccountRepository
 {
@@ -24,7 +23,7 @@ namespace DAL.Repositories.AccountRepository
         {
             try
             {
-                const string AUTHENTICATE_LOGIN_CREDENTIALS_QUERY = @"SELECT Email, Password FROM Account WHERE Email=@Email 
+                const string AUTHENTICATE_LOGIN_CREDENTIALS_QUERY = @"SELECT 1 FROM [User] WHERE Email=@Email 
                                                                     And Password=@Password";
                 SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email, Password = password });
                 bool isPresent =  await _dbCommand.IsRecordPresentAsync(AUTHENTICATE_LOGIN_CREDENTIALS_QUERY, parameters);
@@ -37,7 +36,7 @@ namespace DAL.Repositories.AccountRepository
         {
             try
             {
-                const string EMAIL_EXISTS_QUERY = @"SELECT 1 FROM Account WHERE Email=@Email";
+                const string EMAIL_EXISTS_QUERY = @"SELECT 1 FROM [User] WHERE Email=@Email";
                 SqlParameter[] emailExistsParams = _dbCommand.GetSqlParametersFromObject(new { Email = email });
 
                 bool isPresent = await _dbCommand.IsRecordPresentAsync(EMAIL_EXISTS_QUERY, emailExistsParams);
@@ -46,16 +45,14 @@ namespace DAL.Repositories.AccountRepository
             catch (Exception) { throw; }
         }
 
-        public async Task<UserDTO> GetUserDataAsync(string email)
+        public async Task<UserDTO> GetUserDataAsync(string email, byte roleId)
         {
             try
             {
-                const string GET_USER_DATA_QUERY = @"SELECT u.Id, u.FirstName, u.LastName, u.DepartmentId, u.RoleId, u.ManagerId, a.Email
-                                                   FROM [User] as u
-                                                   INNER JOIN Account a
-                                                   ON a.Id = u.Id
-                                                   WHERE a.Email = @Email";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email });
+                const string GET_USER_DATA_QUERY = @"SELECT Id, FirstName, LastName, DepartmentId, ManagerId, Email, u.[RoleId] FROM [User]
+                                                     INNER JOIN UserRole u ON u.UserId = [User].Id
+                                                     WHERE Email = @Email AND RoleId = @RoleId";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email, RoleId = roleId });
                 Func<IDataReader, UserDTO> mapFunction = reader =>
                 {
                     return new UserDTO
@@ -63,10 +60,10 @@ namespace DAL.Repositories.AccountRepository
                         Id = (short)reader["Id"],
                         FirstName = reader["FirstName"]?.ToString(),
                         LastName = reader["LastName"]?.ToString(),
-                        Email = reader["Email"]?.ToString(),
                         DepartmentId = reader["DepartmentId"] == DBNull.Value ? (byte?)null : (byte)reader["DepartmentId"],
-                        RoleId = (byte)reader["RoleId"],
                         ManagerId = reader["ManagerId"] == DBNull.Value ? (short?)null : (short)reader["ManagerId"],
+                        Email = reader["Email"]?.ToString(),
+                        RoleId = (byte)reader["RoleId"],
                     };
                 };
                 var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_DATA_QUERY, parameters, mapFunction);
@@ -74,7 +71,32 @@ namespace DAL.Repositories.AccountRepository
             }
             catch (Exception) { throw; }
         }
+        public async Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync(string email)
+        {
+            try
+            {
+                const string GET_USER_ROLES_QUERY = @"SELECT u.RoleId, r.RoleName FROM [User]
+                                                      INNER JOIN UserRole AS u
+                                                      ON u.UserId = [User].Id
+                                                      INNER JOIN [Role] AS r
+                                                      ON r.Id = u.RoleId
+                                                      WHERE Email = @Email";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email });
+                Func<IDataReader, UserRoleDTO> mapFunction = reader =>
+                {
+                    return new UserRoleDTO
+                    {
+                        RoleId = (byte)reader["RoleId"],
+                        RoleName = reader["RoleName"].ToString()
+                    };
+                };
+                var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_ROLES_QUERY, parameters, mapFunction);
+                return result;
+            }
+            catch (Exception) { throw; }
+        }
 
+        // TODO: Change to work with new db
         public async Task<bool> RegisterUserAsync(User user, string email, string password)
         {
             try
@@ -142,6 +164,6 @@ namespace DAL.Repositories.AccountRepository
                     (GET_MANAGERS_FROM_DEPARTMENT_QUERY, parameters, mapFunction);
             }
             catch (Exception) { throw; }
-        }        
+        }
     }
 }
