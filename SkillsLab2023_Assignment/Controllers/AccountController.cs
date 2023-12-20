@@ -7,6 +7,7 @@ using SkillsLab2023_Assignment.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Management;
 using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
@@ -31,7 +32,7 @@ namespace SkillsLab2023_Assignment.Controllers
             bool isValid = await _accountService.AuthenticateLoginCredentialsAsync(loginViewModel.Email, loginViewModel.Password);
             if (isValid)
             {
-                TempData["Email"] = loginViewModel.Email;
+                Session["Email"] = loginViewModel.Email;
                 return Json(new { success = true, message = "Login Successful", redirectUrl = Url.Action("ChooseRole", "Account") });
             }
             else
@@ -56,32 +57,38 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllManagersFromDepartment(int departmentId)
         {
-            List<ManagerDTO> managerDTO = (await _accountService.GetAllManagersFromDepartmentAsync(departmentId)) .ToList();
+            List<ManagerDTO> managerDTO = (await _accountService.GetAllManagersFromDepartmentAsync(departmentId)).ToList();
             return Json(new { success = true, managers = managerDTO }, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// // When user logs in by default he is an employee, when admin changes role then he will have more roles available
+        /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Register(RegistrationDTO registrationDTO)
+        public async Task<ActionResult> Register(RegisterViewModel registerViewModel)
         {
             User user = new User
             {
-                FirstName = registrationDTO.FirstName,
-                LastName = registrationDTO.LastName,
-                MobileNumber = registrationDTO.MobileNumber,
-                NationalIdentityCard = registrationDTO.NationalIdentityCard,
-                DepartmentId = registrationDTO.DepartmentId,
-                ManagerId = registrationDTO.ManagerId
+                FirstName = registerViewModel.FirstName,
+                LastName = registerViewModel.LastName,
+                MobileNumber = registerViewModel.MobileNumber,
+                NationalIdentityCard = registerViewModel.NationalIdentityCard,
+                DepartmentId = registerViewModel.DepartmentId,
+                ManagerId = registerViewModel.ManagerId,
+                Email = registerViewModel.Email,
+                Password = registerViewModel.Password
             };
-            bool isRegistered = await _accountService.RegisterUserAsync(user, registrationDTO.Email, registrationDTO.Password);
+            bool isRegistered = await _accountService.RegisterUserAsync(user, registerViewModel.Email, registerViewModel.Password);
 
             if (isRegistered)
             {
-                // TODO: Change
-                UserDTO userData = await _accountService.GetUserDataAsync(registrationDTO.Email, 1);
-                Session["isAuthenticated"] = true;
+                UserDTO userData = await _accountService.GetUserDataAsync(user.Email, (byte)RoleEnum.Employee);
                 Session["CurrentUser"] = userData;
-                Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
-                return Json(new { success = true, message = "Registration Successful", redirectUrl = "/Home/EmployeeDashboard" });
+                Session["UserRole"] = RoleEnum.Employee.ToString();
+
+                string dashboardAction = Extensions.GetDashboardAction((byte)RoleEnum.Employee);
+                return Json(new { success = true, message = "Registration Successful", 
+                    redirectUrl = Url.Action(dashboardAction, "Home") });
             }
             else
             {
@@ -92,9 +99,32 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpGet]
         public async Task<ActionResult> ChooseRole()
         {
-            string email = TempData["Email"].ToString();
+            string email = Session["Email"].ToString();
             List<UserRoleDTO> userRoles = (await _accountService.GetUserRolesAsync(email)).ToList();
             return View(userRoles);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ChooseRole(byte selectedRole)
+        {
+            string email = Session["Email"].ToString();
+            UserDTO user = await _accountService.GetUserDataAsync(email, selectedRole);
+
+            if (user != null) 
+            {
+                HttpContext.Session.Remove("Email");
+                Session["CurrentUser"] = user;
+                Session["UserRole"] = ((RoleEnum)selectedRole).ToString();
+                string dashboardAction = Extensions.GetDashboardAction(selectedRole);
+
+                return Json(new { success = true, message = "Redirecting to dashboard...", 
+                    redirectUrl = Url.Action(dashboardAction, "Home") });
+            }
+            else
+            {
+                return Json(new { success = false,  
+                    message = "User data not found", redirectUrl = Url.Action("Login", "Account")});
+            }
         }
 
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
@@ -105,23 +135,3 @@ namespace SkillsLab2023_Assignment.Controllers
         }
     }
 }
-
-/*// TODO: If user is valid, make user redirect to a screen where he needs to select his role and then based on this,
-                // retrieve data and send to home page
-                UserDTO userData = await _accountService.GetUserDataAsync(loginDTO.Email, (byte)RoleEnum.Employee);
-
-                if (userData != null)
-                {
-                    Session["isAuthenticated"] = true;
-                    Session["CurrentUser"] = userData;
-                    //Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
-                    Session["UserRole"] = RoleEnum.Employee.ToString();
-
-                    string dashboardAction = Extensions.GetDashboardAction(userData.RoleId);
-
-                    
-                }
-                else
-                {
-                    return Json(new { success = false, message = "User data not found" });
-                }*/

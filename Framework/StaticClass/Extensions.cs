@@ -9,7 +9,7 @@ namespace Framework.StaticClass
             return value.ToString().Replace('_', ' ');
         }
 
-        public static string GetDashboardAction(this int roleId)
+        public static string GetDashboardAction(this byte roleId)
         {
             switch ((RoleEnum)roleId)
             {

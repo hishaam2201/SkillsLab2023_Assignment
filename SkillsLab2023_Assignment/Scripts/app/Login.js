@@ -37,7 +37,7 @@ function submitLoginForm() {
                 displayToastToUser('error', data.message)
             }
         })
-        .catch(error => {
+        .catch(() => {
             window.location.href = '/Common/InternalServerError'
         })
 }

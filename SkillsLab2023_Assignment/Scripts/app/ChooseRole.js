@@ -5,10 +5,28 @@ form.addEventListener('submit', function (e) {
     var selectedRole = document.querySelector('input[name="role"]:checked')
     if (selectedRole) {
         var selectedRoleValue = selectedRole.value
-        toastr.success(`${selectedRoleValue}`, 'Success', {
-            timeOut: 1500,
-            progressBar: true
+        fetch('/Account/ChooseRole', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ selectedRole: selectedRoleValue })
         })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayToastToUser('success', data.message)
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl
+                    }, 1500)
+                }
+                else {
+                    displayToastToUser('error', data.message)
+                }
+            })
+            .catch(() => {
+                window.location.href = '/Common/InternalServerError'
+            })
     }
     else {
         toastr.error(`${selectedRoleValue}`, 'Error', {
@@ -17,3 +35,18 @@ form.addEventListener('submit', function (e) {
         })
     }
 })
+
+function displayToastToUser(toastColor, message) {
+    if (toastColor === 'success') {
+        toastr.success(`${message}`, "Success", {
+            timeOut: 1500,
+            progressBar: true
+        })
+    }
+    else {
+        toastr.error(`${message}`, "Error", {
+            timeOut: 5000,
+            progressBar: true
+        })
+    }
+}

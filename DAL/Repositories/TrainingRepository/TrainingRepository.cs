@@ -83,7 +83,7 @@ namespace DAL.Repositories.TrainingRepository
             try
             {
                 string GET_TRAINING_PRE_REQUISITES_QUERY =
-                    $@"SELECT t.Id as TrainingId, p.Id as PreRequisiteId, p.PreRequisiteName FROM Training AS t
+                    $@"SELECT t.Id as TrainingId, p.Id as PreRequisiteId, p.PreRequisiteDescription FROM Training AS t
                        INNER JOIN TrainingPreRequisites
                        ON TrainingPreRequisites.TrainingId = t.Id
                        INNER JOIN PreRequisite AS p
@@ -97,7 +97,7 @@ namespace DAL.Repositories.TrainingRepository
                     {
                         TrainingId = reader["TrainingId"] == DBNull.Value ? (short)0 : (short)reader["TrainingId"],
                         PreRequisiteId = reader["PreRequisiteId"] == DBNull.Value ? 0 : (int)reader["PreRequisiteId"],
-                        PreRequisiteDescription = reader["PreRequisiteName"]?.ToString()
+                        PreRequisiteDescription = reader["PreRequisiteDescription"]?.ToString()
                     };
                 };
 

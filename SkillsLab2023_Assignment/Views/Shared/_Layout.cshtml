@@ -18,7 +18,7 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    @if (Session["isAuthenticated"] != null && Session["CurrentUser"] != null && !isLoginOrRegisterPage)
+    @if (Session["CurrentUser"] != null && !isLoginOrRegisterPage)
     {
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark px-5">
             <div class="container">
