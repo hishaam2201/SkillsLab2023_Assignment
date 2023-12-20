@@ -29,9 +29,14 @@ namespace BusinessLayer.Services.AccountService
             return await _accountRepository.GetAllManagersFromDepartmentAsync(departmentId);
         }
 
-        public async Task<UserDTO> GetUserDataAsync(string email)
+        public async Task<UserDTO> GetUserDataAsync(string email, byte roleId)
         {
-            return await _accountRepository.GetUserDataAsync(email);
+            return await _accountRepository.GetUserDataAsync(email, roleId);
+        }
+
+        public async Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync(string email)
+        {
+            return await _accountRepository.GetUserRolesAsync(email);
         }
 
         public async Task<bool> IsEmailInUseAsync(string email)

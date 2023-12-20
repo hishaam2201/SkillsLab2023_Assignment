@@ -3,6 +3,7 @@ using DAL.DTO;
 using DAL.Models;
 using Framework.Enums;
 using Framework.StaticClass;
+using SkillsLab2023_Assignment.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,28 +26,13 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login(LoginDTO loginDTO)
+        public async Task<ActionResult> Login(LoginViewModel loginViewModel)
         {
-            bool isValid = await _accountService.AuthenticateLoginCredentialsAsync(loginDTO.Email, loginDTO.Password);
-
+            bool isValid = await _accountService.AuthenticateLoginCredentialsAsync(loginViewModel.Email, loginViewModel.Password);
             if (isValid)
             {
-                UserDTO userData = await _accountService.GetUserDataAsync(loginDTO.Email);
-
-                if (userData != null)
-                {
-                    Session["isAuthenticated"] = true;
-                    Session["CurrentUser"] = userData;
-                    Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
-
-                    string dashboardAction = Extensions.GetDashboardAction(userData.RoleId);
-
-                    return Json(new { success = true, message = "Login Successful", redirectUrl = Url.Action(dashboardAction, "Home") });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "User data not found" });
-                }
+                TempData["Email"] = loginViewModel.Email;
+                return Json(new { success = true, message = "Login Successful", redirectUrl = Url.Action("ChooseRole", "Account") });
             }
             else
             {
@@ -90,7 +76,8 @@ namespace SkillsLab2023_Assignment.Controllers
 
             if (isRegistered)
             {
-                UserDTO userData = await _accountService.GetUserDataAsync(registrationDTO.Email);
+                // TODO: Change
+                UserDTO userData = await _accountService.GetUserDataAsync(registrationDTO.Email, 1);
                 Session["isAuthenticated"] = true;
                 Session["CurrentUser"] = userData;
                 Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
@@ -102,6 +89,14 @@ namespace SkillsLab2023_Assignment.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<ActionResult> ChooseRole()
+        {
+            string email = TempData["Email"].ToString();
+            List<UserRoleDTO> userRoles = (await _accountService.GetUserRolesAsync(email)).ToList();
+            return View(userRoles);
+        }
+
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
         public ActionResult LogOut()
         {
@@ -110,3 +105,23 @@ namespace SkillsLab2023_Assignment.Controllers
         }
     }
 }
+
+/*// TODO: If user is valid, make user redirect to a screen where he needs to select his role and then based on this,
+                // retrieve data and send to home page
+                UserDTO userData = await _accountService.GetUserDataAsync(loginDTO.Email, (byte)RoleEnum.Employee);
+
+                if (userData != null)
+                {
+                    Session["isAuthenticated"] = true;
+                    Session["CurrentUser"] = userData;
+                    //Session["UserRole"] = ((RoleEnum)userData.RoleId).ToString();
+                    Session["UserRole"] = RoleEnum.Employee.ToString();
+
+                    string dashboardAction = Extensions.GetDashboardAction(userData.RoleId);
+
+                    
+                }
+                else
+                {
+                    return Json(new { success = false, message = "User data not found" });
+                }*/
