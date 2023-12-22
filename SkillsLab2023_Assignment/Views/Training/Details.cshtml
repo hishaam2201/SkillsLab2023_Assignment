@@ -28,21 +28,19 @@
     </p>
 </div>
 
-<form id="uploadForm" method="post" @*action="@Url.Action("Enroll", "Application")"*@ onsubmit="return false;" enctype="multipart/form-data" novalidate>
+<form id="uploadForm" method="post" onsubmit="return false;" enctype="multipart/form-data" novalidate>
     @for (int index = 0; index < Model.PreRequisites.Count; index++)
     {
         <div class="mb-3">
             <label><strong>PreRequisite @(index + 1)</strong>: @Model.PreRequisites[index].PreRequisiteDescription</label>
-            <input type="file" class="form-control" required data-index="@index" accept=".pdf, .jpeg, .png" />
-            <input type="hidden" name="trainingId" value="@Model.TrainingId" />
-            <input type="hidden" name="prerequisiteId" value="@Model.PreRequisites[index].PreRequisiteId" />
+            <input type="file" class="form-control file-upload" required data-index="@index" accept=".pdf, .jpeg, .png" />
+            <input type="hidden" id="trainingId" value="@Model.TrainingId" />
+            <input type="hidden" id="prerequisiteId_@index" value="@Model.PreRequisites[index].PreRequisiteId" />
             <div id="requiredFeedback_@index" class="invalid-feedback">Field is required</div>
             <div id="typeFeedback_@index" class="invalid-feedback">Invalid File Type</div>
             <div id="sizeFeedback_@index" class="invalid-feedback">File size exceeds the limit</div>
         </div>
     }
-    @*<h4 class="mt-5">Testing file upload</h4>
-    <input type="file" name="file" class="form-control" accept="image/*" required/>*@
     <input type="submit" value="Submit" class="btn btn-primary" />
 </form>
 
