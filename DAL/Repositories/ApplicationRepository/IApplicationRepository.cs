@@ -7,6 +7,7 @@ namespace DAL.Repositories.ApplicationRepository
 {
     public interface IApplicationRepository
     {
-        Task<bool> ApplyForTraining(Application application, DocumentUpload document);
+        Task<int> InsertApplicationAndGetId(Application application);
+        Task<bool> InsertDocumentUpload(DocumentUpload documentUpload);
     }
 }

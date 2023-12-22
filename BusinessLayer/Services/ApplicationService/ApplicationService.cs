@@ -20,6 +20,19 @@ namespace BusinessLayer.Services.ApplicationService
         {
             if (documentUploads != null && documentUploads.Any())
             {
+                var firstDocument = documentUploads.First();
+                var applicationEntity = new Application
+                {
+                    UserId = firstDocument.UsertId,
+                    TrainingId = firstDocument.TrainingId,
+                };
+
+                int applicationId = await _applicationRepository.InsertApplicationAndGetId(applicationEntity);
+                if (applicationId <= 0)
+                {
+                    return false;
+                }
+
                 foreach (var documentUpload in documentUploads)
                 {
                     if (documentUpload.File != null && documentUpload.File.ContentLength > 0)
@@ -34,17 +47,14 @@ namespace BusinessLayer.Services.ApplicationService
 
                         var documentUploadEntity = new DocumentUpload
                         {
+                            ApplicationId = applicationId,
                             File = fileData,
                             PreRequisiteId = documentUpload.PreRequisiteId
                         };
-                        var applicationEntity = new Application
-                        {
-                            UserId = documentUpload.UsertId,
-                            TrainingId = documentUpload.TrainingId
-                        };
+                        
 
                         // Call ApplyForTraining
-                        if (!await _applicationRepository.ApplyForTraining(applicationEntity, documentUploadEntity))
+                        if (!await _applicationRepository.InsertDocumentUpload(documentUploadEntity))
                         {
                             return false;
                         }

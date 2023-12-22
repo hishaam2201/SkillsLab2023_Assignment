@@ -1856,3 +1856,71 @@ Stack Trace:    at System.Web.Mvc.ViewResult.FindView(ControllerContext context)
    at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
    at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
 "---------------------------------------------------------";
+---------------------------------------------------------
+Id: e8c5786a-f1c8-4083-8f17-60b593e6b10d
+Timestamp: 22/12/2023 19:41:34
+Exception Type: Framework.AppLogger.Logger
+Message: Parameter count mismatch.
+Inner Exception: 
+Stack Trace:    at System.Reflection.RuntimeMethodInfo.InvokeArgumentsCheck(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimePropertyInfo.GetValue(Object obj, Object[] index)
+   at Framework.DatabaseCommand.DatabaseCommand.DatabaseCommand`1.GetSqlParametersFromObject(Object obj, List`1 excludedProperties) in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\Framework\DatabaseCommand\DatabaseCommand.cs:line 194
+   at DAL.Repositories.ApplicationRepository.ApplicationRepository.<InsertDocumentUpload>d__3.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\DAL\Repositories\ApplicationRepository\ApplicationRepository.cs:line 33
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at BusinessLayer.Services.ApplicationService.ApplicationService.<ProcessApplication>d__2.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\BusinessLayer\Services\ApplicationService\ApplicationService.cs:line 57
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at SkillsLab2023_Assignment.Controllers.ApplicationController.<Enroll>d__2.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Controllers\ApplicationController.cs:line 34
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_5.<BeginInvokeAction>b__4()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: f072a210-5eb2-4f75-a4bb-357b3289ea7e
+Timestamp: 22/12/2023 19:48:01
+Exception Type: Framework.AppLogger.Logger
+Message: Parameter count mismatch.
+Inner Exception: 
+Stack Trace:    at System.Reflection.RuntimeMethodInfo.InvokeArgumentsCheck(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimePropertyInfo.GetValue(Object obj, Object[] index)
+   at Framework.DatabaseCommand.DatabaseCommand.DatabaseCommand`1.GetSqlParametersFromObject(Object obj, List`1 excludedProperties) in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\Framework\DatabaseCommand\DatabaseCommand.cs:line 194
+   at DAL.Repositories.ApplicationRepository.ApplicationRepository.<InsertDocumentUpload>d__3.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\DAL\Repositories\ApplicationRepository\ApplicationRepository.cs:line 33
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at BusinessLayer.Services.ApplicationService.ApplicationService.<ProcessApplication>d__2.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\BusinessLayer\Services\ApplicationService\ApplicationService.cs:line 57
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at SkillsLab2023_Assignment.Controllers.ApplicationController.<Enroll>d__2.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Controllers\ApplicationController.cs:line 34
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_5.<BeginInvokeAction>b__4()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
