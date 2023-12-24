@@ -13,9 +13,9 @@ namespace BusinessLayer.Services.TrainingService
             _trainingRepository = trainingRepository;
         }
 
-        public async Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync()
+        public async Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync(byte userDepartmentId)
         {
-            return await _trainingRepository.GetAllTrainingsAsync();
+            return await _trainingRepository.GetAllTrainingsAsync(userDepartmentId);
         }
 
         public async Task<TrainingDTO> GetTrainingByIdAsync(int id)

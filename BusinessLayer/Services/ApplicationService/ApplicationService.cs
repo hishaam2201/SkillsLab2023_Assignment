@@ -52,8 +52,6 @@ namespace BusinessLayer.Services.ApplicationService
                             PreRequisiteId = documentUpload.PreRequisiteId
                         };
                         
-
-                        // Call ApplyForTraining
                         if (!await _applicationRepository.InsertDocumentUpload(documentUploadEntity))
                         {
                             return false;

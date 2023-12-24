@@ -26,7 +26,8 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public async Task<JsonResult> GetAllTrainings()
         {
-            List<TrainingDTO> listOfTrainings = (await _trainingService.GetAllTrainingsAsync()).ToList();
+            byte userDepartmentId = (byte) SessionManager.CurrentUser.DepartmentId;
+            List<TrainingDTO> listOfTrainings = (await _trainingService.GetAllTrainingsAsync(userDepartmentId)).ToList();
             return Json(new { success = true, trainings = listOfTrainings }, JsonRequestBehavior.AllowGet);
         }
 
