@@ -114,8 +114,7 @@ namespace SkillsLab2023_Assignment.Controllers
                 NationalIdentityCard = registerViewModel.NationalIdentityCard,
                 DepartmentId = registerViewModel.DepartmentId,
                 ManagerId = registerViewModel.ManagerId,
-                Email = registerViewModel.Email,
-                Password = registerViewModel.Password
+                Email = registerViewModel.Email
             };
             bool isRegistered = await _accountService.RegisterUserAsync(user, registerViewModel.Email, registerViewModel.Password);
 

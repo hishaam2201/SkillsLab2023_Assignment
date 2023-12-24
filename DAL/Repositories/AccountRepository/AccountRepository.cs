@@ -19,17 +19,25 @@ namespace DAL.Repositories.AccountRepository
             _dbCommand = dbCommand;
         }
 
-        public async Task<bool> AuthenticateLoginCredentialsAsync(string email, string password)
+        public async Task<PasswordDTO> GetUserHashedPasswordAndSalt(string email)
         {
             try
             {
-                const string AUTHENTICATE_LOGIN_CREDENTIALS_QUERY = @"SELECT 1 FROM [User] WHERE Email=@Email 
-                                                                    And Password=@Password";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email, Password = password });
-                bool isPresent =  await _dbCommand.IsRecordPresentAsync(AUTHENTICATE_LOGIN_CREDENTIALS_QUERY, parameters);
-                return isPresent;
+                const string GET_USER_HASHEDPASSWORD_AND_SALT_QUERY =
+                    @"SELECT HashedPassword, Salt FROM [User] WHERE Email = @Email";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email });
+                Func<IDataReader, PasswordDTO> mapFunction = reader =>
+                {
+                    return new PasswordDTO
+                    {
+                        HashedPassword = (byte[])reader["HashedPassword"],
+                        Salt = (byte[])reader["Salt"]
+                    };
+                };
+                var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_HASHEDPASSWORD_AND_SALT_QUERY, parameters, mapFunction);
+                return result?.FirstOrDefault();
             }
-            catch (Exception) { throw; }
+            catch(Exception) { throw; }
         }
 
         public async Task<bool> IsEmailInUseAsync(string email)
@@ -97,18 +105,20 @@ namespace DAL.Repositories.AccountRepository
             catch (Exception) { throw; }
         }
 
-        public async Task<bool> RegisterUserAsync(User user, string email, string password)
+        public async Task<bool> RegisterUserAsync(User user, string email)
         {
             try
             {
                 string INSERT_INTO_USER_QUERY =
-                      $@"INSERT INTO [User] (FirstName, LastName, MobileNumber, NationalIdentityCard, DepartmentId, ManagerId, Email, [Password])
-                      VALUES (@FirstName, @LastName, @MobileNumber, @NationalIdentityCard, @DepartmentId, @ManagerId, @Email, @Password);
+                      $@"INSERT INTO [User] (FirstName, LastName, MobileNumber, NationalIdentityCard, DepartmentId, ManagerId, 
+                         Email, HashedPassword, Salt)
+                         VALUES (@FirstName, @LastName, @MobileNumber, @NationalIdentityCard, @DepartmentId, @ManagerId, 
+                         @Email, @Password, @Salt);
 
-                      DECLARE @UserId SMALLINT;
-                      SET @UserId = SCOPE_IDENTITY();
-                      INSERT INTO UserRole (UserId, RoleId) VALUES
-                      (@UserId, {(byte)RoleEnum.Employee})";
+                         DECLARE @UserId SMALLINT;
+                         SET @UserId = SCOPE_IDENTITY();
+                         INSERT INTO UserRole (UserId, RoleId) VALUES
+                         (@UserId, {(byte)RoleEnum.Employee})";
 
                 List<string> excludedUserProperties = new List<string> { "Id" };
                 SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
@@ -161,5 +171,6 @@ namespace DAL.Repositories.AccountRepository
             }
             catch (Exception) { throw; }
         }
+
     }
 }
