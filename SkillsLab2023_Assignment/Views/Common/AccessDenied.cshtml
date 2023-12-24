@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.Title = "Access Unauthorized";
-    string userRole = Session["UserRole"] as string;
+    string userRole = SkillsLab2023_Assignment.Custom.SessionManager.UserRole;
     string homeAction = GetHomeActionForRole(userRole);
 }
 

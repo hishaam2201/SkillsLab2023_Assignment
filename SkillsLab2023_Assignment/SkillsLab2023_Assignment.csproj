@@ -268,11 +268,14 @@
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Custom\CustomAuthorizationAttribute.cs" />
     <Compile Include="Custom\CustomHandleErrorAttribute.cs" />
+    <Compile Include="Custom\SessionManager.cs" />
     <Compile Include="Custom\UserSessionAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DocumentUploadViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
+    <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

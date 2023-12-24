@@ -43,9 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\DepartmentDTO.cs" />
-    <Compile Include="DTO\LoginDTO.cs" />
+    <Compile Include="DTO\DocumentUploadDTO.cs" />
     <Compile Include="DTO\ManagerDTO.cs" />
-    <Compile Include="DTO\RegistrationDTO.cs" />
     <Compile Include="DTO\TrainingDTO.cs" />
     <Compile Include="DTO\TrainingPreRequisteDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />

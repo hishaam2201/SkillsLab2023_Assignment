@@ -44,17 +44,54 @@ form.addEventListener('submit', event => {
         event.stopPropagation()
     }
     else {
-        // submit form
+        submitApplication(form);
         form.classList.remove('was-validated')
     }
 
     form.classList.add('was-validated')
 })
 
+function submitApplication(form) {
+    var formData = new FormData();
+    var fileInputs = document.querySelectorAll('.file-upload');
+
+    fileInputs.forEach(function (fileInput) {
+        var index = fileInput.dataset.index;
+        var trainingId = document.getElementById('trainingId').value
+        var prerequisiteId = document.getElementById("prerequisiteId_" + index).value
+        var file = fileInput.files[0]
+
+        formData.append(`Files[${index}].TrainingId`, trainingId)
+        formData.append(`Files[${index}].PreRequisiteId`, prerequisiteId)
+        formData.append(`Files[${index}].File`, file)
+    })
+
+    // Send POST request to controller
+    fetch("/Application/Enroll", {
+        method: "POST",
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayToastToUser("success", `${data.message}`)
+                setTimeout(() => {
+                    window.location.href = data.redirectUrl
+                }, 2500)
+            }
+            else {
+                displayToastToUser("Error", `${data.message}`)
+            }
+        })
+        .catch(() => {
+            window.location.href = '/Common/InternalServerError';
+        })
+}
+
 function displayToastToUser(toastColor, message) {
     if (toastColor === 'success') {
         toastr.success(`${message}`, "Success", {
-            timeOut: 1500,
+            timeOut: 2000,
             progressBar: true
         })
     }

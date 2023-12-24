@@ -7,6 +7,7 @@ using Framework.DatabaseCommand.DatabaseCommand;
 using DAL.DTO;
 using DAL.Models;
 using System.Threading.Tasks;
+using System.Web.SessionState;
 
 namespace DAL.Repositories.TrainingRepository
 {
@@ -18,12 +19,19 @@ namespace DAL.Repositories.TrainingRepository
             _dbCommand = dbCommand;
         }
 
-        public async Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync()
+        public async Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync(byte userDepartmentId)
         {
             List<TrainingDTO> trainingDTOs = new List<TrainingDTO>();
             try
             {
-                List<Training> trainingList = (await _dbCommand.ExecuteSelectQueryAsync<Training>()).ToList();
+                string GET_ALL_UNEXPIRED_TRAININGS_QUERY = $@"SELECT * FROM Training WHERE DeadlineOfApplication >= GETDATE()
+                                                              ORDER BY 
+                                                              CASE 
+                                                                WHEN DepartmentId = {userDepartmentId} THEN 0
+                                                                ELSE 1
+                                                              END,
+                                                              DepartmentId;";
+                List<Training> trainingList = (await _dbCommand.ExecuteSelectQueryAsync<Training>(GET_ALL_UNEXPIRED_TRAININGS_QUERY)).ToList();
 
                 foreach (Training training in trainingList)
                 {
@@ -33,7 +41,7 @@ namespace DAL.Repositories.TrainingRepository
                     {
                         TrainingId = training.Id,
                         TrainingName = training.TrainingName,
-                        Deadline = training.Deadline.ToString("d MMMM, yyyy"),
+                        DeadlineOfApplication = training.DeadlineOfApplication.ToString("d MMMM, yyyy"),
                         Capacity = training.Capacity,
                         DepartmentName = departmentName?.ToString()
                     });
@@ -56,8 +64,8 @@ namespace DAL.Repositories.TrainingRepository
                     TrainingName = training.TrainingName,
                     Description = training.Description,
                     Capacity = training.Capacity,
-                    StartingDate = training.StartingDate.ToString("d MMMM, yyyy"),
-                    Deadline = training.Deadline.ToString("d MMMM, yyyy"),
+                    TrainingCourseStartingDate = training.TrainingCourseStartingDate.ToString("d MMMM, yyyy"),
+                    DeadlineOfApplication = training.DeadlineOfApplication.ToString("d MMMM, yyyy"),
                     DepartmentName = departmentName?.ToString(),
                     PreRequisites = (await RetrieveTrainingPreRequisitesAsync(training.Id)).ToList()
                 };
@@ -83,7 +91,7 @@ namespace DAL.Repositories.TrainingRepository
             try
             {
                 string GET_TRAINING_PRE_REQUISITES_QUERY =
-                    $@"SELECT t.Id as TrainingId, p.Id as PreRequisiteId, p.PreRequisiteName FROM Training AS t
+                    $@"SELECT t.Id as TrainingId, p.Id as PreRequisiteId, p.PreRequisiteDescription FROM Training AS t
                        INNER JOIN TrainingPreRequisites
                        ON TrainingPreRequisites.TrainingId = t.Id
                        INNER JOIN PreRequisite AS p
@@ -97,7 +105,7 @@ namespace DAL.Repositories.TrainingRepository
                     {
                         TrainingId = reader["TrainingId"] == DBNull.Value ? (short)0 : (short)reader["TrainingId"],
                         PreRequisiteId = reader["PreRequisiteId"] == DBNull.Value ? 0 : (int)reader["PreRequisiteId"],
-                        PreRequisiteDescription = reader["PreRequisiteName"]?.ToString()
+                        PreRequisiteDescription = reader["PreRequisiteDescription"]?.ToString()
                     };
                 };
 

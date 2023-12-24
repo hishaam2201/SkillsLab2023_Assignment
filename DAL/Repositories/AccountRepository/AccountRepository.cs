@@ -71,6 +71,7 @@ namespace DAL.Repositories.AccountRepository
             }
             catch (Exception) { throw; }
         }
+        
         public async Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync(string email)
         {
             try
@@ -96,30 +97,23 @@ namespace DAL.Repositories.AccountRepository
             catch (Exception) { throw; }
         }
 
-        // TODO: Change to work with new db
         public async Task<bool> RegisterUserAsync(User user, string email, string password)
         {
             try
             {
-                const string INSERT_INTO_USER_AND_ACCOUNT_QUERY =
-                      @"INSERT INTO [User] 
-                      (FirstName, LastName, MobileNumber, NationalIdentityCard, DepartmentId, ManagerId)
-                      VALUES (@FirstName, @LastName, @MobileNumber, @NationalIdentityCard, @DepartmentId, @ManagerId); 
-                  
-                      DECLARE @UserId INT
-                      SET @UserId = SCOPE_IDENTITY()
+                string INSERT_INTO_USER_QUERY =
+                      $@"INSERT INTO [User] (FirstName, LastName, MobileNumber, NationalIdentityCard, DepartmentId, ManagerId, Email, [Password])
+                      VALUES (@FirstName, @LastName, @MobileNumber, @NationalIdentityCard, @DepartmentId, @ManagerId, @Email, @Password);
 
-                      INSERT INTO Account (Email, [Password], UserId) VALUES (@Email, @Password, @UserId)";
-                List<string> excludedUserProperties = new List<string> { "UserId" };
+                      DECLARE @UserId SMALLINT;
+                      SET @UserId = SCOPE_IDENTITY();
+                      INSERT INTO UserRole (UserId, RoleId) VALUES
+                      (@UserId, {(byte)RoleEnum.Employee})";
+
+                List<string> excludedUserProperties = new List<string> { "Id" };
                 SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
-                SqlParameter[] queryParams = userQueryParams.Concat(new[]
-                {
-                    new SqlParameter("@Email", email),
-                    new SqlParameter("@Password", password)
-                }).ToArray();
-                
-                bool isSuccessful = await _dbCommand.ExecuteTransactionAsync
-                    (new SqlCommand(INSERT_INTO_USER_AND_ACCOUNT_QUERY), queryParams);
+
+                bool isSuccessful = await _dbCommand.ExecuteTransactionAsync(new SqlCommand(INSERT_INTO_USER_QUERY), userQueryParams);
                 return isSuccessful;
             }
             catch(Exception) { throw; }
@@ -148,8 +142,10 @@ namespace DAL.Repositories.AccountRepository
             try
             {
                 string GET_MANAGERS_FROM_DEPARTMENT_QUERY =
-                    $@"SELECT Id, FirstName, LastName FROM [User] WHERE RoleId = {(int)RoleEnum.Manager}
-                               AND DepartmentId = @DepartmentId";
+                    $@"SELECT Id, FirstName, LastName FROM [User] AS u
+                       INNER JOIN UserRole AS ur
+                       ON ur.UserId = u.Id
+                       WHERE ur.RoleId = {(byte)RoleEnum.Manager} and DepartmentId = @DepartmentId";
                 SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
                 Func<IDataReader, ManagerDTO> mapFunction = reader =>
                 {

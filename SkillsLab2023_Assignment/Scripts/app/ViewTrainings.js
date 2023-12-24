@@ -34,7 +34,7 @@ function populateTable(trainings) {
         row.appendChild(departmentCell)
 
         const deadlineCell = document.createElement('td')
-        deadlineCell.textContent = training.Deadline
+        deadlineCell.textContent = training.DeadlineOfApplication
         row.appendChild(deadlineCell)
 
         const capacityCell = document.createElement('td')
