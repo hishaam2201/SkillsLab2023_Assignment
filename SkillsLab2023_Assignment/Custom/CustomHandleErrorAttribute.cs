@@ -18,6 +18,7 @@ namespace SkillsLab2023_Assignment.Custom
 
             var errorGuid = Guid.NewGuid();
             _logger.LogError(filterContext.Exception, errorGuid);
+            filterContext.HttpContext.Session["ErrorGuid"] = errorGuid;
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.StatusCode = 500;

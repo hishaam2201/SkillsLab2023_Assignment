@@ -16,7 +16,6 @@ namespace BusinessLayer.Services.AccountService
         {
             _accountRepository = accountRepository;
         }
-            //return await _accountRepository.AuthenticateLoginCredentialsAsync(email, password);
 
         public async Task<bool> AuthenticateLoginCredentialsAsync(string email, string password)
         {

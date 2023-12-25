@@ -8,7 +8,6 @@ namespace DAL.Repositories.AccountRepository
 {
     public interface IAccountRepository
     {
-        //Task<bool> AuthenticateLoginCredentialsAsync(string email, string password);
         Task<PasswordDTO> GetUserHashedPasswordAndSalt(string email);
         Task<bool> IsEmailInUseAsync(string email);
         Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync(string email);

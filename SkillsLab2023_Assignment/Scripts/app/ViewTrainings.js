@@ -1,11 +1,19 @@
 (function () {
     fetch('/Training/GetAllTrainings', {
-        method: 'POST'
+        method: 'GET'
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                populateTable(data.trainings)
+                if (data.trainings && data.trainings.length > 0) {
+                    populateTable(data.trainings)
+                }
+                else {
+                    toastr.warning("No trainings found", {
+                        timeOut: 5000,
+                        progressBar: true
+                    })
+                }
             }
             else {
                 toastr.error("Trainings could not be fetched", "Error", {
@@ -36,10 +44,6 @@ function populateTable(trainings) {
         const deadlineCell = document.createElement('td')
         deadlineCell.textContent = training.DeadlineOfApplication
         row.appendChild(deadlineCell)
-
-        const capacityCell = document.createElement('td')
-        capacityCell.textContent = training.Capacity
-        row.appendChild(capacityCell)
 
         const viewButtonCell = document.createElement('td')
         const viewButton = document.createElement('button')

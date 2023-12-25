@@ -13,8 +13,8 @@ namespace DAL.Repositories.AccountRepository
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly IDatabaseCommand<Account> _dbCommand;
-        public AccountRepository(IDatabaseCommand<Account> dbCommand)
+        private readonly IDatabaseCommand<User> _dbCommand;
+        public AccountRepository(IDatabaseCommand<User> dbCommand)
         {
             _dbCommand = dbCommand;
         }

@@ -4,11 +4,6 @@ namespace Framework.StaticClass
 {
     public static class Extensions
     {
-        public static string RemoveUnderScores(this DepartmentEnum value)
-        {
-            return value.ToString().Replace('_', ' ');
-        }
-
         public static string GetDashboardAction(this byte roleId)
         {
             switch ((RoleEnum)roleId)

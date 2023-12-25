@@ -1,10 +1,8 @@
 using BusinessLayer.Services.AccountService;
 using BusinessLayer.Services.TrainingService;
-using BusinessLayer.Services.UserService;
 using Framework.DatabaseCommand.DatabaseCommand;
 using DAL.Repositories.AccountRepository;
 using DAL.Repositories.TrainingRepository;
-using DAL.Repositories.UserRepository;
 using Framework.AppLogger;
 using Framework.DAL;
 using System.Web.Mvc;
@@ -12,6 +10,10 @@ using Unity;
 using Unity.Mvc5;
 using BusinessLayer.Services.ApplicationService;
 using DAL.Repositories.ApplicationRepository;
+using DAL.Repositories.ManagerRepository;
+using BusinessLayer.Services.ManagerService;
+using BusinessLayer.Services.AdministratorService;
+using DAL.Repositories.AdministratorRepository;
 
 namespace SkillsLab2023_Assignment
 {
@@ -25,15 +27,17 @@ namespace SkillsLab2023_Assignment
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
             container.RegisterType(typeof(IDatabaseCommand<>), typeof(DatabaseCommand<>));
 
+            container.RegisterType<IManagerService, ManagerService>();
+            container.RegisterType<IManagerRepository, ManagerRepository>();
 
-            container.RegisterType<IUserRepository, UserRepository>();
-            container.RegisterType<IUserService, UserService>();
+            container.RegisterType<IAdministratorService, AdministratorService>();
+            container.RegisterType<IAdministratorRepository, AdministratorRepository>();
 
-            container.RegisterType<IAccountRepository, AccountRepository>();
             container.RegisterType<IAccountService, AccountService>();
+            container.RegisterType<IAccountRepository, AccountRepository>();
 
-            container.RegisterType<ITrainingRepository, TrainingRepository>();
             container.RegisterType<ITrainingService, TrainingService>();
+            container.RegisterType<ITrainingRepository, TrainingRepository>();
 
             container.RegisterType<IApplicationService, ApplicationService>();
             container.RegisterType<IApplicationRepository, ApplicationRepository>();

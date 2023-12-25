@@ -7,7 +7,6 @@ using Framework.DatabaseCommand.DatabaseCommand;
 using DAL.DTO;
 using DAL.Models;
 using System.Threading.Tasks;
-using System.Web.SessionState;
 
 namespace DAL.Repositories.TrainingRepository
 {
@@ -46,9 +45,9 @@ namespace DAL.Repositories.TrainingRepository
                         DepartmentName = departmentName?.ToString()
                     });
                 }
+                return trainingDTOs;
             }
             catch (Exception) { throw; }
-            return trainingDTOs;
         }
 
         public async Task<TrainingDTO> GetTrainingByIdAsync(int id)
