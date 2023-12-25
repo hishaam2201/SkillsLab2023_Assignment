@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Services.Description;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
     [UserSession]
+    [CustomAuthorization("Employee")]
     public class ApplicationController : Controller
     {
         private readonly IApplicationService _applicationService;

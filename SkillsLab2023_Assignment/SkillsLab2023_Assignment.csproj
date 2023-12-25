@@ -264,6 +264,7 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\DojoController.cs" />
+    <Compile Include="Controllers\EnrollmentProcessController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Custom\CustomAuthorizationAttribute.cs" />
@@ -309,6 +310,7 @@
     <Content Include="gulpfile.js" />
     <Content Include="Scripts\app\ChooseRole.js" />
     <Content Include="Scripts\app\Details.js" />
+    <Content Include="Scripts\app\ViewApplications.js" />
     <Content Include="Scripts\app\ViewTrainings.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -12285,7 +12287,6 @@
     <Content Include="Views\Common\AccessDenied.cshtml" />
     <Content Include="Views\Common\NotFound.cshtml" />
     <Content Include="Views\Common\InternalServerError.cshtml" />
-    <Content Include="Views\Shared\_ErrorLayout.cshtml" />
     <Content Include="Views\Training\Details.cshtml" />
     <Content Include="tsconfig.json" />
     <Content Include="Views\Dojo\Login.cshtml" />
@@ -12297,6 +12298,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Application\" />
+    <Folder Include="Views\EnrollmentProcess\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

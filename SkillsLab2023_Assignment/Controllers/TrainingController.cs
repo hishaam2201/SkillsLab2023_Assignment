@@ -9,6 +9,7 @@ using System.Web.Mvc;
 namespace SkillsLab2023_Assignment.Controllers
 {
     [UserSession]
+    [CustomAuthorization("Employee")]
     public class TrainingController : Controller
     {
         private readonly ITrainingService _trainingService;
@@ -23,12 +24,15 @@ namespace SkillsLab2023_Assignment.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<JsonResult> GetAllTrainings()
         {
             byte userDepartmentId = (byte) SessionManager.CurrentUser.DepartmentId;
             List<TrainingDTO> listOfTrainings = (await _trainingService.GetAllTrainingsAsync(userDepartmentId)).ToList();
-            return Json(new { success = true, trainings = listOfTrainings }, JsonRequestBehavior.AllowGet);
+            return Json(new { 
+                success = listOfTrainings != null && listOfTrainings.Any(),
+                trainings = listOfTrainings 
+            }, JsonRequestBehavior.AllowGet);
         }
 
 
