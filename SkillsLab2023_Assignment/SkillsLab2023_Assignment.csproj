@@ -12297,8 +12297,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Application\" />
-    <Folder Include="Views\EnrollmentProcess\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

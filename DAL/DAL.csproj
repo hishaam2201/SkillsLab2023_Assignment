@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\AttachmentInfoDTO.cs" />
     <Compile Include="DTO\DepartmentDTO.cs" />
     <Compile Include="DTO\DocumentUploadDTO.cs" />
     <Compile Include="DTO\ManagerDTO.cs" />
@@ -65,8 +66,8 @@
     <Compile Include="Repositories\AdministratorRepository\IAdministratorRepository.cs" />
     <Compile Include="Repositories\ApplicationRepository\ApplicationRepository.cs" />
     <Compile Include="Repositories\ApplicationRepository\IApplicationRepository.cs" />
-    <Compile Include="Repositories\ManagerRepository\IManagerRepository.cs" />
-    <Compile Include="Repositories\ManagerRepository\ManagerRepository.cs" />
+    <Compile Include="Repositories\EnrollmentProcessRepository\IEnrollmentProcessRepository.cs" />
+    <Compile Include="Repositories\EnrollmentProcessRepository\EnrollmentProcessRepository.cs" />
     <Compile Include="Repositories\TrainingRepository\ITrainingRepository.cs" />
     <Compile Include="Repositories\TrainingRepository\TrainingRepository.cs" />
   </ItemGroup>

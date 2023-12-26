@@ -1,4 +1,5 @@
 ﻿using DAL.DTO;
+using System.Collections.Generic;
 using System.Web;
 
 namespace SkillsLab2023_Assignment.Custom
@@ -8,6 +9,7 @@ namespace SkillsLab2023_Assignment.Custom
         private const string _currentUserKey = "CurrentUser";
         private const string _userRoleKey = "UserRole";
         private const string _emailKey = "Email";
+        private const string _attachments = "Attachments";
 
         public static UserDTO CurrentUser
         {
@@ -25,6 +27,12 @@ namespace SkillsLab2023_Assignment.Custom
         {
             get => Get<string>(_emailKey);
             set => Set(_emailKey, value);
+        }
+
+        public static List<PendingApplicationDocumentDTO> Attachments
+        {
+            get => Get<List<PendingApplicationDocumentDTO>>(_attachments);
+            set => Set(_attachments, value);
         }
 
         private static T Get<T>(string key)

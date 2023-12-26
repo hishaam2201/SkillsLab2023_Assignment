@@ -1,23 +1,44 @@
 ﻿
 @{
-    @model DAL.DTO.PendingApplicationDTO
     ViewBag.Title = "Dashboard";
 }
 
-<h2>Dashboard</h2>
-<div class="table-responsive">
-    <table class="table table-light table-hover mt-4">
-        <thead class="text-center">
-            <tr>
-                <th scope="col">Applicant's Name</th>
-                <th scope="col">Training Name</th>
-                <th scope="col">Application Status</th>
-                <th scope="col" colspan="3">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="text-center table-group-divider" id="tableBody">
-        </tbody>
-    </table>
+<div id="dashboardContainer">
+    <h2>Dashboard</h2>
+    <div class="table-responsive">
+        <table class="table table-light table-hover mt-4">
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">Applicant's Name</th>
+                    <th scope="col">Training Name</th>
+                    <th scope="col">Training Department</th>
+                    <th scope="col">Application Status</th>
+                    <th scope="col" colspan="3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-center table-group-divider" id="tableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*Modal for Viewing Document*@
+<div class="modal fade" id="viewDocModal" tabindex="-1" aria-labelledby="viewDocModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="viewDocModalLabel">Documents submitted</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                ...
+                @*Display Pre-Requisiste along with a View Button*@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="~/Scripts/app/ViewApplications.js"></script>

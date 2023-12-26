@@ -49,7 +49,8 @@ namespace BusinessLayer.Services.ApplicationService
                         {
                             ApplicationId = applicationId,
                             File = fileData,
-                            PreRequisiteId = documentUpload.PreRequisiteId
+                            PreRequisiteId = documentUpload.PreRequisiteId,
+                            FileName = documentUpload.FileName
                         };
                         
                         if (!await _applicationRepository.InsertDocumentUpload(documentUploadEntity))

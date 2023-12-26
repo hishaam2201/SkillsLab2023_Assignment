@@ -8,5 +8,6 @@ namespace SkillsLab2023_Assignment.Models
         public int TrainingId { get; set; }
         public int PreRequisiteId { get; set; }
         public HttpPostedFileBase File { get; set; }
+        public string FileName { get; set; }
     }
 }
