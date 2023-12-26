@@ -188,8 +188,8 @@
     <Compile Include="Services\AdministratorService\IAdministratorService.cs" />
     <Compile Include="Services\ApplicationService\ApplicationService.cs" />
     <Compile Include="Services\ApplicationService\IApplicationService.cs" />
-    <Compile Include="Services\ManagerService\IManagerService.cs" />
-    <Compile Include="Services\ManagerService\ManagerService.cs" />
+    <Compile Include="Services\EnrollmentProcessService\IEnrollmentProcessService.cs" />
+    <Compile Include="Services\EnrollmentProcessService\EnrollmentProcessService.cs" />
     <Compile Include="Services\TrainingService\ITrainingService.cs" />
     <Compile Include="Services\TrainingService\TrainingService.cs" />
   </ItemGroup>

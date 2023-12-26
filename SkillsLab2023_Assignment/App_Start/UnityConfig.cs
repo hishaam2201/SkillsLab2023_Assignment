@@ -10,10 +10,10 @@ using Unity;
 using Unity.Mvc5;
 using BusinessLayer.Services.ApplicationService;
 using DAL.Repositories.ApplicationRepository;
-using DAL.Repositories.ManagerRepository;
-using BusinessLayer.Services.ManagerService;
 using BusinessLayer.Services.AdministratorService;
 using DAL.Repositories.AdministratorRepository;
+using BusinessLayer.Services.EnrollmentProcessService;
+using DAL.Repositories.EnrollmentProcessRepository;
 
 namespace SkillsLab2023_Assignment
 {
@@ -27,8 +27,8 @@ namespace SkillsLab2023_Assignment
             container.RegisterType<IDataAccessLayer, DataAccessLayer>();
             container.RegisterType(typeof(IDatabaseCommand<>), typeof(DatabaseCommand<>));
 
-            container.RegisterType<IManagerService, ManagerService>();
-            container.RegisterType<IManagerRepository, ManagerRepository>();
+            container.RegisterType<IEnrollmentProcessService, EnrollmentProcessService>();
+            container.RegisterType<IEnrollmentProcessRepository, EnrollmentProcessRepository>();
 
             container.RegisterType<IAdministratorService, AdministratorService>();
             container.RegisterType<IAdministratorRepository, AdministratorRepository>();

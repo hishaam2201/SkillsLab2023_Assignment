@@ -27,8 +27,8 @@ namespace DAL.Repositories.ApplicationRepository
 
         public async Task<bool> InsertDocumentUpload(DocumentUpload documentUpload)
         {
-            const string INSERT_DOCUMENT_UPLOAD_QUERY = @"INSERT INTO DocumentUpload (ApplicationId, [File], PreRequisiteId) 
-                                                          VALUES (@ApplicationId, @File, @PreRequisiteId);";
+            const string INSERT_DOCUMENT_UPLOAD_QUERY = @"INSERT INTO DocumentUpload (ApplicationId, [File], PreRequisiteId, FileName) 
+                                                          VALUES (@ApplicationId, @File, @PreRequisiteId, @FileName);";
             var excludedDocumentUploadParameters = new List<string> { "Id" };
             SqlParameter[] documentUploadPreRequisite = _dbCommand.GetSqlParametersFromObject(documentUpload, excludedDocumentUploadParameters);
             return (await _dbCommand.AffectedRowsCountAsync(INSERT_DOCUMENT_UPLOAD_QUERY, documentUploadPreRequisite)) > 0;

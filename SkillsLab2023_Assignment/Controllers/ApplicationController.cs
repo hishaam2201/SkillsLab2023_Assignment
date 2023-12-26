@@ -28,7 +28,8 @@ namespace SkillsLab2023_Assignment.Controllers
                 UsertId = SessionManager.CurrentUser.Id,
                 TrainingId = file.TrainingId,
                 PreRequisiteId = file.PreRequisiteId,
-                File = file.File
+                File = file.File,
+                FileName = file.FileName,
             }).ToList();
 
             bool isUploaded = await _applicationService.ProcessApplication(enrollmentDataList);

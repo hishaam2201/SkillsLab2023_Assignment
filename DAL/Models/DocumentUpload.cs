@@ -8,5 +8,6 @@ namespace DAL.Models
         public int ApplicationId { get; set; }
         public byte[] File { get; set; }
         public int PreRequisiteId { get; set; }
+        public string FileName { get; set; }
     }
 }

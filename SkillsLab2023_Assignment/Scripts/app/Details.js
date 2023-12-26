@@ -51,7 +51,7 @@ form.addEventListener('submit', event => {
     form.classList.add('was-validated')
 })
 
-function submitApplication(form) {
+function submitApplication() {
     var formData = new FormData();
     var fileInputs = document.querySelectorAll('.file-upload');
 
@@ -60,10 +60,12 @@ function submitApplication(form) {
         var trainingId = document.getElementById('trainingId').value
         var prerequisiteId = document.getElementById("prerequisiteId_" + index).value
         var file = fileInput.files[0]
+        var encodedFileName = encodeURIComponent(file.name).trim()
 
         formData.append(`Files[${index}].TrainingId`, trainingId)
         formData.append(`Files[${index}].PreRequisiteId`, prerequisiteId)
         formData.append(`Files[${index}].File`, file)
+        formData.append(`Files[${index}].FileName`, encodedFileName)
     })
 
     // Send POST request to controller
@@ -83,8 +85,9 @@ function submitApplication(form) {
                 displayToastToUser("Error", `${data.message}`)
             }
         })
-        .catch(() => {
-            window.location.href = '/Common/InternalServerError';
+        .catch((error) => {
+            console.error(`Error: ${error}`)
+            //window.location.href = '/Common/InternalServerError';
         })
 }
 

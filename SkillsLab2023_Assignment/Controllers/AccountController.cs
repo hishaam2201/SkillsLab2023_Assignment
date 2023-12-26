@@ -81,19 +81,6 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpGet]
-        public ActionResult Register()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<JsonResult> GetAllDepartments()
-        {
-            List<DepartmentDTO> departmentDTO = (await _accountService.GetAllDepartmentsAsync()).ToList();
-            return Json(new { success = true, departments = departmentDTO }, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
         public async Task<JsonResult> GetAllManagersFromDepartment(int departmentId)
         {
             List<ManagerDTO> managerDTO = (await _accountService.GetAllManagersFromDepartmentAsync(departmentId)).ToList();
@@ -132,6 +119,19 @@ namespace SkillsLab2023_Assignment.Controllers
             {
                 return Json(new { success = false, message = "Email already exists!" });
             }
+        }
+
+        [HttpGet]
+        public ActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetAllDepartments()
+        {
+            List<DepartmentDTO> departmentDTO = (await _accountService.GetAllDepartmentsAsync()).ToList();
+            return Json(new { success = true, departments = departmentDTO }, JsonRequestBehavior.AllowGet);
         }
 
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]

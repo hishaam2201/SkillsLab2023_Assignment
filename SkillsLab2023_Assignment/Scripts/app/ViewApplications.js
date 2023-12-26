@@ -1,25 +1,17 @@
 (function () {
-    fetch('/EnrollmentProcess/ApproveApplication', {
+    fetch('/EnrollmentProcess/ViewApplications', {
         method: 'GET'
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                if (data.success) {
-                    if (data.PendingApplications && data.PendingApplications.length > 0) {
-                        console.log(data.PendingApplications)
-                        populateApplicationTable(data.PendingApplications)
-                    }
-                    else {
-                        toastr.warning("No pending applications found", {
-                            timeOut: 5000,
-                            progressBar: true
-                        })
-                    }
+                if (data.PendingApplications && data.PendingApplications.length > 0) {
+                    populateApplicationTable(data.PendingApplications)
                 }
             }
             else {
-                toastr.error("Applications could not be fetched", "Error", {
+                document.getElementById("dashboardContainer").innerHTML = '<h1>No pending applications found</h1>'
+                toastr.warning("No pending applications found", {
                     timeOut: 5000,
                     progressBar: true
                 })
@@ -44,43 +36,139 @@ function populateApplicationTable(pendingApplications) {
         trainingNameCell.textContent = pendingApplication.TrainingName
         row.appendChild(trainingNameCell)
 
+        const trainingDepartmentCell = document.createElement('td')
+        trainingDepartmentCell.textContent = pendingApplication.DepartmentName
+        row.appendChild(trainingDepartmentCell)
+
         const applicationStatusCell = document.createElement('td')
         applicationStatusCell.textContent = pendingApplication.ApplicationStatus
         row.appendChild(applicationStatusCell)
 
-        const viewDocumentButtonCell = document.createElement('td')
-        const viewDocumentButton = document.createElement('button')
-        viewDocumentButton.classList.add('btn');
-        viewDocumentButton.classList.add('btn-secondary');
-        viewDocumentButton.textContent = 'View Document';
-        viewDocumentButton.addEventListener('click', () => {
-            alert("View Document Button Clicked")
+        const viewDocumentButtonCell = createButton('view', 'View Document', () => {
+            const firstName = pendingApplication.FirstName
+            const lastName = pendingApplication.LastName
+            const applicationId = pendingApplication.ApplicationId
+            fetchDataAndPopulateModal(firstName, lastName, applicationId)
         })
-        viewDocumentButtonCell.appendChild(viewDocumentButton)
+
+        const approveApplicationButtonCell = createButton('approve', 'Approve Application', () => {
+            alert('Approve Application Button Clicked');
+        });
+
+        const declineApplicationButtonCell = createButton('decline', 'Decline Application', () => {
+            alert('Decline Application Button Clicked');
+        });
+
         row.appendChild(viewDocumentButtonCell)
-
-        const approveApplicationButtonCell = document.createElement('td')
-        const approveApplicationButton = document.createElement('button')
-        approveApplicationButton.classList.add('btn');
-        approveApplicationButton.classList.add('btn-outline-success');
-        approveApplicationButton.textContent = 'Approve Application';
-        approveApplicationButton.addEventListener('click', () => {
-            alert("Approve Application Button Clicked")
-        })
-        approveApplicationButtonCell.appendChild(approveApplicationButton)
         row.appendChild(approveApplicationButtonCell)
-
-        const declineApplicationButtonCell = document.createElement('td')
-        const declineApplicationButton = document.createElement('button')
-        declineApplicationButton.classList.add('btn');
-        declineApplicationButton.classList.add('btn-outline-danger');
-        declineApplicationButton.textContent = 'Decline Application';
-        declineApplicationButton.addEventListener('click', () => {
-            alert("Decline Application Button Clicked")
-        })
-        declineApplicationButtonCell.appendChild(declineApplicationButton)
         row.appendChild(declineApplicationButtonCell)
 
         tableBody.appendChild(row)
     })
+}
+
+function createButton(type, text, clickHandler) {
+    const buttonCell = document.createElement('td');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.classList.add('btn');
+
+    switch (type) {
+        case 'view':
+            button.classList.add('btn-secondary');
+            button.setAttribute('data-bs-toggle', 'modal');
+            button.setAttribute('data-bs-target', '#viewDocModal');
+            button.addEventListener('click', clickHandler);
+            break;
+        case 'approve':
+            button.classList.add('btn-outline-success');
+            button.addEventListener('click', clickHandler);
+            break;
+        case 'decline':
+            button.classList.add('btn-outline-danger');
+            button.addEventListener('click', clickHandler);
+            break;
+        default:
+            break;
+    }
+
+    button.textContent = text;
+    buttonCell.appendChild(button);
+    return buttonCell;
+}
+
+function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
+    fetch(`/EnrollmentProcess/ViewDocuments?applicationId=${applicationId}`, {
+        method: 'POST'
+    })
+        .then(response => response.json())
+        .then(data => {
+            const modal = document.getElementById("viewDocModal");
+            const modalTitle = modal.querySelector(".modal-title");
+
+            modalTitle.textContent = `Documents submitted by ${firstName} ${lastName}`
+
+            if (data.success) {
+                if (data.Attachments && data.Attachments.length > 0) {
+                    populateModal(data.Attachments);
+                }
+                else {
+                    toastr.warning("No attachments found", {
+                        timeOut: 5000,
+                        progressBar: true
+                    })
+                }
+            }
+            else {
+                toastr.error("Documents could not be fetched", "Error", {
+                    timeOut: 5000,
+                    progressBar: true
+                })
+            }
+        })
+        .catch(() => {
+            window.location.href = "/Common/InternalServerError"
+        })
+}
+
+function populateModal(attachmentInfoList) {
+    var modalBody = document.getElementById("modalBody")
+    modalBody.innerHTML = '';
+
+    attachmentInfoList.forEach(function (attachmentInfo) {
+        var rowDiv = document.createElement('div');
+        rowDiv.className = 'row';
+
+        var preRequisiteDiv = document.createElement('div');
+        preRequisiteDiv.className = 'col-md-8';
+
+        var preRequisiteParagraph = document.createElement('p');
+        preRequisiteParagraph.innerHTML = '<strong>Pre-Requisite:</strong> ' + attachmentInfo.PreRequisiteDescription;
+
+        preRequisiteDiv.appendChild(preRequisiteParagraph);
+
+        var buttonDiv = document.createElement('div');
+        buttonDiv.classList.add("col-md-4", "text-center")
+
+        var viewButton = document.createElement('a');
+        viewButton.href = `/EnrollmentProcess/DownloadAttachment?attachmentId=${attachmentInfo.AttachmentId}`;
+        viewButton.className = 'btn btn-primary';
+        viewButton.textContent = 'View Document';
+        buttonDiv.appendChild(viewButton);
+
+        rowDiv.appendChild(preRequisiteDiv);
+        rowDiv.appendChild(buttonDiv);
+
+        modalBody.appendChild(rowDiv);
+    })
+}
+
+function downloadAttachment(attachmentId) {
+    fetch(`/EnrollmentProcess/DownloadAttachment?attachmentId=${attachmentId}`, {
+        method: 'GET'
+    })
+        .then(response => response.json())
+        .catch(() => {
+            window.location.href = "/Common/InternalServerError"
+        })
 }
