@@ -3,8 +3,10 @@
     ViewBag.Title = "Dashboard";
 }
 
+<link href="~/Content/app/Spinner.css" rel="stylesheet" />
+
 <div id="dashboardContainer">
-    <h2>Dashboard</h2>
+    <h2>Training Approval Dashboard</h2>
     <div class="table-responsive">
         <table class="table table-light table-hover mt-4">
             <thead class="text-center">
@@ -31,14 +33,27 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="modalBody" class="modal-body">
-                ...
-                @*Display Pre-Requisiste along with a View Button*@
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="declineModal">Decline Reason</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="declineModalBody" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="spinner-wrapper" id="emailSpinner" style="display: none;">
+    <div class="spinner-border d-block text-info" role="status"></div>
+    <div class="spinner-text">Please wait...</div>
 </div>
 
 <script src="~/Scripts/app/ViewApplications.js"></script>

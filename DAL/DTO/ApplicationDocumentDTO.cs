@@ -2,7 +2,7 @@
 
 namespace DAL.DTO
 {
-    public class PendingApplicationDocumentDTO
+    public class ApplicationDocumentDTO
     {
         public int AttachmentId { get; set; }
         public byte[] File { get; set; }

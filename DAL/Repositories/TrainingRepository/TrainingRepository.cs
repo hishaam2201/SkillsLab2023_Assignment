@@ -23,6 +23,7 @@ namespace DAL.Repositories.TrainingRepository
             List<TrainingDTO> trainingDTOs = new List<TrainingDTO>();
             try
             {
+                // TODO: An employee cannot apply for the same training twice (Riss tou training ki so userid pa dn applicsation)
                 string GET_ALL_UNEXPIRED_TRAININGS_QUERY = $@"SELECT * FROM Training WHERE DeadlineOfApplication >= GETDATE()
                                                               ORDER BY 
                                                               CASE 
@@ -34,7 +35,7 @@ namespace DAL.Repositories.TrainingRepository
 
                 foreach (Training training in trainingList)
                 {
-                    object departmentName = await RetrieveDepartmentNameAsync(training.Id);
+                    object departmentName = await RetrieveDepartmentNameAsync(training.DepartmentId);
 
                     trainingDTOs.Add(new TrainingDTO
                     {
@@ -55,7 +56,7 @@ namespace DAL.Repositories.TrainingRepository
             try
             {
                 Training training = await _dbCommand.GetByIdAsync(id);
-                object departmentName = await RetrieveDepartmentNameAsync(training.Id);
+                object departmentName = await RetrieveDepartmentNameAsync(training.DepartmentId);
 
                 return new TrainingDTO
                 {
@@ -63,7 +64,7 @@ namespace DAL.Repositories.TrainingRepository
                     TrainingName = training.TrainingName,
                     Description = training.Description,
                     Capacity = training.Capacity,
-                    TrainingCourseStartingDate = training.TrainingCourseStartingDate.ToString("d MMMM, yyyy"),
+                    TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime.ToString("d MMMM, yyyy 'at' HH:mm"),
                     DeadlineOfApplication = training.DeadlineOfApplication.ToString("d MMMM, yyyy"),
                     DepartmentName = departmentName?.ToString(),
                     PreRequisites = (await RetrieveTrainingPreRequisitesAsync(training.Id)).ToList()

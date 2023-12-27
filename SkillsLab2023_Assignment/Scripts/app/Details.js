@@ -60,13 +60,15 @@ function submitApplication() {
         var trainingId = document.getElementById('trainingId').value
         var prerequisiteId = document.getElementById("prerequisiteId_" + index).value
         var file = fileInput.files[0]
-        var encodedFileName = encodeURIComponent(file.name).trim()
+        var encodedFileName = encodeURIComponent(file.name)
 
         formData.append(`Files[${index}].TrainingId`, trainingId)
         formData.append(`Files[${index}].PreRequisiteId`, prerequisiteId)
         formData.append(`Files[${index}].File`, file)
         formData.append(`Files[${index}].FileName`, encodedFileName)
     })
+
+    console.log(formData)
 
     // Send POST request to controller
     fetch("/Application/Enroll", {

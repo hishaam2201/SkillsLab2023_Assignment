@@ -47,8 +47,9 @@
     <Compile Include="DTO\DocumentUploadDTO.cs" />
     <Compile Include="DTO\ManagerDTO.cs" />
     <Compile Include="DTO\PasswordDTO.cs" />
-    <Compile Include="DTO\PendingApplicationDocumentDTO.cs" />
-    <Compile Include="DTO\PendingApplicationDTO.cs" />
+    <Compile Include="DTO\ApplicationDocumentDTO.cs" />
+    <Compile Include="DTO\ApplicationDTO.cs" />
+    <Compile Include="DTO\SendEmailDTO.cs" />
     <Compile Include="DTO\TrainingDTO.cs" />
     <Compile Include="DTO\TrainingPreRequisteDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />

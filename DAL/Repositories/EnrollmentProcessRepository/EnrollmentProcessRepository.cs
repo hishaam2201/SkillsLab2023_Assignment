@@ -1,10 +1,12 @@
 ﻿using DAL.DTO;
 using DAL.Models;
 using Framework.DatabaseCommand.DatabaseCommand;
+using Framework.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DAL.Repositories.EnrollmentProcessRepository
@@ -17,7 +19,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
             _dbCommand = dbCommand;
         }
 
-        public async Task<IEnumerable<PendingApplicationDTO>> GetApplicationsAsync(short managerId)
+        public async Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId)
         {
             try
             {
@@ -33,9 +35,9 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                   WHERE ApplicationStatus = 'Pending' AND u.ManagerId = @ManagerId;";
                 
                 SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { ManagerId = managerId });
-                Func<IDataReader, PendingApplicationDTO> mapFunction = reader =>
+                Func<IDataReader, ApplicationDTO> mapFunction = reader =>
                 {
-                    return new PendingApplicationDTO
+                    return new ApplicationDTO
                     {
                         ApplicationId = (int)reader["ApplicationId"],
                         FirstName = reader["FirstName"]?.ToString(),
@@ -53,7 +55,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
 
         }
 
-        public async Task<IEnumerable<PendingApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId)
+        public async Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId)
         {
             try
             {
@@ -65,9 +67,9 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                   WHERE du.ApplicationId = @ApplicationId;";
 
                 SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { ApplicationId = applicationId });
-                Func<IDataReader, PendingApplicationDocumentDTO> mapFunction = reader =>
+                Func<IDataReader, ApplicationDocumentDTO> mapFunction = reader =>
                 {
-                    return new PendingApplicationDocumentDTO
+                    return new ApplicationDocumentDTO
                     {
                         AttachmentId = (int)reader["AttachmentId"],
                         File = reader["File"] as byte[],
@@ -77,6 +79,80 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                 };
                 var result = await _dbCommand.ExecuteSelectQueryAsync(GET_APPLICATION_DOCUMENT_QUERY, parameters, mapFunction);
                 return result;
+            }
+            catch (Exception) { throw; }
+        }
+
+        public async Task<(bool, SendEmailDTO)> ApproveApplicationAsync(int applicationId)
+        {
+            try
+            {
+                const string APPROVE_APPLICATION_QUERY = @"UPDATE [Application]
+                                                           SET ApplicationStatus = @ApplicationStatus
+                                                           WHERE 
+	                                                       Id = @ApplicationId;
+
+                                                           SELECT u.FirstName, u.LastName, u.Email, t.TrainingName FROM [Application]
+                                                           INNER JOIN [User] AS u
+                                                           ON u.Id = [Application].UserId
+                                                           INNER JOIN Training AS t
+                                                           ON t.Id = [Application].TrainingId
+                                                           WHERE [Application].Id = @ApplicationId";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new
+                {
+                    ApplicationStatus = (ApplicationStatusEnum.Approved.ToString()),
+                    ApplicationId = applicationId
+                });
+                Func<IDataReader, SendEmailDTO> mapFunction = reader =>
+                {
+                    string firstName = reader["FirstName"]?.ToString();
+                    string lastName = reader["LastName"]?.ToString();
+                    return new SendEmailDTO
+                    {
+                        EmployeeName = $"{firstName} {lastName}",
+                        EmployeeEmail = reader["Email"]?.ToString(),
+                        TrainingName = reader["TrainingName"]?.ToString()
+                    };
+                };
+                var result =  (await _dbCommand.ExecuteSelectQueryAsync(APPROVE_APPLICATION_QUERY, parameters, mapFunction)).FirstOrDefault();
+                return (true, result);
+            }
+            catch (Exception) { throw; }
+        }
+
+        public async Task<(bool, SendEmailDTO)> DeclineApplicationAsync(int applicationId)
+        {
+            try
+            {
+                const string DECLINE_APPLICATION_QUERY = @"UPDATE [Application]
+                                                           SET ApplicationStatus = @ApplicationStatus
+                                                           WHERE 
+	                                                       Id = @ApplicationId;
+
+                                                           SELECT u.FirstName, u.LastName, u.Email, t.TrainingName FROM [Application]
+                                                           INNER JOIN [User] AS u
+                                                           ON u.Id = [Application].UserId
+                                                           INNER JOIN Training AS t
+                                                           ON t.Id = [Application].TrainingId
+                                                           WHERE [Application].Id = @ApplicationId";
+                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new
+                {
+                    ApplicationStatus = (ApplicationStatusEnum.Declined.ToString()),
+                    ApplicationId = applicationId
+                });
+                Func<IDataReader, SendEmailDTO> mapFunction = reader =>
+                {
+                    string firstName = reader["FirstName"]?.ToString();
+                    string lastName = reader["LastName"]?.ToString();
+                    return new SendEmailDTO
+                    {
+                        EmployeeName = $"{firstName} {lastName}",
+                        EmployeeEmail = reader["Email"]?.ToString(),
+                        TrainingName = reader["TrainingName"]?.ToString()
+                    };
+                };
+                var result = (await _dbCommand.ExecuteSelectQueryAsync(DECLINE_APPLICATION_QUERY, parameters, mapFunction)).FirstOrDefault();
+                return (true, result);
             }
             catch (Exception) { throw; }
         }

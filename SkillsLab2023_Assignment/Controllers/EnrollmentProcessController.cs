@@ -10,6 +10,7 @@ using System.Web.Mvc;
 namespace SkillsLab2023_Assignment.Controllers
 {
     [UserSession]
+    [CustomAuthorization("Manager")]
     public class EnrollmentProcessController : Controller
     {
         private readonly IEnrollmentProcessService _enrollmentProcessService;
@@ -19,11 +20,10 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpGet]
-        [CustomAuthorization("Manager")]
         public async Task<JsonResult> ViewApplications()
         {
             short managerId = SessionManager.CurrentUser.Id;
-            List<PendingApplicationDTO> pendingApplications = (await _enrollmentProcessService.GetApplicationsAsync(managerId)).ToList();
+            List<ApplicationDTO> pendingApplications = (await _enrollmentProcessService.GetApplicationsAsync(managerId)).ToList();
             return Json(new
             {
                 success = pendingApplications != null && pendingApplications.Any(),
@@ -32,10 +32,9 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpPost]
-        [CustomAuthorization("Manager")]
         public async Task<JsonResult> ViewDocuments(int applicationId)
         {
-            List<PendingApplicationDocumentDTO> documents = (await _enrollmentProcessService.GetApplicationDocumentAsync(applicationId)).ToList();
+            List<ApplicationDocumentDTO> documents = (await _enrollmentProcessService.GetApplicationDocumentAsync(applicationId)).ToList();
             SessionManager.Attachments = documents;
 
             List<AttachmentInfoDTO> attachmentInfoList = documents.Select(doc => new AttachmentInfoDTO
@@ -52,14 +51,35 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpGet]
-        [CustomAuthorization("Manager")]
         public async Task<ActionResult> DownloadAttachment(int attachmentId)
         {
-            PendingApplicationDocumentDTO document = SessionManager.Attachments.FirstOrDefault(doc => doc.AttachmentId == attachmentId);
+            ApplicationDocumentDTO document = SessionManager.Attachments.FirstOrDefault(doc => doc.AttachmentId == attachmentId);
             byte[] binaryFile = document.File;
             string contentType = "application/octet-stream"; // TODO: Perform server side validations to display allowed files based on extensions
             string fileName = Uri.UnescapeDataString(document.FileName); // Decode encoded file name
             return await Task.Run(() => File(binaryFile, contentType, fileName));
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ApproveApplication(int applicationId)
+        {
+            string managerName = $"{SessionManager.CurrentUser.FirstName} {SessionManager.CurrentUser.LastName}";
+            bool isApproved = await _enrollmentProcessService.ApproveApplicationAsync(applicationId, managerName);
+            return Json(new
+            {
+                success = isApproved
+            });
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> DeclineApplication(int applicationId, string message)
+        {
+            string managerName = $"{SessionManager.CurrentUser.FirstName} {SessionManager.CurrentUser.LastName}";
+            bool isDeclined = await _enrollmentProcessService.DeclineApplicationAsync(applicationId, managerName, message);
+            return Json(new
+            {
+                success = isDeclined
+            });
         }
     }
 }

@@ -29,8 +29,10 @@ namespace SkillsLab2023_Assignment.Controllers
                 TrainingId = file.TrainingId,
                 PreRequisiteId = file.PreRequisiteId,
                 File = file.File,
-                FileName = file.FileName,
+                FileName = file.FileName
             }).ToList();
+
+            // TODO: File restriction to only images, and look at max file size
 
             bool isUploaded = await _applicationService.ProcessApplication(enrollmentDataList);
             if (isUploaded)

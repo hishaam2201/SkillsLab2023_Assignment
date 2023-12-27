@@ -40,23 +40,25 @@ function populateApplicationTable(pendingApplications) {
         trainingDepartmentCell.textContent = pendingApplication.DepartmentName
         row.appendChild(trainingDepartmentCell)
 
+        const applicationId = pendingApplication.ApplicationId
         const applicationStatusCell = document.createElement('td')
+        applicationStatusCell.id = `applicationStatus_${applicationId}`;
         applicationStatusCell.textContent = pendingApplication.ApplicationStatus
         row.appendChild(applicationStatusCell)
 
         const viewDocumentButtonCell = createButton('view', 'View Document', () => {
             const firstName = pendingApplication.FirstName
             const lastName = pendingApplication.LastName
-            const applicationId = pendingApplication.ApplicationId
             fetchDataAndPopulateModal(firstName, lastName, applicationId)
         })
 
         const approveApplicationButtonCell = createButton('approve', 'Approve Application', () => {
-            alert('Approve Application Button Clicked');
+            showSpinner()
+            approveApplication(applicationId)
         });
 
         const declineApplicationButtonCell = createButton('decline', 'Decline Application', () => {
-            alert('Decline Application Button Clicked');
+            showDeclineModal(applicationId)
         });
 
         row.appendChild(viewDocumentButtonCell)
@@ -86,6 +88,8 @@ function createButton(type, text, clickHandler) {
             break;
         case 'decline':
             button.classList.add('btn-outline-danger');
+            button.setAttribute('data-bs-toggle', 'modal');
+            button.setAttribute('data-bs-target', '#declineModal');
             button.addEventListener('click', clickHandler);
             break;
         default:
@@ -110,7 +114,7 @@ function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
 
             if (data.success) {
                 if (data.Attachments && data.Attachments.length > 0) {
-                    populateModal(data.Attachments);
+                    populateViewModal(data.Attachments);
                 }
                 else {
                     toastr.warning("No attachments found", {
@@ -131,7 +135,7 @@ function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
         })
 }
 
-function populateModal(attachmentInfoList) {
+function populateViewModal(attachmentInfoList) {
     var modalBody = document.getElementById("modalBody")
     modalBody.innerHTML = '';
 
@@ -171,4 +175,106 @@ function downloadAttachment(attachmentId) {
         .catch(() => {
             window.location.href = "/Common/InternalServerError"
         })
+}
+
+function approveApplication(applicationId) {
+    fetch(`/EnrollmentProcess/ApproveApplication?applicationId=${applicationId}`, {
+        method: 'POST'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success("Application approved!", "Approved", {
+                    timeOut: 1200,
+                    progressBar: true
+                })
+
+                setTimeout(() => {
+                    hideSpinner();
+                    window.location.reload()
+                }, 1300)
+            }
+            else {
+                toastr.error("Could not approve application", "Error", {
+                    timeOut: 5000,
+                    progressBar: true
+                })
+            }
+        })
+        .catch(() => {
+            hideSpinner();
+            window.location.href = "/Common/InternalServerError"
+        })
+}
+
+function showDeclineModal(applicationId) {
+    var textArea = document.createElement('textarea')
+    textArea.id = 'declineMessage';
+    textArea.className = 'form-control';
+    textArea.placeholder = 'Enter decline reason...'
+
+    var submitButton = document.createElement('button')
+    submitButton.type = 'button'
+    submitButton.classList.add('btn', 'btn-primary')
+    submitButton.setAttribute('data-bs-dismiss', 'modal');
+    submitButton.textContent = 'Send Declined Message'
+    submitButton.addEventListener('click', function () {
+        submitDeclineReason(applicationId)
+    })
+
+    var modalBody = document.getElementById('declineModalBody')
+    modalBody.appendChild(textArea)
+    modalBody.appendChild(submitButton)
+}
+
+function submitDeclineReason(applicationId) {
+    var declineMessage = document.getElementById('declineMessage').value
+    //showSpinner()
+    declineApplication(applicationId, declineMessage)
+}
+
+function declineApplication(applicationId, message) {
+    var formData = new FormData()
+    formData.append('applicationId', applicationId)
+    formData.append('message', message)
+
+    fetch(`/EnrollmentProcess/DeclineApplication`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success("Declined message sent successfully!", "Message sent", {
+                    timeOut: 1200,
+                    progressBar: true
+                })
+
+                setTimeout(() => {
+                    hideSpinner();
+                    window.location.reload()
+                }, 1300)
+            }
+            else {
+                toastr.error("Could not send declined reason", "Error", {
+                    timeOut: 5000,
+                    progressBar: true
+                })
+            }
+        })
+        .catch(() => {
+            hideSpinner();
+            window.location.href = "/Common/InternalServerError"
+        })
+}
+
+function showSpinner() {
+    const spinnerWrapper = document.getElementById('emailSpinner');
+    spinnerWrapper.style.display = 'flex';
+}
+
+function hideSpinner() {
+    const spinnerWrapper = document.getElementById('emailSpinner');
+    spinnerWrapper.style.opacity = '0';
+    spinnerWrapper.style.display = 'none';
 }
