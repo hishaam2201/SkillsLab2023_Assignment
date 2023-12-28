@@ -4,6 +4,8 @@
     ViewBag.Title = "Training Details";
 }
 
+<link href="~/Content/app/Details.css" rel="stylesheet" />
+
 <h2 id="trainingName" class="mb-3">@Model.TrainingName</h2>
 <div class="fs-5">
     <p id="description">
@@ -23,12 +25,15 @@
         @Model.TrainingCourseStartingDateTime
     </p>
 </div>
-
+<div class="callout callout-info">
+    <h4 class="alert-heading"><strong>Upload Attachments for Training Prerequisites</strong></h4>
+    <p class="mb-0">Please upload the required documents for each prerequisite listed below. Ensure that each file is in PDF, JPEG, or PNG format.</p>
+</div>
 <form id="uploadForm" method="post" onsubmit="return false;" enctype="multipart/form-data" novalidate>
     @for (int index = 0; index < Model.PreRequisites.Count; index++)
     {
         <div class="mb-3">
-            <label><strong>PreRequisite @(index + 1)</strong>: @Model.PreRequisites[index].PreRequisiteDescription</label>
+            <label><strong>@Model.PreRequisites[index].PreRequisiteName</strong>: @Model.PreRequisites[index].PreRequisiteDescription</label>
             <input type="file" class="form-control file-upload" required data-index="@index" accept=".pdf, .jpeg, .png" />
             <input type="hidden" id="trainingId" value="@Model.TrainingId" />
             <input type="hidden" id="prerequisiteId_@index" value="@Model.PreRequisites[index].PreRequisiteId" />

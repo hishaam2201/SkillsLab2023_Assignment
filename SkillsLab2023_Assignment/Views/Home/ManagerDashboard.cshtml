@@ -25,7 +25,7 @@
 </div>
 
 @*Modal for Viewing Document*@
-<div class="modal fade" id="viewDocModal" tabindex="-1" aria-labelledby="viewDocModalLabel" aria-hidden="true">
+<div class="modal modal-lg fade" id="viewDocModal" tabindex="-1" aria-labelledby="viewDocModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -38,14 +38,24 @@
     </div>
 </div>
 
+@*Modal for declining application*@
 <div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="declineModal">Decline Reason</h1>
+                <h1 class="modal-title fs-5" id="declineModalTitle"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div id="declineModalBody" class="modal-body">
+            <div class="modal-body pt-1">
+                <form>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Message:</label>
+                        <textarea class="form-control" id="decline-message-text" placeholder="Enter decline reason..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="declineButton" type="button" data-bs-dismiss="modal" class="btn btn-danger">Send Message</button>
             </div>
         </div>
     </div>

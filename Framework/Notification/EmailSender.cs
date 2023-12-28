@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace Framework.Notification
@@ -24,15 +22,8 @@ namespace Framework.Notification
                 Body = body,
                 IsBodyHtml = true
             };
-
-            try
-            {
-                await smtpClient.SendMailAsync(mailMessage);
-                return true;
-            }
-            catch(Exception) { throw; }
+            await smtpClient.SendMailAsync(mailMessage);
+            return true;
         }
-
-
     }
 }

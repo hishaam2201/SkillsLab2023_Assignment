@@ -40,6 +40,7 @@ namespace SkillsLab2023_Assignment.Controllers
             List<AttachmentInfoDTO> attachmentInfoList = documents.Select(doc => new AttachmentInfoDTO
             {
                 AttachmentId = doc.AttachmentId,
+                PreRequisiteName = doc.PreRequisiteName,
                 PreRequisiteDescription = doc.PreRequisiteDescription
             }).ToList();
 

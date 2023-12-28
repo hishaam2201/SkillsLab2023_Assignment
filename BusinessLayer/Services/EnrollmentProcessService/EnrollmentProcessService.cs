@@ -18,47 +18,35 @@ namespace BusinessLayer.Services.EnrollmentProcessService
         public async Task<bool> ApproveApplicationAsync(int applicationId, string managerName)
         {
             var (isApproved, result) = await _enrollmentProcessRepository.ApproveApplicationAsync(applicationId);
-
             if (isApproved)
             {
                 SendEmailDTO emailDTO = new SendEmailDTO
                 {
-                    IsApproved = isApproved,
                     EmployeeName = result.EmployeeName,
                     EmployeeEmail = result.EmployeeEmail,
                     ManagerName = managerName,
                     TrainingName = result.TrainingName
                 };
-                GenerateEmailBody(emailDTO, out string body, out string subject);
-                try
-                {
-                    return await EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
-                }
-                catch(Exception) { throw; }
+                GenerateEmailBody(emailDTO, result: "Approved", out string body, out string subject);
+                return await EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
             }
             return false;
         }
 
         public async Task<bool> DeclineApplicationAsync(int applicationId, string managerName, string message)
         {
-            var (isDeclined, result) = await _enrollmentProcessRepository.DeclineApplicationAsync(applicationId);
-
+            var (isDeclined, result) = await _enrollmentProcessRepository.DeclineApplicationAsync(applicationId, message);
             if (isDeclined)
             {
                 SendEmailDTO emailDTO = new SendEmailDTO
                 {
-                    IsApproved = isDeclined,
                     EmployeeName = result.EmployeeName,
                     EmployeeEmail = result.EmployeeEmail,
                     ManagerName = managerName,
                     TrainingName = result.TrainingName
                 };
-                GenerateEmailBody(emailDTO, out string body, out string subject, message);
-                try
-                {
-                    return await EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
-                }
-                catch (Exception) { throw; }
+                GenerateEmailBody(emailDTO, result: "Declined", out string body, out string subject, message: message);
+                return await EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
             }
             return false;
         }
@@ -74,10 +62,8 @@ namespace BusinessLayer.Services.EnrollmentProcessService
         }
 
         // PRIVATE HELPER METHODS
-        private void GenerateEmailBody(SendEmailDTO emailDTO, out string htmlBody, out string subject, string message = "")
+        private void GenerateEmailBody(SendEmailDTO emailDTO, string result, out string htmlBody, out string subject, string message = "")
         {
-            string result = emailDTO.IsApproved ? "Approved" : "Rejected";
-
             if (result == "Approved")
             {
                 htmlBody = $@"
@@ -97,7 +83,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                         </body>
                     </html>";
             }
-            else
+            else if (result == "Declined")
             {
                 htmlBody = $@"
                     <html>
@@ -117,6 +103,10 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                             <p>Best regards</p>
                         </body>
                     </html>";
+            }
+            else
+            {
+                htmlBody = "";
             }
             subject = $"Training Request for {emailDTO.TrainingName} - {result}";
         }

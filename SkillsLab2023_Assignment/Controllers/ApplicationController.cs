@@ -33,7 +33,6 @@ namespace SkillsLab2023_Assignment.Controllers
             }).ToList();
 
             // TODO: File restriction to only images, and look at max file size
-
             bool isUploaded = await _applicationService.ProcessApplication(enrollmentDataList);
             if (isUploaded)
             {

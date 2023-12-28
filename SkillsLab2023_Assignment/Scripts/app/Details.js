@@ -68,9 +68,6 @@ function submitApplication() {
         formData.append(`Files[${index}].FileName`, encodedFileName)
     })
 
-    console.log(formData)
-
-    // Send POST request to controller
     fetch("/Application/Enroll", {
         method: "POST",
         body: formData
@@ -87,9 +84,8 @@ function submitApplication() {
                 displayToastToUser("Error", `${data.message}`)
             }
         })
-        .catch((error) => {
-            console.error(`Error: ${error}`)
-            //window.location.href = '/Common/InternalServerError';
+        .catch(() => {
+            window.location.href = '/Common/InternalServerError';
         })
 }
 

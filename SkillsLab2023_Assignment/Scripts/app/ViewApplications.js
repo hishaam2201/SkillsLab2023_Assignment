@@ -27,9 +27,9 @@ function populateApplicationTable(pendingApplications) {
 
     pendingApplications.forEach(pendingApplication => {
         const row = document.createElement('tr')
-
+        var fullName = `${pendingApplication.FirstName} ${pendingApplication.LastName }`
         const applicantNameCell = document.createElement('td')
-        applicantNameCell.textContent = `${pendingApplication.FirstName} ${pendingApplication.LastName}`
+        applicantNameCell.textContent = `${fullName}`
         row.appendChild(applicantNameCell)
 
         const trainingNameCell = document.createElement('td')
@@ -58,7 +58,7 @@ function populateApplicationTable(pendingApplications) {
         });
 
         const declineApplicationButtonCell = createButton('decline', 'Decline Application', () => {
-            showDeclineModal(applicationId)
+            submitDeclineModal(applicationId, fullName)
         });
 
         row.appendChild(viewDocumentButtonCell)
@@ -99,7 +99,7 @@ function createButton(type, text, clickHandler) {
     button.textContent = text;
     buttonCell.appendChild(button);
     return buttonCell;
-}
+}    
 
 function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
     fetch(`/EnrollmentProcess/ViewDocuments?applicationId=${applicationId}`, {
@@ -141,18 +141,18 @@ function populateViewModal(attachmentInfoList) {
 
     attachmentInfoList.forEach(function (attachmentInfo) {
         var rowDiv = document.createElement('div');
-        rowDiv.className = 'row';
+        rowDiv.classList.add('row', 'mb-1');
 
         var preRequisiteDiv = document.createElement('div');
-        preRequisiteDiv.className = 'col-md-8';
+        preRequisiteDiv.className = 'col-md-9';
 
         var preRequisiteParagraph = document.createElement('p');
-        preRequisiteParagraph.innerHTML = '<strong>Pre-Requisite:</strong> ' + attachmentInfo.PreRequisiteDescription;
+        preRequisiteParagraph.innerHTML = `<strong>${attachmentInfo.PreRequisiteName}:</strong> ${attachmentInfo.PreRequisiteDescription}`;
 
         preRequisiteDiv.appendChild(preRequisiteParagraph);
 
         var buttonDiv = document.createElement('div');
-        buttonDiv.classList.add("col-md-4", "text-center")
+        buttonDiv.classList.add("col-md-3", "text-center")
 
         var viewButton = document.createElement('a');
         viewButton.href = `/EnrollmentProcess/DownloadAttachment?attachmentId=${attachmentInfo.AttachmentId}`;
@@ -207,30 +207,18 @@ function approveApplication(applicationId) {
         })
 }
 
-function showDeclineModal(applicationId) {
-    var textArea = document.createElement('textarea')
-    textArea.id = 'declineMessage';
-    textArea.className = 'form-control';
-    textArea.placeholder = 'Enter decline reason...'
-
-    var submitButton = document.createElement('button')
-    submitButton.type = 'button'
-    submitButton.classList.add('btn', 'btn-primary')
-    submitButton.setAttribute('data-bs-dismiss', 'modal');
-    submitButton.textContent = 'Send Declined Message'
-    submitButton.addEventListener('click', function () {
-        submitDeclineReason(applicationId)
+function submitDeclineModal(applicationId, fullName) {
+    var declineModal = document.getElementById('declineModal')
+    if (declineModal) {
+        const declineModalTitle = document.getElementById("declineModalTitle")
+        declineModalTitle.textContent = `Decline reason to ${fullName}`
+    }
+    const declineButton = document.getElementById("declineButton");
+    declineButton.addEventListener('click', function () {
+        const declineMessage = document.getElementById('decline-message-text').value;
+        showSpinner()
+        declineApplication(applicationId, declineMessage)
     })
-
-    var modalBody = document.getElementById('declineModalBody')
-    modalBody.appendChild(textArea)
-    modalBody.appendChild(submitButton)
-}
-
-function submitDeclineReason(applicationId) {
-    var declineMessage = document.getElementById('declineMessage').value
-    //showSpinner()
-    declineApplication(applicationId, declineMessage)
 }
 
 function declineApplication(applicationId, message) {
