@@ -95,7 +95,6 @@ function createButton(type, text, clickHandler) {
         default:
             break;
     }
-
     button.textContent = text;
     buttonCell.appendChild(button);
     return buttonCell;
@@ -141,7 +140,7 @@ function populateViewModal(attachmentInfoList) {
 
     attachmentInfoList.forEach(function (attachmentInfo) {
         var rowDiv = document.createElement('div');
-        rowDiv.classList.add('row', 'mb-1');
+        rowDiv.classList.add('row','p-2');
 
         var preRequisiteDiv = document.createElement('div');
         preRequisiteDiv.className = 'col-md-9';
@@ -171,7 +170,7 @@ function downloadAttachment(attachmentId) {
     fetch(`/EnrollmentProcess/DownloadAttachment?attachmentId=${attachmentId}`, {
         method: 'GET'
     })
-        .then(response => response.json())
+        .then(response => response.blob())
         .catch(() => {
             window.location.href = "/Common/InternalServerError"
         })

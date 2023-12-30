@@ -51,11 +51,6 @@ namespace BusinessLayer.Services.AccountService
             return await _accountRepository.GetUserRolesAsync(email);
         }
 
-        public async Task<bool> IsEmailInUseAsync(string email)
-        {
-            return await _accountRepository.IsEmailInUseAsync(email);
-        }
-
         public async Task<bool> RegisterUserAsync(User user, string email, string password)
         {
             if (await IsEmailInUseAsync(email)) return false;
@@ -70,6 +65,11 @@ namespace BusinessLayer.Services.AccountService
         }
 
         // PRIVATE HELPER METHODS
+        private async Task<bool> IsEmailInUseAsync(string email)
+        {
+            return await _accountRepository.IsEmailInUseAsync(email);
+        }
+
         private byte[] GenerateSalt()
         {
             byte[] salt = new byte[32];

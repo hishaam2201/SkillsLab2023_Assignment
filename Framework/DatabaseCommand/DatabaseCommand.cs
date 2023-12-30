@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Framework.DatabaseCommand.DatabaseCommand
@@ -110,7 +109,7 @@ namespace Framework.DatabaseCommand.DatabaseCommand
         {
             List<TResult> results = new List<TResult>();
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
-            using (SqlCommand sqlCommand = new SqlCommand(query ?? $@"SELECT * FOM [{typeof(TResult).Name}]", sqlConnection))
+            using (SqlCommand sqlCommand = new SqlCommand(query ?? $@"SELECT * FROM [{typeof(TResult).Name}]", sqlConnection))
             {
                 if (parameters != null && parameters.Any())
                 {
@@ -180,7 +179,7 @@ namespace Framework.DatabaseCommand.DatabaseCommand
         }
 
         // PRIAVTE HELPER METHODS
-        private static void MapColumnsToProperties<TResult>(TResult item, IDataReader reader)
+        private void MapColumnsToProperties<TResult>(TResult item, IDataReader reader)
         {
             for (int i = 0; i < reader.FieldCount; i++)
             {

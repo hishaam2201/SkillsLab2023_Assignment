@@ -118,12 +118,15 @@ namespace DAL.Repositories.AccountRepository
                          DECLARE @UserId SMALLINT;
                          SET @UserId = SCOPE_IDENTITY();
                          INSERT INTO UserRole (UserId, RoleId) VALUES
-                         (@UserId, {(byte)RoleEnum.Employee})";
+                         (@UserId, @RoleId)";
 
                 List<string> excludedUserProperties = new List<string> { "Id" };
                 SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
+                SqlParameter roleIdParam = new SqlParameter("@RoleId", SqlDbType.TinyInt);
+                roleIdParam.Value = (byte)RoleEnum.Employee;
+                SqlParameter[] allParams = userQueryParams.Concat(new[] { roleIdParam }).ToArray();
 
-                bool isSuccessful = await _dbCommand.ExecuteTransactionAsync(new SqlCommand(INSERT_INTO_USER_QUERY), userQueryParams);
+                bool isSuccessful = await _dbCommand.ExecuteTransactionAsync(new SqlCommand(INSERT_INTO_USER_QUERY), allParams);
                 return isSuccessful;
             }
             catch(Exception) { throw; }

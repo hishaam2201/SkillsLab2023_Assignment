@@ -11,5 +11,6 @@ namespace DAL.Models
         public DateTime DeadlineOfApplication { get; set; }
         public int Capacity { get; set; }
         public int DepartmentId { get; set; }
+        public bool IsDeadlineExpired { get; set; }
     }
 }

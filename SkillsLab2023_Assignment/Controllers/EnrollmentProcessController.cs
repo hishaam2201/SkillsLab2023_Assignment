@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Services.EnrollmentProcessService;
 using DAL.DTO;
+using Framework.Enums;
 using SkillsLab2023_Assignment.Custom;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Web.Mvc;
 namespace SkillsLab2023_Assignment.Controllers
 {
     [UserSession]
-    [CustomAuthorization("Manager")]
+    [CustomAuthorization(RoleEnum.Manager)]
     public class EnrollmentProcessController : Controller
     {
         private readonly IEnrollmentProcessService _enrollmentProcessService;
@@ -56,7 +57,7 @@ namespace SkillsLab2023_Assignment.Controllers
         {
             ApplicationDocumentDTO document = SessionManager.Attachments.FirstOrDefault(doc => doc.AttachmentId == attachmentId);
             byte[] binaryFile = document.File;
-            string contentType = "application/octet-stream"; // TODO: Perform server side validations to display allowed files based on extensions
+            string contentType = "application/octet-stream";
             string fileName = Uri.UnescapeDataString(document.FileName); // Decode encoded file name
             return await Task.Run(() => File(binaryFile, contentType, fileName));
         }
@@ -81,6 +82,13 @@ namespace SkillsLab2023_Assignment.Controllers
             {
                 success = isDeclined
             });
+        }
+
+        [HttpGet]
+        [CustomAuthorization(RoleEnum.Administrator)]
+        public ActionResult ProcessSelection()
+        {
+            return View();
         }
     }
 }

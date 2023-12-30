@@ -10,39 +10,36 @@ using Unity;
 using Unity.Mvc5;
 using BusinessLayer.Services.ApplicationService;
 using DAL.Repositories.ApplicationRepository;
-using BusinessLayer.Services.AdministratorService;
-using DAL.Repositories.AdministratorRepository;
 using BusinessLayer.Services.EnrollmentProcessService;
 using DAL.Repositories.EnrollmentProcessRepository;
+using System.Runtime.InteropServices;
 
 namespace SkillsLab2023_Assignment
 {
     public static class UnityConfig
     {
+        public static IUnityContainer Container { get; internal set; }
         public static void RegisterComponents()
         {
-			var container = new UnityContainer();
-            
-            container.RegisterType<ILogger, Logger>();
-            container.RegisterType<IDataAccessLayer, DataAccessLayer>();
-            container.RegisterType(typeof(IDatabaseCommand<>), typeof(DatabaseCommand<>));
+            Container = new UnityContainer();
 
-            container.RegisterType<IEnrollmentProcessService, EnrollmentProcessService>();
-            container.RegisterType<IEnrollmentProcessRepository, EnrollmentProcessRepository>();
+            Container.RegisterType<ILogger, Logger>();
+            Container.RegisterType<IDataAccessLayer, DataAccessLayer>();
+            Container.RegisterType(typeof(IDatabaseCommand<>), typeof(DatabaseCommand<>));
 
-            container.RegisterType<IAdministratorService, AdministratorService>();
-            container.RegisterType<IAdministratorRepository, AdministratorRepository>();
+            Container.RegisterType<IEnrollmentProcessService, EnrollmentProcessService>();
+            Container.RegisterType<IEnrollmentProcessRepository, EnrollmentProcessRepository>();
 
-            container.RegisterType<IAccountService, AccountService>();
-            container.RegisterType<IAccountRepository, AccountRepository>();
+            Container.RegisterType<IAccountService, AccountService>();
+            Container.RegisterType<IAccountRepository, AccountRepository>();
 
-            container.RegisterType<ITrainingService, TrainingService>();
-            container.RegisterType<ITrainingRepository, TrainingRepository>();
+            Container.RegisterType<ITrainingService, TrainingService>();
+            Container.RegisterType<ITrainingRepository, TrainingRepository>();
 
-            container.RegisterType<IApplicationService, ApplicationService>();
-            container.RegisterType<IApplicationRepository, ApplicationRepository>();
+            Container.RegisterType<IApplicationService, ApplicationService>();
+            Container.RegisterType<IApplicationRepository, ApplicationRepository>();
 
-            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+            DependencyResolver.SetResolver(new UnityDependencyResolver(Container));
         }
     }
 }

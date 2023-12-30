@@ -15,6 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     <link href="~/Content/toastr.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
@@ -31,10 +32,14 @@
                 </button>
                 <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1 fs-5">
-                        <li>@Html.ActionLink("Home", homeAction, "Home", new { area = "" }, new { @class = "nav-link" })</li>
                         @if (userRole == Framework.Enums.RoleEnum.Employee.ToString())
                         {
+                            <li>@Html.ActionLink("Home", homeAction, "Home", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Browse Training", "ViewTrainings", "Training", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
+                        else if (userRole == Framework.Enums.RoleEnum.Administrator.ToString())
+                        {
+                            <li>@Html.ActionLink("Process Selection", "ProcessSelection", "EnrollmentProcess", new { area = "" }, new { @class = "nav-link" })</li>
                         }
                         <li class=" ms-auto">@Html.ActionLink("Logout", "LogOut", "Account", new { area = "" }, new { @class = "nav-link" })</li>
                     </ul>
@@ -51,7 +56,7 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    <script src="~/Scripts/toastr.js"></script>
+    @*<script src="~/Scripts/toastr.js"></script>*@
     @RenderSection("scripts", required: false)
 </body>
 </html>

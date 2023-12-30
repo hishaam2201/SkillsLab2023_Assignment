@@ -1,0 +1,15 @@
+﻿.table-wrapper{
+    padding-top: 1.5rem;
+}
+#allTrainings th {
+    text-align: center;
+}
+
+#allTrainings td:not(.pre-requisite-cell) {
+    text-align: center;
+}
+
+#allTrainings td.pre-requisite-cell {
+    text-align: left;
+}
+

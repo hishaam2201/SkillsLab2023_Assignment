@@ -13,7 +13,6 @@ namespace BusinessLayer.Services.AccountService
         Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(int departmentId);
         Task<UserDTO> GetUserDataAsync(string email, byte roleId);
         Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync(string email);
-        Task<bool> IsEmailInUseAsync(string email);
         Task<bool> RegisterUserAsync(User user, string email, string password);
     }
 }

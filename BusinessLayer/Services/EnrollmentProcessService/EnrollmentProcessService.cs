@@ -1,5 +1,6 @@
 ﻿using DAL.DTO;
 using DAL.Repositories.EnrollmentProcessRepository;
+using Framework.Enums;
 using Framework.Notification;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                     ManagerName = managerName,
                     TrainingName = result.TrainingName
                 };
-                GenerateEmailBody(emailDTO, result: "Approved", out string body, out string subject);
+                GenerateEmailBody(emailDTO, result: EnrollmentProcessApprovalEnum.Approved, out string body, out string subject);
                 return await EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
             }
             return false;
@@ -45,7 +46,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                     ManagerName = managerName,
                     TrainingName = result.TrainingName
                 };
-                GenerateEmailBody(emailDTO, result: "Declined", out string body, out string subject, message: message);
+                GenerateEmailBody(emailDTO, result: EnrollmentProcessApprovalEnum.Declined, out string body, out string subject, message: message);
                 return await EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
             }
             return false;
@@ -62,9 +63,9 @@ namespace BusinessLayer.Services.EnrollmentProcessService
         }
 
         // PRIVATE HELPER METHODS
-        private void GenerateEmailBody(SendEmailDTO emailDTO, string result, out string htmlBody, out string subject, string message = "")
+        private void GenerateEmailBody(SendEmailDTO emailDTO, EnrollmentProcessApprovalEnum result, out string htmlBody, out string subject, string message = "")
         {
-            if (result == "Approved")
+            if (result == EnrollmentProcessApprovalEnum.Approved)
             {
                 htmlBody = $@"
                     <html>
@@ -83,7 +84,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                         </body>
                     </html>";
             }
-            else if (result == "Declined")
+            else if (result == EnrollmentProcessApprovalEnum.Declined)
             {
                 htmlBody = $@"
                     <html>
@@ -103,6 +104,10 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                             <p>Best regards</p>
                         </body>
                     </html>";
+            }
+            else if (result == EnrollmentProcessApprovalEnum.Selected)
+            {
+                htmlBody = "";
             }
             else
             {

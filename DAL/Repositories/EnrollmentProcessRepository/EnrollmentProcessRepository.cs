@@ -54,8 +54,8 @@ namespace DAL.Repositories.EnrollmentProcessRepository
         {
 
             const string GET_APPLICATION_DOCUMENT_QUERY =
-            @"SELECT du.Id AS AttachmentId, du.[File], pr.[Name], pr.PreRequisiteDescription, du.[FileName]
-                   DocumentUpload AS du
+                @"SELECT du.Id AS AttachmentId, du.[File], pr.[Name], pr.PreRequisiteDescription, du.[FileName]
+                  FROM DocumentUpload AS du
                   INNER JOIN
                       PreRequisite pr ON pr.Id = du.PreRequisiteId
                   WHERE du.ApplicationId = @ApplicationId;";
@@ -78,17 +78,17 @@ namespace DAL.Repositories.EnrollmentProcessRepository
 
         public async Task<(bool, SendEmailDTO)> ApproveApplicationAsync(int applicationId)
         {
-            const string APPROVE_APPLICATION_QUERY = @"UPDATE [Application]
-                                                           SET ApplicationStatus = @ApplicationStatus
-                                                           WHERE 
-	                                                       Id = @ApplicationId;
+            const string APPROVE_APPLICATION_QUERY = @"
+                                            UPDATE [Application]
+                                            SET ApplicationStatus = @ApplicationStatus
+                                            WHERE Id = @ApplicationId;
 
-                                                           SELECT u.FirstName, u.LastName, u.Email, t.TrainingName FROM [Application]
-                                                           INNER JOIN [User] AS u
-                                                           ON u.Id = [Application].UserId
-                                                           INNER JOIN Training AS t
-                                                           ON t.Id = [Application].TrainingId
-                                                           WHERE [Application].Id = @ApplicationId";
+                                            SELECT u.FirstName, u.LastName, u.Email, t.TrainingName FROM [Application]
+                                            INNER JOIN [User] AS u
+                                            ON u.Id = [Application].UserId
+                                            INNER JOIN Training AS t
+                                            ON t.Id = [Application].TrainingId
+                                            WHERE [Application].Id = @ApplicationId";
             SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new
             {
                 ApplicationStatus = (ApplicationStatusEnum.Approved.ToString()),

@@ -34,9 +34,6 @@
     <Reference Include="Firebase.Auth, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Firebase.Auth.1.0.0\lib\netstandard1.1\Firebase.Auth.dll</HintPath>
     </Reference>
-    <Reference Include="Firebase.Storage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FirebaseStorage.net.1.0.3\lib\netstandard1.1\Firebase.Storage.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
       <Private>True</Private>
@@ -184,8 +181,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AccountService\AccountService.cs" />
     <Compile Include="Services\AccountService\IAccountService.cs" />
-    <Compile Include="Services\AdministratorService\AdministratorService.cs" />
-    <Compile Include="Services\AdministratorService\IAdministratorService.cs" />
     <Compile Include="Services\ApplicationService\ApplicationService.cs" />
     <Compile Include="Services\ApplicationService\IApplicationService.cs" />
     <Compile Include="Services\EnrollmentProcessService\IEnrollmentProcessService.cs" />

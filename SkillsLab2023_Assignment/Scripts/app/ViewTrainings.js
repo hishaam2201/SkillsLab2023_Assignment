@@ -1,5 +1,5 @@
 (function () {
-    fetch('/Training/GetAllTrainings', {
+    fetch('/Training/GetAllUnappliedTrainings', {
         method: 'GET'
     })
         .then(response => response.json())
@@ -18,7 +18,7 @@
             else {
                 toastr.error("Trainings could not be fetched", "Error", {
                     timeOut: 5000,
-                    progressBar: true
+                    progressBar: true,
                 })
             }
         })

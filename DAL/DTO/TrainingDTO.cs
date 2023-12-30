@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 
 namespace DAL.DTO
@@ -12,6 +12,7 @@ namespace DAL.DTO
         public string DeadlineOfApplication { get; set; }
         public int Capacity { get; set; }
         public string DepartmentName { get; set; }
+        public bool IsDeadlineExpired { get; set; }
         public List<TrainingPreRequisteDTO> PreRequisites { get; set; }
     }
 }
