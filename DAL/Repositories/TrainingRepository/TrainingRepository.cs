@@ -60,10 +60,10 @@ namespace DAL.Repositories.TrainingRepository
                 TrainingId = training.Id,
                 TrainingName = training.TrainingName,
                 Description = training.Description,
-                Capacity = training.Capacity,
-                TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime.ToString("d MMMM, yyyy 'at' HH:mm"),
                 DeadlineOfApplication = training.DeadlineOfApplication.ToString("d MMMM, yyyy"),
+                Capacity = training.Capacity,
                 DepartmentName = departmentName?.ToString(),
+                TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime.ToString("d MMMM yyyy 'at' HH:mm"),
                 PreRequisites = (await RetrieveTrainingPreRequisitesAsync(training.Id)).ToList()
             };
         }
@@ -102,6 +102,11 @@ namespace DAL.Repositories.TrainingRepository
                                 AND IsDeadlineExpired = @IsNotExpired;";
             SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { IsExpired = 1, IsNotExpired = 0 });
             await _dbCommand.AffectedRowsCountAsync(UPDATE_DEADLINE_EXPIRY_STATUS_QUERY, parameters);
+        }
+
+        public async Task<IEnumerable<PreRequisite>> GetAllPreRequisites()
+        {
+            return await _dbCommand.ExecuteSelectQueryAsync<PreRequisite>();
         }
 
         public async Task<bool> DeleteTrainingAsync(int trainingId)
@@ -182,6 +187,7 @@ namespace DAL.Repositories.TrainingRepository
             }
             catch (Exception) { throw; }
         }
+
     }
 }
 

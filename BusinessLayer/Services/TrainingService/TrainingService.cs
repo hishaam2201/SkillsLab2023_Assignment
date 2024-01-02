@@ -1,7 +1,9 @@
 ﻿using DAL.DTO;
 using DAL.Models;
 using DAL.Repositories.TrainingRepository;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Services.TrainingService
@@ -32,6 +34,16 @@ namespace BusinessLayer.Services.TrainingService
         public async Task UpdateDeadlineExpiryStatusAsync()
         {
             await _trainingRepository.UpdateDeadlineExpiryStatusAsync();
+        }
+
+        public async Task<OperationResult> GetAllPreRequisites()
+        {
+            IEnumerable<PreRequisite> preRequisites = (await _trainingRepository.GetAllPreRequisites());
+            return new OperationResult
+            {
+                Success = preRequisites != null && preRequisites.Any(),
+                ListOfData = preRequisites
+            };
         }
 
         public async Task<OperationResult> DeleteTrainingAsync(int trainingId)

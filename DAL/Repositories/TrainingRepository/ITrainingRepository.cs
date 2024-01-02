@@ -1,4 +1,5 @@
 ﻿using DAL.DTO;
+using DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace DAL.Repositories.TrainingRepository
         Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync();
         Task UpdateDeadlineExpiryStatusAsync();
         Task<bool> AreUsersSelectedForTrainingAsync(int trainingId);
+        Task<IEnumerable<PreRequisite>> GetAllPreRequisites();
         Task<bool> DeleteTrainingAsync(int trainingId);
     }
 }

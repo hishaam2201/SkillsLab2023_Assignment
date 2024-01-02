@@ -11,6 +11,7 @@ namespace BusinessLayer.Services.TrainingService
         Task<TrainingDTO> GetTrainingByIdAsync(int id);
         Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync();
         Task UpdateDeadlineExpiryStatusAsync();
+        Task<OperationResult> GetAllPreRequisites();
         Task<OperationResult> DeleteTrainingAsync(int trainingId);
     }
 }

@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 })
                             }
                         })
-                        .catch(error => {
+                        .catch(() => {
                             toastr.error("Error fetching Managers", "Error", {
                                 closeButton: true
                             })
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
             }
         })
-        .catch(error => {
+        .catch(() => {
             toastr.error("Error fetching Departments", "Error", {
                 closeButton: true                
             })

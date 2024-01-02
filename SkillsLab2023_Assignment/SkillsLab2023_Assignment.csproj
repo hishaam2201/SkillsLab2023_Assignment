@@ -12316,7 +12316,7 @@
     <Content Include="Views\Common\AccessDenied.cshtml" />
     <Content Include="Views\Common\NotFound.cshtml" />
     <Content Include="Views\Common\InternalServerError.cshtml" />
-    <Content Include="Views\Training\Details.cshtml" />
+    <Content Include="Views\Training\TrainingDetails.cshtml" />
     <Content Include="tsconfig.json" />
     <Content Include="Views\Dojo\Login.cshtml" />
     <Content Include="Views\Home\EmployeeDashboard.cshtml" />

@@ -3,11 +3,17 @@
 @{
     ViewBag.Title = "Dashboard";
 }
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.8.0/slimselect.css"
+      integrity="sha512-0jtuSOf2mf7BDdp4NdezEWR/IZ3UuXNxfeJ/AmdP6cyRbkBxGmVjKv91i/cxWksjJtnpSSOsuhxFN0t7xiPA0Q=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link href="~/Content/app/Admin.css" rel="stylesheet" />
 <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 <script defer src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script defer src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.8.0/slimselect.min.js"
+        integrity="sha512-mG8eLOuzKowvifd2czChe3LabGrcIU8naD1b9FUVe4+gzvtyzSy+5AafrHR57rHB+msrHlWsFaEYtumxkC90rg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script defer src="~/Scripts/app/Admin.js"></script>
 
 <h2>View all trainings</h2>
@@ -68,7 +74,10 @@ else
                             }
                         </td>
                         <td>
-                            <button data-training-id="@training.TrainingId" type="button" class="btn btn-labeled btn-outline-primary edit-btn">
+                            <button data-training-id="@training.TrainingId" type="button"
+                                    class="btn btn-labeled btn-outline-primary edit-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#updateTrainingModal">
                                 <span class="btn-label"><i class="fa-regular fa-pen-to-square"></i></span>
                             </button>
                         </td>
@@ -85,4 +94,75 @@ else
             </tbody>
         </table>
     </div>
+
+    <!-- Edit Training Modal -->
+    <div class="modal fade" id="updateTrainingModal" tabindex="-1" aria-labelledby="updateTrainingModalLabel" aria-hidden="true" data-bs-focus="false">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center" id="updateTrainingModalLabel">Editing <span id="trainingTitle"></span></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row">
+                        <form id="editTrainingForm" method="post" onsubmit="return false;">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="trainingName" class="form-label">Training Name</label>
+                                    <input type="text" class="form-control" id="trainingName">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="trainingDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" aria-label="Description" id="trainingDescription" maxlength="600"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="applicationDeadline" class="form-label">Application Deadline</label>
+                                    <input type="date" class="form-control" id="applicationDeadline" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="capacity" class="form-label">Capacity</label>
+                                    <input type="number" class="form-control" id="capacity" min="5" />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="departments" class="form-label">Department</label>
+                                    <select id="departments" class="form-select" aria-label="departments">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="trainingStartDate" class="form-label">Training Start Date</label>
+                                    <input type="date" class="form-control" id="trainingStartDate" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="trainingStartTime" class="form-label">Training Start Time</label>
+                                    <input type="time" class="form-control" id="trainingStartTime" step="1" />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="allPreRequisites" class="form-label">Training Pre-Requisites</label>
+                                    <select id="allPreRequisites" class="p-2" multiple>
+                                        @*TODO: Populate prerequisites dynamically*@
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
+
+
+<script>
+    
+</script>
