@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Framework.DatabaseCommand.DatabaseCommand
@@ -24,29 +23,27 @@ namespace Framework.DatabaseCommand.DatabaseCommand
             bool isSuccessful;
 
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
+            using (SqlTransaction sqlTransaction = sqlConnection.BeginTransaction())
             {
-                using (SqlTransaction sqlTransaction = sqlConnection.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        command.Connection = sqlConnection;
-                        command.Transaction = sqlTransaction;
+                    command.Connection = sqlConnection;
+                    command.Transaction = sqlTransaction;
 
-                        if (parameters != null && parameters.Any())
-                        {
-                            command.Parameters.AddRange(parameters);
-                        }
-                        await command.ExecuteNonQueryAsync();
-
-                        sqlTransaction.Commit();
-                        isSuccessful = true;
-                    }
-                    catch (Exception)
+                    if (parameters != null && parameters.Any())
                     {
-                        sqlTransaction.Rollback();
-                        isSuccessful = false;
-                        throw;
+                        command.Parameters.AddRange(parameters);
                     }
+                    await command.ExecuteNonQueryAsync();
+
+                    sqlTransaction.Commit();
+                    isSuccessful = true;
+                }
+                catch (Exception)
+                {
+                    sqlTransaction.Rollback();
+                    isSuccessful = false;
+                    throw;
                 }
             }
             return isSuccessful;
@@ -55,61 +52,55 @@ namespace Framework.DatabaseCommand.DatabaseCommand
         public async Task<bool> IsRecordPresentAsync(string query, SqlParameter[] parameters)
         {
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
+            using (SqlCommand command = new SqlCommand(query, sqlConnection))
             {
-                using (SqlCommand command = new SqlCommand(query, sqlConnection))
+                try
                 {
-                    try
+                    if (parameters != null && parameters.Any())
                     {
-                        if (parameters != null && parameters.Any())
-                        {
-                            command.Parameters.AddRange(parameters);
-                        }
-                        using(SqlDataReader reader = await command.ExecuteReaderAsync())
-                        {
-                            return reader.HasRows;
-                        }
+                        command.Parameters.AddRange(parameters);
                     }
-                    catch (Exception) { throw; } 
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        return reader.HasRows;
+                    }
                 }
+                catch (Exception) { throw; }
             }
         }
 
         public async Task<object> GetScalerResultAsync(string query, SqlParameter[] parameters)
         {
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
+            using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
             {
-                using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
+                try
                 {
-                    try
+                    if (parameters != null && parameters.Any())
                     {
-                        if (parameters != null && parameters.Any())
-                        {
-                            sqlCommand.Parameters.AddRange(parameters);
-                        }
-                        return await sqlCommand.ExecuteScalarAsync();
+                        sqlCommand.Parameters.AddRange(parameters);
                     }
-                    catch (Exception) { throw; }
+                    return await sqlCommand.ExecuteScalarAsync();
                 }
+                catch (Exception) { throw; }
             }
         }
 
         public async Task<int> AffectedRowsCountAsync(string query, SqlParameter[] parameters = null)
         {
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
+            using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
             {
-                using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
+                try
                 {
-                    try
+                    if (parameters != null && parameters.Length > 0)
                     {
-                        if (parameters != null && parameters.Length > 0)
-                        {
-                            sqlCommand.Parameters.AddRange(parameters);
-                        }
-
-                        return await sqlCommand.ExecuteNonQueryAsync();
+                        sqlCommand.Parameters.AddRange(parameters);
                     }
-                    catch (Exception) { throw; }
+
+                    return await sqlCommand.ExecuteNonQueryAsync();
                 }
+                catch (Exception) { throw; }
             }
         }
 
@@ -117,40 +108,34 @@ namespace Framework.DatabaseCommand.DatabaseCommand
             Func<IDataReader, TResult> mapFunction = null)
         {
             List<TResult> results = new List<TResult>();
-            using(SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
+            using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
+            using (SqlCommand sqlCommand = new SqlCommand(query ?? $@"SELECT * FROM [{typeof(TResult).Name}]", sqlConnection))
             {
-                try
+                if (parameters != null && parameters.Any())
                 {
-                    using (SqlCommand sqlCommand = new SqlCommand(query ?? $@"SELECT * FROM [{typeof(TResult).Name}]", sqlConnection))
-                    {
-                        if (parameters != null && parameters.Any())
-                        {
-                            sqlCommand.Parameters.AddRange(parameters);
-                        }
+                    sqlCommand.Parameters.AddRange(parameters);
+                }
 
-                        using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
+                using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (await reader.ReadAsync())
                         {
-                            if (reader.HasRows)
+                            TResult item;
+                            if (mapFunction != null)
                             {
-                                while (await reader.ReadAsync())
-                                {
-                                    TResult item;
-                                    if (mapFunction != null)
-                                    {
-                                        item = mapFunction(reader);
-                                    }
-                                    else
-                                    {
-                                        item = Activator.CreateInstance<TResult>();
-                                        MapColumnsToProperties(item, reader);
-                                    }
-                                    results.Add(item);
-                                }
+                                item = mapFunction(reader);
                             }
+                            else
+                            {
+                                item = Activator.CreateInstance<TResult>();
+                                MapColumnsToProperties(item, reader);
+                            }
+                            results.Add(item);
                         }
                     }
                 }
-                catch(Exception) { throw; }
             }
             return results;
         }
@@ -160,24 +145,20 @@ namespace Framework.DatabaseCommand.DatabaseCommand
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             {
                 string GET_BY_ID_QUERY = $@"SELECT * FROM [{typeof(T).Name}] WHERE Id = @Id";
-                try
+                using (SqlCommand sqlCommand = new SqlCommand(GET_BY_ID_QUERY, sqlConnection))
                 {
-                    using (SqlCommand sqlCommand = new SqlCommand(GET_BY_ID_QUERY, sqlConnection))
+                    sqlCommand.Parameters.AddWithValue("@Id", id);
+                    using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
                     {
-                        sqlCommand.Parameters.AddWithValue("@Id", id);
-                        using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
+                        if (await reader.ReadAsync())
                         {
-                            if (await reader.ReadAsync())
-                            {
-                                T item = Activator.CreateInstance<T>();
-                                MapColumnsToProperties(item, reader);
-                                return item;
-                            }
-                            return default; // return null
+                            T item = Activator.CreateInstance<T>();
+                            MapColumnsToProperties(item, reader);
+                            return item;
                         }
+                        return default; // return null
                     }
                 }
-                catch (Exception) { throw; }
             }
         }
 
@@ -198,7 +179,7 @@ namespace Framework.DatabaseCommand.DatabaseCommand
         }
 
         // PRIAVTE HELPER METHODS
-        private static void MapColumnsToProperties<TResult>(TResult item, IDataReader reader)
+        private void MapColumnsToProperties<TResult>(TResult item, IDataReader reader)
         {
             for (int i = 0; i < reader.FieldCount; i++)
             {

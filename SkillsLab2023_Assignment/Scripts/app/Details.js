@@ -60,7 +60,7 @@ function submitApplication() {
         var trainingId = document.getElementById('trainingId').value
         var prerequisiteId = document.getElementById("prerequisiteId_" + index).value
         var file = fileInput.files[0]
-        var encodedFileName = encodeURIComponent(file.name).trim()
+        var encodedFileName = encodeURIComponent(file.name)
 
         formData.append(`Files[${index}].TrainingId`, trainingId)
         formData.append(`Files[${index}].PreRequisiteId`, prerequisiteId)
@@ -68,7 +68,6 @@ function submitApplication() {
         formData.append(`Files[${index}].FileName`, encodedFileName)
     })
 
-    // Send POST request to controller
     fetch("/Application/Enroll", {
         method: "POST",
         body: formData
@@ -85,9 +84,8 @@ function submitApplication() {
                 displayToastToUser("Error", `${data.message}`)
             }
         })
-        .catch((error) => {
-            console.error(`Error: ${error}`)
-            //window.location.href = '/Common/InternalServerError';
+        .catch(() => {
+            window.location.href = '/Common/InternalServerError';
         })
 }
 

@@ -6,7 +6,9 @@ namespace DAL.Repositories.EnrollmentProcessRepository
 {
     public interface IEnrollmentProcessRepository
     {
-        Task<IEnumerable<PendingApplicationDTO>> GetApplicationsAsync(short managerId);
-        Task<IEnumerable<PendingApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId);
+        Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId);
+        Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId);
+        Task<(bool, SendEmailDTO)> ApproveApplicationAsync(int applicationId);
+        Task<(bool, SendEmailDTO)> DeclineApplicationAsync(int applicationId, string message);
     }
 }

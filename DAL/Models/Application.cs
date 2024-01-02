@@ -10,5 +10,6 @@ namespace DAL.Models
         public DateTime ApplicationDateTime { get; private set; }
         public short UserId { get; set; }
         public int TrainingId { get; set; }
+        public string DeclineReason { get; set; }
     }
 }

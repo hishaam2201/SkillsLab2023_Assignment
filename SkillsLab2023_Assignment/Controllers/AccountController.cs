@@ -12,6 +12,7 @@ using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
+    [ValidationFilter]
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;

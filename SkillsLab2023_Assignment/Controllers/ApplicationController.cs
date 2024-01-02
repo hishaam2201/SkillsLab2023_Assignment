@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Services.ApplicationService;
 using DAL.DTO;
+using Framework.Enums;
 using SkillsLab2023_Assignment.Custom;
 using SkillsLab2023_Assignment.Models;
 using System.Collections.Generic;
@@ -9,8 +10,9 @@ using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
+    [ValidationFilter]
     [UserSession]
-    [CustomAuthorization("Employee")]
+    [CustomAuthorization(RoleEnum.Employee)]
     public class ApplicationController : Controller
     {
         private readonly IApplicationService _applicationService;
@@ -22,14 +24,13 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public async Task<JsonResult> Enroll(List<DocumentUploadViewModel> files)
         {
-            // TODO: Perform server side validations as well
             var enrollmentDataList = files.Select(file => new DocumentUploadDTO
             {
                 UsertId = SessionManager.CurrentUser.Id,
                 TrainingId = file.TrainingId,
                 PreRequisiteId = file.PreRequisiteId,
                 File = file.File,
-                FileName = file.FileName,
+                FileName = file.FileName
             }).ToList();
 
             bool isUploaded = await _applicationService.ProcessApplication(enrollmentDataList);

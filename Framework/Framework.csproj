@@ -49,6 +49,7 @@
     <Compile Include="DatabaseCommand\DatabaseCommand.cs" />
     <Compile Include="DatabaseCommand\IDatabaseCommand.cs" />
     <Compile Include="Enums\ApplicationStatusEnum.cs" />
+    <Compile Include="Enums\EnrollmentProcessApprovalEnum.cs" />
     <Compile Include="Enums\RoleEnum.cs" />
     <Compile Include="Notification\EmailSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

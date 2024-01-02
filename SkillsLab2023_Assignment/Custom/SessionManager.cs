@@ -29,9 +29,9 @@ namespace SkillsLab2023_Assignment.Custom
             set => Set(_emailKey, value);
         }
 
-        public static List<PendingApplicationDocumentDTO> Attachments
+        public static List<ApplicationDocumentDTO> Attachments
         {
-            get => Get<List<PendingApplicationDocumentDTO>>(_attachments);
+            get => Get<List<ApplicationDocumentDTO>>(_attachments);
             set => Set(_attachments, value);
         }
 

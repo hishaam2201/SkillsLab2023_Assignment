@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace DAL.DTO
 {
-    public class PendingApplicationDTO
+    public class ApplicationDTO
     {
         public int ApplicationId { get; set; }
         public string FirstName { get; set; }
@@ -15,5 +11,6 @@ namespace DAL.DTO
         public string TrainingName { get; set; }
         public string DepartmentName { get; set; }
         public string ApplicationStatus { get; set; }
+        public string DeclineReason { get; set; }
     }
 }

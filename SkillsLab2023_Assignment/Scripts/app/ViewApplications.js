@@ -27,9 +27,9 @@ function populateApplicationTable(pendingApplications) {
 
     pendingApplications.forEach(pendingApplication => {
         const row = document.createElement('tr')
-
+        var fullName = `${pendingApplication.FirstName} ${pendingApplication.LastName }`
         const applicantNameCell = document.createElement('td')
-        applicantNameCell.textContent = `${pendingApplication.FirstName} ${pendingApplication.LastName}`
+        applicantNameCell.textContent = `${fullName}`
         row.appendChild(applicantNameCell)
 
         const trainingNameCell = document.createElement('td')
@@ -40,23 +40,25 @@ function populateApplicationTable(pendingApplications) {
         trainingDepartmentCell.textContent = pendingApplication.DepartmentName
         row.appendChild(trainingDepartmentCell)
 
+        const applicationId = pendingApplication.ApplicationId
         const applicationStatusCell = document.createElement('td')
+        applicationStatusCell.id = `applicationStatus_${applicationId}`;
         applicationStatusCell.textContent = pendingApplication.ApplicationStatus
         row.appendChild(applicationStatusCell)
 
         const viewDocumentButtonCell = createButton('view', 'View Document', () => {
             const firstName = pendingApplication.FirstName
             const lastName = pendingApplication.LastName
-            const applicationId = pendingApplication.ApplicationId
             fetchDataAndPopulateModal(firstName, lastName, applicationId)
         })
 
         const approveApplicationButtonCell = createButton('approve', 'Approve Application', () => {
-            alert('Approve Application Button Clicked');
+            showSpinner()
+            approveApplication(applicationId)
         });
 
         const declineApplicationButtonCell = createButton('decline', 'Decline Application', () => {
-            alert('Decline Application Button Clicked');
+            submitDeclineModal(applicationId, fullName)
         });
 
         row.appendChild(viewDocumentButtonCell)
@@ -86,16 +88,17 @@ function createButton(type, text, clickHandler) {
             break;
         case 'decline':
             button.classList.add('btn-outline-danger');
+            button.setAttribute('data-bs-toggle', 'modal');
+            button.setAttribute('data-bs-target', '#declineModal');
             button.addEventListener('click', clickHandler);
             break;
         default:
             break;
     }
-
     button.textContent = text;
     buttonCell.appendChild(button);
     return buttonCell;
-}
+}    
 
 function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
     fetch(`/EnrollmentProcess/ViewDocuments?applicationId=${applicationId}`, {
@@ -110,7 +113,7 @@ function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
 
             if (data.success) {
                 if (data.Attachments && data.Attachments.length > 0) {
-                    populateModal(data.Attachments);
+                    populateViewModal(data.Attachments);
                 }
                 else {
                     toastr.warning("No attachments found", {
@@ -131,24 +134,24 @@ function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
         })
 }
 
-function populateModal(attachmentInfoList) {
+function populateViewModal(attachmentInfoList) {
     var modalBody = document.getElementById("modalBody")
     modalBody.innerHTML = '';
 
     attachmentInfoList.forEach(function (attachmentInfo) {
         var rowDiv = document.createElement('div');
-        rowDiv.className = 'row';
+        rowDiv.classList.add('row','p-2');
 
         var preRequisiteDiv = document.createElement('div');
-        preRequisiteDiv.className = 'col-md-8';
+        preRequisiteDiv.className = 'col-md-9';
 
         var preRequisiteParagraph = document.createElement('p');
-        preRequisiteParagraph.innerHTML = '<strong>Pre-Requisite:</strong> ' + attachmentInfo.PreRequisiteDescription;
+        preRequisiteParagraph.innerHTML = `<strong>${attachmentInfo.PreRequisiteName}:</strong> ${attachmentInfo.PreRequisiteDescription}`;
 
         preRequisiteDiv.appendChild(preRequisiteParagraph);
 
         var buttonDiv = document.createElement('div');
-        buttonDiv.classList.add("col-md-4", "text-center")
+        buttonDiv.classList.add("col-md-3", "text-center")
 
         var viewButton = document.createElement('a');
         viewButton.href = `/EnrollmentProcess/DownloadAttachment?attachmentId=${attachmentInfo.AttachmentId}`;
@@ -167,8 +170,98 @@ function downloadAttachment(attachmentId) {
     fetch(`/EnrollmentProcess/DownloadAttachment?attachmentId=${attachmentId}`, {
         method: 'GET'
     })
-        .then(response => response.json())
+        .then(response => response.blob())
         .catch(() => {
             window.location.href = "/Common/InternalServerError"
         })
+}
+
+function approveApplication(applicationId) {
+    fetch(`/EnrollmentProcess/ApproveApplication?applicationId=${applicationId}`, {
+        method: 'POST'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success("Application approved!", "Approved", {
+                    timeOut: 1200,
+                    progressBar: true
+                })
+
+                setTimeout(() => {
+                    hideSpinner();
+                    window.location.reload()
+                }, 1300)
+            }
+            else {
+                toastr.error("Could not approve application", "Error", {
+                    timeOut: 5000,
+                    progressBar: true
+                })
+            }
+        })
+        .catch(() => {
+            hideSpinner();
+            window.location.href = "/Common/InternalServerError"
+        })
+}
+
+function submitDeclineModal(applicationId, fullName) {
+    var declineModal = document.getElementById('declineModal')
+    if (declineModal) {
+        const declineModalTitle = document.getElementById("declineModalTitle")
+        declineModalTitle.textContent = `Decline reason to ${fullName}`
+    }
+    const declineButton = document.getElementById("declineButton");
+    declineButton.addEventListener('click', function () {
+        const declineMessage = document.getElementById('decline-message-text').value;
+        showSpinner()
+        declineApplication(applicationId, declineMessage)
+    })
+}
+
+function declineApplication(applicationId, message) {
+    var formData = new FormData()
+    formData.append('applicationId', applicationId)
+    formData.append('message', message)
+
+    fetch(`/EnrollmentProcess/DeclineApplication`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success("Declined message sent successfully!", "Message sent", {
+                    timeOut: 1200,
+                    progressBar: true
+                })
+
+                setTimeout(() => {
+                    hideSpinner();
+                    window.location.reload()
+                }, 1300)
+            }
+            else {
+                toastr.error("Could not send declined reason", "Error", {
+                    timeOut: 5000,
+                    progressBar: true
+                })
+            }
+        })
+        .catch(() => {
+            hideSpinner();
+            window.location.href = "/Common/InternalServerError"
+        })
+}
+
+function showSpinner() {
+    const spinnerWrapper = document.getElementById('emailSpinner');
+    spinnerWrapper.style.display = 'flex';
+}
+
+function hideSpinner() {
+    const spinnerWrapper = document.getElementById('emailSpinner');
+    spinnerWrapper.style.opacity = '0';
+    spinnerWrapper.style.display = 'none';
 }

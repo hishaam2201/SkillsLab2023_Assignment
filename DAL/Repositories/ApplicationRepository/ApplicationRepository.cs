@@ -17,21 +17,29 @@ namespace DAL.Repositories.ApplicationRepository
 
         public async Task<int> InsertApplicationAndGetId(Application application)
         {
-            const string INSERT_APPLICATION_QUERY = @"INSERT INTO [Application] (UserId, TrainingId)
+            try
+            {
+                const string INSERT_APPLICATION_QUERY = @"INSERT INTO [Application] (UserId, TrainingId)
                                                       VALUES (@UserId, @TrainingId)
                                                       SELECT SCOPE_IDENTITY();";
-            var excludedApplicationParameters = new List<string> { "Id", "ApplicationStatus", "ApplicationDateTime" };
-            SqlParameter[] applicationParameters = _dbCommand.GetSqlParametersFromObject(application, excludedApplicationParameters);
-            return Convert.ToInt32(await _dbCommand.GetScalerResultAsync(INSERT_APPLICATION_QUERY, applicationParameters));
+                var excludedApplicationParameters = new List<string> { "Id", "ApplicationStatus", "ApplicationDateTime", "DeclineReason" };
+                SqlParameter[] applicationParameters = _dbCommand.GetSqlParametersFromObject(application, excludedApplicationParameters);
+                return Convert.ToInt32(await _dbCommand.GetScalerResultAsync(INSERT_APPLICATION_QUERY, applicationParameters));
+            }
+            catch (Exception) { throw; }
         }
 
         public async Task<bool> InsertDocumentUpload(DocumentUpload documentUpload)
         {
-            const string INSERT_DOCUMENT_UPLOAD_QUERY = @"INSERT INTO DocumentUpload (ApplicationId, [File], PreRequisiteId, FileName) 
+            try
+            {
+                const string INSERT_DOCUMENT_UPLOAD_QUERY = @"INSERT INTO DocumentUpload (ApplicationId, [File], PreRequisiteId, FileName) 
                                                           VALUES (@ApplicationId, @File, @PreRequisiteId, @FileName);";
-            var excludedDocumentUploadParameters = new List<string> { "Id" };
-            SqlParameter[] documentUploadPreRequisite = _dbCommand.GetSqlParametersFromObject(documentUpload, excludedDocumentUploadParameters);
-            return (await _dbCommand.AffectedRowsCountAsync(INSERT_DOCUMENT_UPLOAD_QUERY, documentUploadPreRequisite)) > 0;
+                var excludedDocumentUploadParameters = new List<string> { "Id" };
+                SqlParameter[] documentUploadPreRequisite = _dbCommand.GetSqlParametersFromObject(documentUpload, excludedDocumentUploadParameters);
+                return (await _dbCommand.AffectedRowsCountAsync(INSERT_DOCUMENT_UPLOAD_QUERY, documentUploadPreRequisite)) > 0;
+            }
+            catch (Exception) { throw; }
         }
     }
 
