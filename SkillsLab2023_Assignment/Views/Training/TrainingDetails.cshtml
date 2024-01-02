@@ -18,11 +18,11 @@
     </p>
     <p id="deadline" class="mb-3">
         <strong>Deadline of Application: </strong>
-        @Model.DeadlineOfApplication
+        @Model.DeadlineOfApplication.ToString("d MMMM, yyyy")
     </p>
     <p id="startingDate" class="mb-3">
         <strong>Training Course Starting Date: </strong>
-        @Model.TrainingCourseStartingDateTime
+        @Model.TrainingCourseStartingDateTime.ToString("d MMMM yyyy 'at' HH:mm")
     </p>
 </div>
 <div class="callout callout-info">

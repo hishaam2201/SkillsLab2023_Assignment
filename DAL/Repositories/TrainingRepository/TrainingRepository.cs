@@ -42,7 +42,7 @@ namespace DAL.Repositories.TrainingRepository
                 {
                     TrainingId = training.Id,
                     TrainingName = training.TrainingName,
-                    DeadlineOfApplication = training.DeadlineOfApplication.ToString("d MMMM, yyyy"),
+                    DeadlineOfApplication = training.DeadlineOfApplication,
                     Capacity = training.Capacity,
                     DepartmentName = departmentName?.ToString()
                 });
@@ -60,10 +60,10 @@ namespace DAL.Repositories.TrainingRepository
                 TrainingId = training.Id,
                 TrainingName = training.TrainingName,
                 Description = training.Description,
-                DeadlineOfApplication = training.DeadlineOfApplication.ToString("d MMMM, yyyy"),
+                DeadlineOfApplication = training.DeadlineOfApplication,
                 Capacity = training.Capacity,
                 DepartmentName = departmentName?.ToString(),
-                TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime.ToString("d MMMM yyyy 'at' HH:mm"),
+                TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime,
                 PreRequisites = (await RetrieveTrainingPreRequisitesAsync(training.Id)).ToList()
             };
         }
@@ -82,8 +82,8 @@ namespace DAL.Repositories.TrainingRepository
                     TrainingId = training.Id,
                     TrainingName = training.TrainingName,
                     Description = training.Description,
-                    TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime.ToString("d MMMM, yyyy 'at' HH:mm"),
-                    DeadlineOfApplication = training.DeadlineOfApplication.ToString("d MMMM, yyyy"),
+                    TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime,
+                    DeadlineOfApplication = training.DeadlineOfApplication,
                     Capacity = training.Capacity,
                     DepartmentName = departmentName?.ToString(),
                     IsDeadlineExpired = training.IsDeadlineExpired,
