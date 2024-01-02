@@ -53,7 +53,7 @@ else
                             }
                         </td>
                         <td>@training.TrainingName</td>
-                        <td>@training.DeadlineOfApplication</td>
+                        <td>@training.DeadlineOfApplication.ToString("d MMMM, yyyy")</td>
                         <td>@training.Capacity</td>
                         <td>@training.DepartmentName</td>
                         <td class="pre-requisite-cell">
@@ -76,14 +76,16 @@ else
                         <td>
                             <button data-training-id="@training.TrainingId" type="button"
                                     class="btn btn-labeled btn-outline-primary edit-btn"
-                                    data-bs-toggle="modal"
                                     data-bs-target="#updateTrainingModal">
-                                <span class="btn-label"><i class="fa-regular fa-pen-to-square"></i></span>
+                                <span class="btn-label"><i class="fa-regular fa-pen-to-square icon"></i></span>
+                                <div class="spinner-border spinner-border-sm spinner" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
                             </button>
                         </td>
                         <td>
                             <button data-training-id="@training.TrainingId" type="button" class="btn btn-labeled btn-outline-danger delete-btn text-center">
-                                <span class="btn-label"><i class="fa-solid fa-trash trashIcon"></i></span>
+                                <span class="btn-label"><i class="fa-solid fa-trash icon"></i></span>
                                 <div class="spinner-border spinner-border-sm spinner" role="status" style="display: none;">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
@@ -103,66 +105,68 @@ else
                     <h1 class="modal-title fs-5 text-center" id="updateTrainingModalLabel">Editing <span id="trainingTitle"></span></h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <div class="row">
-                        <form id="editTrainingForm" method="post" onsubmit="return false;">
+                <form id="editTrainingForm" method="post" onsubmit="return false;" novalidate>
+                    <div class="modal-body p-4">
+                        <div class="row">
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <label for="trainingName" class="form-label">Training Name</label>
-                                    <input type="text" class="form-control" id="trainingName">
+                                    <input type="text" class="form-control" id="trainingName" required>
+                                    <div class="invalid-feedback">Training name is required</div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <label for="trainingDescription" class="form-label">Description</label>
-                                    <textarea class="form-control" aria-label="Description" id="trainingDescription" maxlength="600"></textarea>
+                                    <textarea class="form-control" aria-label="Description" id="trainingDescription" maxlength="600" rows="3" required></textarea>
+                                    <div class="invalid-feedback">Training description is required</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label for="applicationDeadline" class="form-label">Application Deadline</label>
-                                    <input type="date" class="form-control" id="applicationDeadline" />
+                                    <input type="date" class="form-control" id="applicationDeadline" required />
+                                    <div class="invalid-feedback">Application deadline is required</div>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label for="capacity" class="form-label">Capacity</label>
-                                    <input type="number" class="form-control" id="capacity" min="5" />
+                                    <input type="number" class="form-control" id="capacity" min="5" required />
+                                    <div class="invalid-feedback">Capacity is required</div>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label for="departments" class="form-label">Department</label>
-                                    <select id="departments" class="form-select" aria-label="departments">
+                                    <select id="departments" class="form-select" aria-label="departments" required>
                                     </select>
+                                    <div class="invalid-feedback">A department is required</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="trainingStartDate" class="form-label">Training Start Date</label>
-                                    <input type="date" class="form-control" id="trainingStartDate" />
+                                    <input type="date" class="form-control" id="trainingStartDate" required />
+                                    <div class="invalid-feedback">Training start date is required</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="trainingStartTime" class="form-label">Training Start Time</label>
-                                    <input type="time" class="form-control" id="trainingStartTime" step="1" />
+                                    <input type="time" class="form-control" id="trainingStartTime" step="1" required />
+                                    <div class="invalid-feedback">Training start time is required</div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <label for="allPreRequisites" class="form-label">Training Pre-Requisites</label>
                                     <select id="allPreRequisites" class="p-2" multiple>
-                                        @*TODO: Populate prerequisites dynamically*@
                                     </select>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Save changes</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" @*data-bs-dismiss="modal"*@>
+                        <i class="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;Save changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 }
-
-
-<script>
-    
-</script>

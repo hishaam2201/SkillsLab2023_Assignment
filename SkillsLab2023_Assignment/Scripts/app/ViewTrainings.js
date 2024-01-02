@@ -22,7 +22,7 @@
                 })
             }
         })
-        .catch(() => {
+        .catch((error) => {
             window.location.href = '/Common/InternalServerError'
         })
 })()
@@ -42,7 +42,7 @@ function populateTable(trainings) {
         row.appendChild(departmentCell)
 
         const deadlineCell = document.createElement('td')
-        deadlineCell.textContent = training.DeadlineOfApplication
+        deadlineCell.textContent = formatDate(training.DeadlineOfApplication)
         row.appendChild(deadlineCell)
 
         const viewButtonCell = document.createElement('td')
@@ -59,4 +59,19 @@ function populateTable(trainings) {
 
         tableBody.appendChild(row)
     })
+}
+
+function formatDate(date) {
+    // Extracting only unix timestamp
+    var match = date.match(/\d+/);
+    var numericPart = match ? match[0] : null;
+
+    // Make sure to treat as millisecond
+    const dateObject = new Date(parseInt(numericPart, 10))
+
+    const day = String(dateObject.getDate()).padStart(2, '0')
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0')
+    const year = dateObject.getFullYear()
+
+    return `${day}/${month}/${year}`
 }

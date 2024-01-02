@@ -22,8 +22,11 @@
             }
         ],
         drawCallback: function () {
-            addButtonClickListener('edit-btn', function (_, trainingId) {
-                fetchTrainingDetails(slimSelect, trainingId)
+            addButtonClickListener('edit-btn', function (button, trainingId) {
+                disableButton(button)
+                setTimeout(() => {
+                    fetchTrainingDetails(slimSelect, trainingId, button)
+                }, 1000)
             });
 
             addButtonClickListener('delete-btn', function (button, trainingId) {
@@ -36,17 +39,36 @@
     });
 })()
 
-function fetchTrainingDetails(slimSelect, trainingId) {
+const editTrainingForm = document.getElementById('editTrainingForm')
+
+editTrainingForm.addEventListener('submit', event => {
+    if (!editTrainingForm.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+    }
+    else {
+        console.log('Submitted')
+    }
+    editTrainingForm.classList.add('was-validated')
+
+}, false)
+
+function fetchTrainingDetails(slimSelect, trainingId, button) {
     fetch(`/Training/GetTrainingById?trainingId=${trainingId}`, {
         method: 'POST'
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                fetchDepartments(data.training.DepartmentName)
-                fetchPreRequisites(slimSelect, data.training.PreRequisites)
-                //TODO: Populate Training form with existing data
-                //console.log(data.training)
+                const departmentPromise = fetchDepartments();
+                const preRequisitesPromise = fetchPreRequisites()
+
+                return Promise.all([departmentPromise, preRequisitesPromise])
+                    .then(([departmentsData, preRequisitesData]) => {
+                        populateEditTrainingForm(slimSelect, data.training, departmentsData,
+                            data.training.DepartmentName, preRequisitesData, data.training.PreRequisites)
+                        $('#updateTrainingModal').modal('show');
+                    })
             }
             else {
                 toastr.error(`${data.message}`, "Error", {
@@ -58,27 +80,85 @@ function fetchTrainingDetails(slimSelect, trainingId) {
         .catch(() => {
             window.location.href = '/Common/InternalServerError'
         })
+        .finally(() => {
+            enableButton(button)
+        })
 }
 
-function fetchPreRequisites(slimSelect, listOfCurrentTrainingPreRequisites) {
-    fetch('/Training/GetAllPreRequisites', {
-        method: 'GET'
+function populateEditTrainingForm(slimSelect, training, departmentsData, currentTrainingDepartment, preRequisitesData, listOfCurrentTrainingPreRequisites) {
+    document.getElementById('trainingTitle').textContent = training.TrainingName;
+    document.getElementById('trainingName').value = training.TrainingName;
+    document.getElementById('trainingDescription').value = training.Description;
+
+    const applicationDeadline = document.getElementById('applicationDeadline')
+    applicationDeadline.value = formatDateTime(training.DeadlineOfApplication);
+
+    document.getElementById('capacity').value = training.Capacity;
+    populateDepartmentOptions(departmentsData, currentTrainingDepartment)
+
+    var trainingStartDate = document.getElementById('trainingStartDate');
+    trainingStartDate.value = formatDateTime(training.TrainingCourseStartingDateTime);
+    const currentDate = new Date();
+    const formattedCurrentDate = currentDate.toISOString().split('T')[0]
+    updateDeadlineAttributes(applicationDeadline, formattedCurrentDate, trainingStartDate.value);
+    // On change, limit deadline
+    trainingStartDate.addEventListener('change', function () {
+        updateDeadlineAttributes(applicationDeadline, formattedCurrentDate, trainingStartDate.value)
+    });
+    document.getElementById('trainingStartTime').value = formatDateTime(training.TrainingCourseStartingDateTime, true);
+    populatePreRequisitesOptions(slimSelect, preRequisitesData, listOfCurrentTrainingPreRequisites)
+}
+
+function updateDeadlineAttributes(applicationDeadlineInput, formattedCurrentDate, trainingStartDate) {
+    // Update the min and max attributes of the deadline input
+    applicationDeadlineInput.min = formattedCurrentDate;
+    applicationDeadlineInput.max = trainingStartDate; // You can adjust this based on your specific requirements
+}
+
+function formatDateTime(timestamp, isTime = false) {
+    // Extracting only unix timestamp
+    var match = timestamp.match(/\d+/);
+    var numericPart = match ? match[0] : null;
+
+    // Make sure to treat as millisecond
+    const dateObject = new Date(parseInt(numericPart, 10))
+
+    if (isTime) {
+        const hours = String(dateObject.getHours()).padStart(2, '0');
+        const minutes = String(dateObject.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`
+    }
+    else {
+        const day = String(dateObject.getDate()).padStart(2, '0')
+        const month = String(dateObject.getMonth() + 1).padStart(2, '0')
+        const year = dateObject.getFullYear()
+        return `${year}-${month}-${day}`
+    }
+}
+
+function fetchPreRequisites() {
+    return new Promise((resolve, reject) => {
+        fetch('/Training/GetAllPreRequisites', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resolve(data.preRequisites)
+                }
+                else {
+                    toastr.error("An error occurred while fetching all pre-requisites", "Error", {
+                        progressBar: true,
+                        timeOut: 3000
+                    });
+                    reject(new Error("Failed to fetch all pre-requisites"));
+                }
+            })
+            .catch(error => {
+                window.location.href = '/Common/InternalServerError';
+                reject(error);
+            })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                populatePreRequisitesOptions(slimSelect, data.preRequisites, listOfCurrentTrainingPreRequisites)
-            }
-            else {
-                toastr.error("Pre Requisites could not be fetched", "Error", {
-                    progressBar: true,
-                    timeOut: 3000
-                })
-            }
-        })
-        .catch(() => {
-            window.location.href = '/Common/InternalServerError'
-        })
 }
 
 function populatePreRequisitesOptions(slimSelect, listOfAllPreRequisites, listOfCurrentTrainingPreRequisites) {
@@ -92,25 +172,29 @@ function populatePreRequisitesOptions(slimSelect, listOfAllPreRequisites, listOf
     slimSelect.setSelected(valuesToSelect);
 }
 
-function fetchDepartments(currentTrainingDepartment) {
-    fetch('/Account/GetAllDepartments', {
-        method: 'GET'
+function fetchDepartments() {
+    return new Promise((resolve, reject) => {
+        fetch('/Account/GetAllDepartments', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resolve(data.departments)
+                }
+                else {
+                    toastr.error("An error occurred while fetching departments", "Error", {
+                        progressBar: true,
+                        timeOut: 3000
+                    });
+                    reject(new Error("Failed to fetch departments"));
+                }
+            })
+            .catch(error => {
+                window.location.href = '/Common/InternalServerError';
+                reject(error);
+            })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                populateDepartmentOptions(data.departments, currentTrainingDepartment)
-            }
-            else {
-                toastr.error("An error occurred while fetching departments", "Error", {
-                    progressBar: true,
-                    timeOut: 3000
-                })
-            }
-        })
-        .catch(() => {
-            window.location.href = '/Common/InternalServerError'
-        })
 }
 
 function populateDepartmentOptions(departments, currentTrainingDepartment) {
@@ -163,7 +247,7 @@ function deleteTraining(button, trainingId) {
 function enableButton(button) {
     if (button) {
         toggleElementVisibility(button, '.spinner', false)
-        toggleElementVisibility(button, '.trashIcon', true)
+        toggleElementVisibility(button, '.icon', true)
         button.disabled = false;
     }
 }
@@ -171,7 +255,7 @@ function enableButton(button) {
 function disableButton(button) {
     if (button) {
         toggleElementVisibility(button, '.spinner', true)
-        toggleElementVisibility(button, '.trashIcon', false)
+        toggleElementVisibility(button, '.icon', false)
         button.disabled = true
     }
 }
