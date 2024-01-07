@@ -22,25 +22,37 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> Enroll(List<DocumentUploadViewModel> files)
+        public async Task<JsonResult> Enroll(int trainingId, List<DocumentUploadViewModel> files)
         {
-            var enrollmentDataList = files.Select(file => new DocumentUploadDTO
+            List<DocumentUploadDTO> enrollmentDataList = new List<DocumentUploadDTO>();
+            if (files != null && files.Any())
             {
-                UsertId = SessionManager.CurrentUser.Id,
-                TrainingId = file.TrainingId,
-                PreRequisiteId = file.PreRequisiteId,
-                File = file.File,
-                FileName = file.FileName
-            }).ToList();
+                enrollmentDataList = files.Select(file => new DocumentUploadDTO
+                {
+                    UsertId = SessionManager.CurrentUser.Id,
+                    TrainingId = trainingId,
+                    PreRequisiteId = file.PreRequisiteId,
+                    File = file.File,
+                    FileName = file.FileName
+                }).ToList();
+            }
+            else
+            {
+                enrollmentDataList.Add(new DocumentUploadDTO
+                {
+                    UsertId = SessionManager.CurrentUser.Id,
+                    TrainingId = trainingId,
+                });
+            }
 
-            bool isUploaded = await _applicationService.ProcessApplication(enrollmentDataList);
-            if (isUploaded)
+            bool isSuccessful = await _applicationService.ProcessApplication(enrollmentDataList);
+            if (isSuccessful)
             {
                 return Json(new { success = true, message = "Application successful", redirectUrl = Url.Action("EmployeeDashboard", "Home") });
             }
             else
             {
-                return Json(new { success = false, message = "Could not perform application..."});
+                return Json(new { success = false, message = "Could not perform application..." });
             }
         }
     }

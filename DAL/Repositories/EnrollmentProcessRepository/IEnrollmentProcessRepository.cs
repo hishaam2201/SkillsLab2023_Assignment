@@ -10,5 +10,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
         Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId);
         Task<(bool, SendEmailDTO)> ApproveApplicationAsync(int applicationId);
         Task<(bool, SendEmailDTO)> DeclineApplicationAsync(int applicationId, string message);
+        Task<IEnumerable<TrainingDTO>> GetAllExpiredTrainingIdsAsync();
+        Task<IEnumerable<SelectionProcessDTO>> ProcessUsersSelectionAsync(short trainingId, string declineReason = "");
     }
 }

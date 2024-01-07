@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+
 namespace DAL.DTO
 {
     public class SendEmailDTO
@@ -8,5 +10,7 @@ namespace DAL.DTO
         public string ManagerName { get; set; }
         public string EmployeeEmail { get; set; }
         public string TrainingName { get; set; }
+        public DateTime TrainingStartDate { get; set; }
+
     }
 }

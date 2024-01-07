@@ -49,6 +49,7 @@
     <Compile Include="DTO\PasswordDTO.cs" />
     <Compile Include="DTO\ApplicationDocumentDTO.cs" />
     <Compile Include="DTO\ApplicationDTO.cs" />
+    <Compile Include="DTO\SelectionProcessDTO.cs" />
     <Compile Include="DTO\SendEmailDTO.cs" />
     <Compile Include="DTO\TrainingDTO.cs" />
     <Compile Include="DTO\TrainingPreRequisteDTO.cs" />

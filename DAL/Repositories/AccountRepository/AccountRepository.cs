@@ -122,8 +122,10 @@ namespace DAL.Repositories.AccountRepository
 
                 List<string> excludedUserProperties = new List<string> { "Id" };
                 SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
-                SqlParameter roleIdParam = new SqlParameter("@RoleId", SqlDbType.TinyInt);
-                roleIdParam.Value = (byte)RoleEnum.Employee;
+                SqlParameter roleIdParam = new SqlParameter("@RoleId", SqlDbType.TinyInt)
+                {
+                    Value = (byte)RoleEnum.Employee
+                };
                 SqlParameter[] allParams = userQueryParams.Concat(new[] { roleIdParam }).ToArray();
 
                 bool isSuccessful = await _dbCommand.ExecuteTransactionAsync(new SqlCommand(INSERT_INTO_USER_QUERY), allParams);

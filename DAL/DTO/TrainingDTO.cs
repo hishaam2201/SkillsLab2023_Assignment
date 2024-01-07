@@ -6,7 +6,7 @@ namespace DAL.DTO
 {
     public class TrainingDTO
     {
-        public int TrainingId { get; set; }
+        public short TrainingId { get; set; }
         public string TrainingName { get; set; }
         public string Description { get; set; }
         public DateTime TrainingCourseStartingDateTime { get; set; }

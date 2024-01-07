@@ -1,5 +1,5 @@
 ﻿.table-wrapper{
-    padding-top: 1.5rem;
+    padding-top: 1rem;
 }
 #allTrainings th {
     text-align: center;
@@ -11,4 +11,9 @@
 
 #allTrainings td.pre-requisite-cell {
     text-align: left;
+}
+
+#addTrainingIcon {
+    transition: transform 0.3s ease-in-out;
+    transform: rotate(0deg);
 }

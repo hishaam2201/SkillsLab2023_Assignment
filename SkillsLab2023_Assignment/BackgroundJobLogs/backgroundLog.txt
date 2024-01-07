@@ -1,0 +1,14 @@
+---------------------------------------------------------
+Timestamp: 1/7/2024 6:08:46 PM
+Output: No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/7/2024 6:25:49 PM
+Output: 5 employee(s) have been selected for the training Testing background job 1. 
+                                                       1 employee(s) have been declined for the training due to availability of seats.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/7/2024 6:41:23 PM
+Output: 5 employee(s) have been selected for the training Testing background job 1.
+ 1 employee(s) have been declined for the training due to availability of seats.
+"---------------------------------------------------------";

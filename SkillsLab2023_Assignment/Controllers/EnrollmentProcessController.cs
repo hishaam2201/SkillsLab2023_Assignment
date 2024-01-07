@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Services.EnrollmentProcessService;
 using DAL.DTO;
+using DAL.Models;
 using Framework.Enums;
 using SkillsLab2023_Assignment.Custom;
 using System;
@@ -7,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Services.Description;
+using System.Xml.Linq;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
@@ -35,21 +38,28 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public async Task<JsonResult> ViewDocuments(int applicationId)
         {
-            List<ApplicationDocumentDTO> documents = (await _enrollmentProcessService.GetApplicationDocumentAsync(applicationId)).ToList();
-            SessionManager.Attachments = documents;
+            OperationResult result = await _enrollmentProcessService.GetApplicationDocumentAsync(applicationId);
 
-            List<AttachmentInfoDTO> attachmentInfoList = documents.Select(doc => new AttachmentInfoDTO
+            if (result.Success)
             {
-                AttachmentId = doc.AttachmentId,
-                PreRequisiteName = doc.PreRequisiteName,
-                PreRequisiteDescription = doc.PreRequisiteDescription
-            }).ToList();
+                var listOfData = (result.ListOfData).ToList();
+                var documents = (List<ApplicationDocumentDTO>)listOfData[0];
+                SessionManager.Attachments = documents;
 
-            return Json(new
+                return Json(new
+                {
+                    success = result?.Success ?? false,
+                    Attachments = (List<AttachmentInfoDTO>)listOfData[1]
+                });
+            }
+            else
             {
-                success = documents != null && documents.Any(),
-                Attachments = attachmentInfoList
-            });
+                return Json(new
+                {
+                    success = result?.Success ?? false,
+                    message = result?.Message
+                });
+            }
         }
 
         [HttpGet]
@@ -89,6 +99,18 @@ namespace SkillsLab2023_Assignment.Controllers
         public ActionResult ProcessSelection()
         {
             return View();
+        }
+
+        [HttpPost]
+        [CustomAuthorization(RoleEnum.Administrator)]
+        public async Task<JsonResult> PerformManualSelectionProcess(short trainingId)
+        {
+            OperationResult result = await _enrollmentProcessService.PerformManualSelectionProcessAsync(trainingId);
+            return Json(new
+            {
+                success = result.Success,
+                message = result.Message
+            });
         }
     }
 }

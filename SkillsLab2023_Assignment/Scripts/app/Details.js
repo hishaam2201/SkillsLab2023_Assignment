@@ -53,20 +53,23 @@ form.addEventListener('submit', event => {
 
 function submitApplication() {
     var formData = new FormData();
+    var trainingId = document.getElementById('trainingId').value
+    formData.append(`TrainingId`, trainingId)
+
     var fileInputs = document.querySelectorAll('.file-upload');
+    var hasPreRequisites = fileInputs.length > 0
+    if (hasPreRequisites) {
+        fileInputs.forEach(function (fileInput) {
+            var index = fileInput.dataset.index;
+            var prerequisiteId = document.getElementById("prerequisiteId_" + index).value
+            var file = fileInput.files[0]
+            var encodedFileName = encodeURIComponent(file.name)
 
-    fileInputs.forEach(function (fileInput) {
-        var index = fileInput.dataset.index;
-        var trainingId = document.getElementById('trainingId').value
-        var prerequisiteId = document.getElementById("prerequisiteId_" + index).value
-        var file = fileInput.files[0]
-        var encodedFileName = encodeURIComponent(file.name)
-
-        formData.append(`Files[${index}].TrainingId`, trainingId)
-        formData.append(`Files[${index}].PreRequisiteId`, prerequisiteId)
-        formData.append(`Files[${index}].File`, file)
-        formData.append(`Files[${index}].FileName`, encodedFileName)
-    })
+            formData.append(`Files[${index}].PreRequisiteId`, prerequisiteId)
+            formData.append(`Files[${index}].File`, file)
+            formData.append(`Files[${index}].FileName`, encodedFileName)
+        })
+    }
 
     fetch("/Application/Enroll", {
         method: "POST",

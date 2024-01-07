@@ -13,6 +13,7 @@ using DAL.Repositories.ApplicationRepository;
 using BusinessLayer.Services.EnrollmentProcessService;
 using DAL.Repositories.EnrollmentProcessRepository;
 using System.Runtime.InteropServices;
+using Framework.BackgroundEnrollmentProcessLogger;
 
 namespace SkillsLab2023_Assignment
 {
@@ -24,6 +25,8 @@ namespace SkillsLab2023_Assignment
             Container = new UnityContainer();
 
             Container.RegisterType<ILogger, Logger>();
+            Container.RegisterType<IBackgroundJobLogger, BackgroundJobLogger>();
+
             Container.RegisterType<IDataAccessLayer, DataAccessLayer>();
             Container.RegisterType(typeof(IDatabaseCommand<>), typeof(DatabaseCommand<>));
 

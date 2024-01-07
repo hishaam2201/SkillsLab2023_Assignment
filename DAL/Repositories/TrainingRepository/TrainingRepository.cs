@@ -20,27 +20,34 @@ namespace DAL.Repositories.TrainingRepository
             _dbCommand = dbCommand;
         }
 
-        public async Task<IEnumerable<TrainingDTO>> GetUnappliedTrainingsAsync(byte userDepartmentId)
+        public async Task<IEnumerable<TrainingDTO>> GetUnappliedTrainingsAsync(byte userDepartmentId, short userId)
         {
             List<TrainingDTO> trainingDTOs = new List<TrainingDTO>();
-            // TODO: An employee cannot apply for the same training twice (Riss tou training ki so userid pa dn applicsation)
-            const string GET_ALL_UNEXPIRED_TRAININGS_QUERY = @"SELECT * FROM Training WHERE IsDeadlineExpired = @IsDeadlineExpired
-                                                               ORDER BY 
-                                                               CASE 
-                                                                 WHEN DepartmentId = @UserDepartmentId THEN 0
-                                                                 ELSE 1
-                                                               END,
-                                                               DepartmentId;";
-            SqlParameter[] parameter = _dbCommand.GetSqlParametersFromObject(new { IsDeadlineExpired = 0, UserDepartmentId = userDepartmentId });
-            List<Training> trainingList = (await _dbCommand.ExecuteSelectQueryAsync<Training>(GET_ALL_UNEXPIRED_TRAININGS_QUERY, parameter)).ToList();
+            const string GET_ALL_UNAPPLIED_TRAININGS_QUERY = @"
+                                SELECT t.* FROM Training AS t
+                                WHERE 
+	                                t.IsDeadlineExpired = @IsDeadlineExpired
+	                                AND NOT EXISTS (
+		                                SELECT 1 FROM [Application] AS a
+		                                WHERE a.TrainingId = t.Id
+		                                AND a.UserId = @UserId
+	                                )
+                                ORDER BY 
+                                CASE 
+                                  WHEN DepartmentId = @UserDepartmentId THEN 0
+                                  ELSE 1
+                                END,
+                                DepartmentId;";
+            SqlParameter[] parameter = _dbCommand.GetSqlParametersFromObject(new { IsDeadlineExpired = 0, UserId = userId, UserDepartmentId = userDepartmentId });
+            List<Training> trainingList = (await _dbCommand.ExecuteSelectQueryAsync<Training>(GET_ALL_UNAPPLIED_TRAININGS_QUERY, parameter)).ToList();
 
             foreach (Training training in trainingList)
             {
-                object departmentName = await RetrieveDepartmentNameAsync(training.DepartmentId);
+                object departmentName = await RetrieveDepartmentNameAsync((byte)training.DepartmentId);
 
                 trainingDTOs.Add(new TrainingDTO
                 {
-                    TrainingId = training.Id,
+                    TrainingId = (short)training.Id,
                     TrainingName = training.TrainingName,
                     DeadlineOfApplication = training.DeadlineOfApplication,
                     Capacity = training.Capacity,
@@ -53,11 +60,11 @@ namespace DAL.Repositories.TrainingRepository
         public async Task<TrainingDTO> GetTrainingByIdAsync(int id)
         {
             Training training = await _dbCommand.GetByIdAsync(id);
-            object departmentName = await RetrieveDepartmentNameAsync(training.DepartmentId);
+            object departmentName = await RetrieveDepartmentNameAsync((byte)training.DepartmentId);
 
             return new TrainingDTO
             {
-                TrainingId = training.Id,
+                TrainingId = (short)training.Id,
                 TrainingName = training.TrainingName,
                 Description = training.Description,
                 DeadlineOfApplication = training.DeadlineOfApplication,
@@ -75,11 +82,11 @@ namespace DAL.Repositories.TrainingRepository
 
             foreach (Training training in trainingList)
             {
-                object departmentName = await RetrieveDepartmentNameAsync(training.DepartmentId);
+                object departmentName = await RetrieveDepartmentNameAsync((byte)training.DepartmentId);
 
                 trainingDTOs.Add(new TrainingDTO
                 {
-                    TrainingId = training.Id,
+                    TrainingId = (short)training.Id,
                     TrainingName = training.TrainingName,
                     Description = training.Description,
                     TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime,
@@ -104,9 +111,49 @@ namespace DAL.Repositories.TrainingRepository
             await _dbCommand.AffectedRowsCountAsync(UPDATE_DEADLINE_EXPIRY_STATUS_QUERY, parameters);
         }
 
-        public async Task<IEnumerable<PreRequisite>> GetAllPreRequisites()
+        public async Task<IEnumerable<PreRequisite>> GetAllPreRequisitesAsync()
         {
             return await _dbCommand.ExecuteSelectQueryAsync<PreRequisite>();
+        }
+
+        public async Task<bool> AddTrainingAsync(Training training, string preRequisiteIds)
+        {
+            const string INSERT_TRAINING_QUERY = @"
+                    INSERT INTO Training (TrainingName, Description, DeadlineOfApplication, Capacity, DepartmentId, 
+                                          TrainingCourseStartingDateTime, IsDeadlineExpired)
+                    VALUES (@TrainingName, @Description, @DeadlineOfApplication, @Capacity, @DepartmentId, 
+                            @TrainingCourseStartingDateTime, @IsDeadlineExpired)
+                    DECLARE @Id INT
+                    SET @Id = SCOPE_IDENTITY()
+                    IF (@PreRequisiteIds IS NOT NULL AND LEN(@PreRequisiteIds) > 0)
+                        BEGIN
+                            INSERT INTO TrainingPreRequisites (TrainingId, PreRequisiteId)
+                            SELECT @Id, P.value
+                            FROM STRING_SPLIT(@PreRequisiteIds, ',') AS P;
+                        END";
+            return await ExecuteTrainingTransactionAsync(INSERT_TRAINING_QUERY, training, preRequisiteIds);
+        }
+
+        public async Task<bool> UpdateTrainingAsync(Training training, string preRequisiteIds)
+        {
+            const string UPDATE_TRAINING_QUERY = @"
+                    UPDATE Training
+                    SET TrainingName = @TrainingName,
+	                    [Description] = @Description,
+	                    DeadlineOfApplication = @DeadlineOfApplication,
+	                    Capacity = @Capacity,
+	                    DepartmentId = @DepartmentId,
+	                    TrainingCourseStartingDateTime = @TrainingCourseStartingDateTime,
+	                    IsDeadlineExpired = @IsDeadlineExpired
+                    WHERE Id = @Id
+                    DELETE FROM TrainingPreRequisites WHERE TrainingId = @Id
+                    IF (@PreRequisiteIds IS NOT NULL AND LEN(@PreRequisiteIds) > 0)
+                        BEGIN
+                            INSERT INTO TrainingPreRequisites (TrainingId, PreRequisiteId)
+                            SELECT @Id, P.value
+                            FROM STRING_SPLIT(@PreRequisiteIds, ',') AS P;
+                        END";
+            return await ExecuteTrainingTransactionAsync(UPDATE_TRAINING_QUERY, training, preRequisiteIds, excludeTrainingId: false);
         }
 
         public async Task<bool> DeleteTrainingAsync(int trainingId)
@@ -146,7 +193,7 @@ namespace DAL.Repositories.TrainingRepository
         }
 
         // PRIVATE HELPER METHODS
-        private async Task<object> RetrieveDepartmentNameAsync(int departmentId)
+        private async Task<object> RetrieveDepartmentNameAsync(byte departmentId)
         {
             try
             {
@@ -188,6 +235,14 @@ namespace DAL.Repositories.TrainingRepository
             catch (Exception) { throw; }
         }
 
+        private async Task<bool> ExecuteTrainingTransactionAsync(string query, Training training, string preRequisiteIds, bool excludeTrainingId = true)
+        {
+            List<string> excludeParameters = excludeTrainingId ? new List<string> { "Id" } : null;
+            SqlParameter[] trainingParameters = _dbCommand.GetSqlParametersFromObject(training, excludeParameters);
+            SqlParameter[] preRequisiteIdsParameters = _dbCommand.GetSqlParametersFromObject(new { PreRequisiteIds = preRequisiteIds });
+            SqlParameter[] allParameters = trainingParameters.Concat(preRequisiteIdsParameters).ToArray();
+            return await _dbCommand.ExecuteTransactionAsync(new SqlCommand(query), allParameters);
+        }
     }
 }
 
