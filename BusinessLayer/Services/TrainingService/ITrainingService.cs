@@ -7,11 +7,12 @@ namespace BusinessLayer.Services.TrainingService
 {
     public interface ITrainingService
     {
-        Task<IEnumerable<TrainingDTO>> GetUnappliedTrainingsAsync(byte userDepartmentId);
+        Task<IEnumerable<TrainingDTO>> GetUnappliedTrainingsAsync(byte userDepartmentId, short userId);
         Task<TrainingDTO> GetTrainingByIdAsync(int id);
         Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync();
-        Task UpdateDeadlineExpiryStatusAsync();
-        Task<OperationResult> GetAllPreRequisites();
+        Task PerformAutomaticDeadlineExpiryStatusUpdateAsync();
+        Task<OperationResult> GetAllPreRequisitesAsync();
+        Task<OperationResult> SaveTrainingAsync(Training training, string preRequisiteIds, bool isUpdate);
         Task<OperationResult> DeleteTrainingAsync(int trainingId);
     }
 }

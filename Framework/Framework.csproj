@@ -44,12 +44,13 @@
   <ItemGroup>
     <Compile Include="AppLogger\ILogger.cs" />
     <Compile Include="AppLogger\Logger.cs" />
+    <Compile Include="BackgroundEnrollmentProcessLogger\BackgroundJobLogger.cs" />
+    <Compile Include="BackgroundEnrollmentProcessLogger\IBackgroundJobLogger.cs" />
     <Compile Include="DAL\DataAccessLayer.cs" />
     <Compile Include="DAL\IDataAccessLayer.cs" />
     <Compile Include="DatabaseCommand\DatabaseCommand.cs" />
     <Compile Include="DatabaseCommand\IDatabaseCommand.cs" />
     <Compile Include="Enums\ApplicationStatusEnum.cs" />
-    <Compile Include="Enums\EnrollmentProcessApprovalEnum.cs" />
     <Compile Include="Enums\RoleEnum.cs" />
     <Compile Include="Notification\EmailSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

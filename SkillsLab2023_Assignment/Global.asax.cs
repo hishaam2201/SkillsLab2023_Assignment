@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Services.TrainingService;
+﻿using BusinessLayer.Services.EnrollmentProcessService;
+using BusinessLayer.Services.TrainingService;
 using Hangfire;
 using SkillsLab2023_Assignment.App_Start;
 using System;
@@ -40,8 +41,10 @@ namespace SkillsLab2023_Assignment
 
             // Schedule update deadline expiry status job
             BackgroundJob.Schedule<ITrainingService>
-                (trainingService => trainingService.UpdateDeadlineExpiryStatusAsync(), TimeSpan.FromHours(24));
-            // TODO: Schedule selection process
+                (trainingService => trainingService.PerformAutomaticDeadlineExpiryStatusUpdateAsync(), TimeSpan.FromHours(24));
+            // Schedule selection process
+            BackgroundJob.Schedule<IEnrollmentProcessService>
+                (enrollmentProcessService => enrollmentProcessService.PerformAutomaticSelectionProcessAsync(), TimeSpan.FromHours(24));
         }
 
         protected void Application_BeginRequest()

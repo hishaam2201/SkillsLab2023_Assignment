@@ -1,5 +1,17 @@
+// TODO: Break code into different scripts of Add Update and Delete
 (function () {
-    var slimSelect = new SlimSelect({
+    var addSlimSelect = new SlimSelect({
+        select: document.getElementById('addTrainingAllPreRequisites'),
+        settings: {
+            placeholderText: 'Add Pre-Requisites',
+            allowDeselect: true,
+            searchHighlight: true,
+            closeOnSelect: false,
+            hideSelected: true
+        }
+    })
+
+    var editSlimSelect = new SlimSelect({
         select: document.getElementById('allPreRequisites'),
         settings: {
             placeholderText: 'Edit Pre-Requisites',
@@ -25,7 +37,7 @@
             addButtonClickListener('edit-btn', function (button, trainingId) {
                 disableButton(button)
                 setTimeout(() => {
-                    fetchTrainingDetails(slimSelect, trainingId, button)
+                    fetchTrainingDetails(editSlimSelect, trainingId, button)
                 }, 1000)
             });
 
@@ -37,21 +49,185 @@
             });
         }
     });
+
+    // Validation on Edit Training Form
+    const editTrainingForm = document.getElementById('editTrainingForm')
+    editTrainingForm.addEventListener('submit', event => {
+        if (!editTrainingForm.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+        else {
+            document.getElementById('saveChangesBtn').disabled = true
+            submitEditTrainingForm(editSlimSelect)
+        }
+        editTrainingForm.classList.add('was-validated')
+
+    }, false)
+
+    // Populating departments and pre-requisites Insert training select
+    const departmentPromise = fetchDepartments();
+    const preRequisitesPromise = fetchPreRequisites()
+    Promise.all([departmentPromise, preRequisitesPromise])
+        .then(([departmentsData, preRequisitesData]) => {
+            populateDepartmentOptions(document.getElementById('addTrainingDepartments'), departmentsData, [], false)
+            populatePreRequisitesOptions(addSlimSelect, preRequisitesData, [], false)
+        })
+        .catch(() => {
+            window.location.href = '/Common/InternalServerError'
+        })
+
+    // Rendering Insert Training Form
+    var addTrainingBtn = document.getElementById('addTrainingBtn');
+    var addTrainingIcon = document.getElementById('addTrainingIcon');
+    var collapsed = false;
+    var addTrainingForm = document.getElementById('addTrainingForm')
+    addTrainingBtn.addEventListener('click', function () {
+        collapsed = !collapsed;
+        addTrainingIcon.style.transform = collapsed ? 'rotate(45deg)' : 'rotate(0deg)';
+
+        // Validation on dates
+        const applicationDeadlineInput = document.getElementById('addTrainingApplicationDeadline')
+        const trainingStartDate = document.getElementById('addTrainingStartDate');
+        const currentDate = new Date();
+        const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+        // Limit deadline, initial call
+        trainingStartDate.addEventListener('change', function () {
+            updateDeadlineMinMaxLimits(applicationDeadlineInput, formattedCurrentDate, trainingStartDate.value)
+        });
+
+        // Reset Bootstrap validation when button is clicked to close the collapse
+        addTrainingForm = document.getElementById('addTrainingForm');
+        addTrainingForm.classList.remove('was-validated');
+        clearForm(addTrainingForm)
+    });
+
+    // Validation on insert training form
+    addTrainingForm.addEventListener('submit', event => {
+        if (!addTrainingForm.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+        else {
+            /*document.getElementById('nextBtn').disabled = true*/
+            disableButton(document.getElementById('nextBtn'))
+            submitAddTrainingForm(addSlimSelect)
+        }
+        addTrainingForm.classList.add('was-validated')
+
+    }, false)
 })()
 
-const editTrainingForm = document.getElementById('editTrainingForm')
+function submitAddTrainingForm(addSlimSelect) {
+    const trainingName = document.getElementById('addTrainingName').value
+    const description = document.getElementById('addTrainingDescription').value
+    const applicationDeadline = document.getElementById('addTrainingApplicationDeadline').value
+    const capacity = document.getElementById('addTrainingCapacity').value
 
-editTrainingForm.addEventListener('submit', event => {
-    if (!editTrainingForm.checkValidity()) {
-        event.preventDefault()
-        event.stopPropagation()
-    }
-    else {
-        console.log('Submitted')
-    }
-    editTrainingForm.classList.add('was-validated')
+    const trainingStartDate = document.getElementById('addTrainingStartDate').value;
+    const trainingStartTime = document.getElementById('addTrainingStartTime').value;
+    const trainingStartDateTime = `${trainingStartDate} ${trainingStartTime}`
 
-}, false)
+    const departmentId = document.getElementById('addTrainingDepartments').value
+    const preRequisiteIds = addSlimSelect.getSelected()
+
+    var formData = new FormData()
+    formData.append('TrainingName', trainingName)
+    formData.append('Description', description)
+    formData.append('ApplicationDeadline', applicationDeadline)
+    formData.append('Capacity', capacity)
+    formData.append('DepartmentId', departmentId)
+    formData.append('TrainingStartDateTime', trainingStartDateTime)
+    formData.append('PreRequisiteIds', preRequisiteIds)
+
+    fetch('/Training/AddTraining', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success(`${data.message}`, "Success", {
+                    progressBar: true,
+                    timeOut: 1000
+                })
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1100)
+            }
+            else {
+                toastr.error(`${data.message}`, "Error", {
+                    progressBar: true,
+                    timeOut: 2500
+                })
+            }
+        })
+        .catch((error) => {
+            console.error(error)
+            //window.location.href = '/Common/InternalServerError'
+        })
+        .finally(() => {
+            var addTrainingCollapse = new bootstrap.Collapse(document.getElementById('addTrainingCollapse'));
+            addTrainingCollapse.hide();
+            enableButton(document.getElementById('nextBtn'))
+        })
+}
+
+var modalTrainingId = document.getElementById('modalTrainingId')
+function submitEditTrainingForm(editSlimSelect) {
+    const trainingId = modalTrainingId.value
+    const trainingName = document.getElementById('trainingName').value
+    const description = document.getElementById('trainingDescription').value
+    const applicationDeadline = document.getElementById('applicationDeadline').value
+    const capacity = document.getElementById('capacity').value
+
+    const trainingStartDate = document.getElementById('trainingStartDate').value;
+    const trainingStartTime = document.getElementById('trainingStartTime').value;
+    const trainingStartDateTime = `${trainingStartDate} ${trainingStartTime}`
+
+    const departmentId = document.getElementById('departments').value
+    const preRequisiteIds = editSlimSelect.getSelected()
+
+    var formData = new FormData()
+    formData.append('TrainingId', trainingId)
+    formData.append('TrainingName', trainingName)
+    formData.append('Description', description)
+    formData.append('ApplicationDeadline', applicationDeadline)
+    formData.append('Capacity', capacity)
+    formData.append('DepartmentId', departmentId)
+    formData.append('TrainingStartDateTime', trainingStartDateTime)
+    formData.append('PreRequisiteIds', preRequisiteIds)
+
+    fetch('/Training/UpdateTraining', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success(`${data.message}`, "Success", {
+                    progressBar: true,
+                    timeOut: 1000
+                })
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1100)
+            }
+            else {
+                toastr.error(`${data.message}`, "Error", {
+                    progressBar: true,
+                    timeOut: 2500
+                })
+            }
+        })
+        .catch(() => {
+            window.location.href = '/Common/InternalServerError'
+        })
+        .finally(() => {
+            document.getElementById('saveChangesBtn').disabled = false
+            $('#updateTrainingModal').modal('hide');
+        })
+}
 
 function fetchTrainingDetails(slimSelect, trainingId, button) {
     fetch(`/Training/GetTrainingById?trainingId=${trainingId}`, {
@@ -85,7 +261,9 @@ function fetchTrainingDetails(slimSelect, trainingId, button) {
         })
 }
 
-function populateEditTrainingForm(slimSelect, training, departmentsData, currentTrainingDepartment, preRequisitesData, listOfCurrentTrainingPreRequisites) {
+function populateEditTrainingForm(slimSelect, training, departmentsData,
+    currentTrainingDepartment, preRequisitesData, listOfCurrentTrainingPreRequisites) {
+
     document.getElementById('trainingTitle').textContent = training.TrainingName;
     document.getElementById('trainingName').value = training.TrainingName;
     document.getElementById('trainingDescription').value = training.Description;
@@ -94,25 +272,28 @@ function populateEditTrainingForm(slimSelect, training, departmentsData, current
     applicationDeadline.value = formatDateTime(training.DeadlineOfApplication);
 
     document.getElementById('capacity').value = training.Capacity;
-    populateDepartmentOptions(departmentsData, currentTrainingDepartment)
+    const departmentSelectElement = document.getElementById('departments')
+    populateDepartmentOptions(departmentSelectElement, departmentsData, currentTrainingDepartment, true)
 
     var trainingStartDate = document.getElementById('trainingStartDate');
     trainingStartDate.value = formatDateTime(training.TrainingCourseStartingDateTime);
     const currentDate = new Date();
-    const formattedCurrentDate = currentDate.toISOString().split('T')[0]
-    updateDeadlineAttributes(applicationDeadline, formattedCurrentDate, trainingStartDate.value);
+    const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+    // Limit deadline, initial call
+    updateDeadlineMinMaxLimits(applicationDeadline, formattedCurrentDate, trainingStartDate.value);
+    trainingStartDate.min = formattedCurrentDate
     // On change, limit deadline
     trainingStartDate.addEventListener('change', function () {
-        updateDeadlineAttributes(applicationDeadline, formattedCurrentDate, trainingStartDate.value)
+        updateDeadlineMinMaxLimits(applicationDeadline, formattedCurrentDate, trainingStartDate.value)
     });
     document.getElementById('trainingStartTime').value = formatDateTime(training.TrainingCourseStartingDateTime, true);
-    populatePreRequisitesOptions(slimSelect, preRequisitesData, listOfCurrentTrainingPreRequisites)
+    populatePreRequisitesOptions(slimSelect, preRequisitesData, listOfCurrentTrainingPreRequisites, true)
 }
 
-function updateDeadlineAttributes(applicationDeadlineInput, formattedCurrentDate, trainingStartDate) {
+function updateDeadlineMinMaxLimits(applicationDeadlineInput, formattedCurrentDate, trainingStartDate) {
     // Update the min and max attributes of the deadline input
     applicationDeadlineInput.min = formattedCurrentDate;
-    applicationDeadlineInput.max = trainingStartDate; // You can adjust this based on your specific requirements
+    applicationDeadlineInput.max = trainingStartDate;
 }
 
 function formatDateTime(timestamp, isTime = false) {
@@ -161,15 +342,17 @@ function fetchPreRequisites() {
     })
 }
 
-function populatePreRequisitesOptions(slimSelect, listOfAllPreRequisites, listOfCurrentTrainingPreRequisites) {
+function populatePreRequisitesOptions(slimSelect, listOfAllPreRequisites, listOfCurrentTrainingPreRequisites, isUpdate) {
     const formattedArrayOfAllPreRequisites = listOfAllPreRequisites.map(preRequisite => ({
         text: `${preRequisite.Name}: ${preRequisite.PreRequisiteDescription}`,
         value: `${preRequisite.Id}`
     }));
     slimSelect.setData(formattedArrayOfAllPreRequisites);
 
-    const valuesToSelect = listOfCurrentTrainingPreRequisites.map(preRequisite => preRequisite.PreRequisiteId.toString());
-    slimSelect.setSelected(valuesToSelect);
+    if (isUpdate) {
+        const valuesToSelect = listOfCurrentTrainingPreRequisites.map(preRequisite => preRequisite.PreRequisiteId.toString());
+        slimSelect.setSelected(valuesToSelect);
+    }
 }
 
 function fetchDepartments() {
@@ -197,15 +380,14 @@ function fetchDepartments() {
     })
 }
 
-function populateDepartmentOptions(departments, currentTrainingDepartment) {
-    var departmentSelectElement = document.getElementById('departments')
+function populateDepartmentOptions(departmentSelectElement, departments, currentTrainingDepartment, isUpdate) {
     departmentSelectElement.innerHTML = ''
     departments.forEach(function (department) {
         var option = document.createElement('option')
         option.value = department.Id
         option.text = department.DepartmentName
 
-        if (department.DepartmentName === currentTrainingDepartment) {
+        if (isUpdate && (department.DepartmentName === currentTrainingDepartment)) {
             option.selected = true
         }
         departmentSelectElement.appendChild(option)
@@ -273,8 +455,17 @@ function addButtonClickListener(className, action) {
         button.removeEventListener('click', button.clickHandler);
         button.clickHandler = function () {
             var trainingId = button.getAttribute('data-training-id');
+            modalTrainingId.value = trainingId
             action(button, trainingId);
         };
         button.addEventListener('click', button.clickHandler);
+    });
+}
+
+function clearForm(form) {
+    Array.from(form.elements).forEach(element => {
+        if (['input', 'textarea', 'select'].includes(element.tagName.toLowerCase())) {
+            element.value = '';
+        }
     });
 }

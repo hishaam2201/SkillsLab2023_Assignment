@@ -6,7 +6,9 @@ namespace Framework.Notification
     public class EmailSender
     {
         private const string SERVER_ADDRESS = "relay.ceridian.com";
-        public static async Task<bool> SendEmailAsync(string subject, string body, string recipientEmail)
+#pragma warning disable CS1998
+        public static async Task SendEmailAsync(string subject, string body, string recipientEmail)
+#pragma warning restore CS1998
         {
             string senderEmail = "TrainingAdmin@ceridian.com";
             var smtpClient = new SmtpClient(SERVER_ADDRESS)
@@ -22,8 +24,9 @@ namespace Framework.Notification
                 Body = body,
                 IsBodyHtml = true
             };
-            await smtpClient.SendMailAsync(mailMessage);
-            return true;
+#pragma warning disable CS4014
+            Task.Run(() => { smtpClient.SendMailAsync(mailMessage); }).ConfigureAwait(false);
+#pragma warning restore CS4014
         }
     }
 }

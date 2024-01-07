@@ -6,8 +6,6 @@ namespace SkillsLab2023_Assignment.Models
 {
     public class DocumentUploadViewModel
     {
-        [Required(ErrorMessage="Training is required")]
-        public int TrainingId { get; set; }
         [Required(ErrorMessage = "PreRequisite is required")]
         public int PreRequisiteId { get; set; }
         [Required(ErrorMessage = "File is required")]

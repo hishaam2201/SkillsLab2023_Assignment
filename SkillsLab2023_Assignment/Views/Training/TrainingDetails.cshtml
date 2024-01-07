@@ -25,24 +25,33 @@
         @Model.TrainingCourseStartingDateTime.ToString("d MMMM yyyy 'at' HH:mm")
     </p>
 </div>
-<div class="callout callout-info">
-    <h4 class="alert-heading"><strong>Upload Attachments for Training Prerequisites</strong></h4>
-    <p class="mb-0">Please upload the required documents for each prerequisite listed below. Ensure that each file is in PDF, JPEG, or PNG format.</p>
-</div>
 <form id="uploadForm" method="post" onsubmit="return false;" enctype="multipart/form-data" novalidate>
-    @for (int index = 0; index < Model.PreRequisites.Count; index++)
+    <input type="hidden" id="trainingId" value="@Model.TrainingId" />
+    @if (Model.PreRequisites.Count == 0)
     {
-        <div class="mb-3">
-            <label><strong>@Model.PreRequisites[index].PreRequisiteName</strong>: @Model.PreRequisites[index].PreRequisiteDescription</label>
-            <input type="file" class="form-control file-upload" required data-index="@index" accept=".pdf, .jpeg, .png" />
-            <input type="hidden" id="trainingId" value="@Model.TrainingId" />
-            <input type="hidden" id="prerequisiteId_@index" value="@Model.PreRequisites[index].PreRequisiteId" />
-            <div id="requiredFeedback_@index" class="invalid-feedback">Field is required</div>
-            <div id="typeFeedback_@index" class="invalid-feedback">Invalid File Type</div>
-            <div id="sizeFeedback_@index" class="invalid-feedback">File size exceeds the limit</div>
+        <div class="callout callout-info">
+            <h4 class="alert-heading"><strong>No pre-requisites required for this training</strong></h4>
         </div>
     }
-    <input type="submit" value="Submit" class="btn btn-primary" />
+    else
+    {
+        <div class="callout callout-info">
+            <h4 class="alert-heading"><strong>Upload Attachments for Training Prerequisites</strong></h4>
+            <p class="mb-0">Please upload the required documents for each prerequisite listed below. Ensure that each file is in PDF, JPEG, or PNG format.</p>
+        </div>
+        for (int index = 0; index < Model.PreRequisites.Count; index++)
+        {
+            <div class="mb-3">
+                <label><strong>@Model.PreRequisites[index].PreRequisiteName</strong>: @Model.PreRequisites[index].PreRequisiteDescription</label>
+                <input type="file" class="form-control file-upload" required data-index="@index" accept=".pdf, .jpeg, .png" />
+                <input type="hidden" id="prerequisiteId_@index" value="@Model.PreRequisites[index].PreRequisiteId" />
+                <div id="requiredFeedback_@index" class="invalid-feedback">Field is required</div>
+                <div id="typeFeedback_@index" class="invalid-feedback">Invalid File Type</div>
+                <div id="sizeFeedback_@index" class="invalid-feedback">File size exceeds the limit</div>
+            </div>
+        }
+    }
+    <input type="submit" value="Apply for training" class="btn btn-primary" />
 </form>
 
 <script src="~/Scripts/app/Details.js"></script>

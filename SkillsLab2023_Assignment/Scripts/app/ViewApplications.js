@@ -115,18 +115,10 @@ function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
                 if (data.Attachments && data.Attachments.length > 0) {
                     populateViewModal(data.Attachments);
                 }
-                else {
-                    toastr.warning("No attachments found", {
-                        timeOut: 5000,
-                        progressBar: true
-                    })
-                }
             }
             else {
-                toastr.error("Documents could not be fetched", "Error", {
-                    timeOut: 5000,
-                    progressBar: true
-                })
+                var modalBody = document.getElementById('modalBody');
+                modalBody.innerHTML = '<p>' + data.message + '</p>'
             }
         })
         .catch(() => {
