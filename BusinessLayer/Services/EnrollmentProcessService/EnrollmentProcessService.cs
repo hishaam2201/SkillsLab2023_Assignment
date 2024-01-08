@@ -5,10 +5,8 @@ using Framework.BackgroundEnrollmentProcessLogger;
 using Framework.Enums;
 using Framework.Notification;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
-using BusinessLayer.Services.TrainingService;
 using DAL.Repositories.TrainingRepository;
 
 namespace BusinessLayer.Services.EnrollmentProcessService
@@ -104,6 +102,20 @@ namespace BusinessLayer.Services.EnrollmentProcessService
         public async Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId)
         {
             return await _enrollmentProcessRepository.GetApplicationsAsync(managerId);
+        }
+
+        public async Task<SelectedProcessUserDTO> GetSelectedUsersForTrainingAsync(short trainingId)
+        {
+            TrainingDTO training = await _trainingRepository.GetTrainingByIdAsync(trainingId);
+            List<SelectionProcessDTO> listOfSelectedUsers = (await _enrollmentProcessRepository.GetSelectedUsersForTrainingAsync(trainingId)).ToList();
+            SelectedProcessUserDTO selectedUsersDTO = new SelectedProcessUserDTO
+            {
+                TrainingName = training.TrainingName,
+                TrainingDepartment = training.DepartmentName,
+                TrainingStartDateTime = training.TrainingCourseStartingDateTime,
+                SelectedProcessUsers = listOfSelectedUsers
+            };
+            return selectedUsersDTO;
         }
 
         public async Task PerformAutomaticSelectionProcessAsync()

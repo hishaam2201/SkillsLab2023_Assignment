@@ -182,12 +182,10 @@ namespace DAL.Repositories.TrainingRepository
         public async Task<bool> AreUsersSelectedForTrainingAsync(int trainingId)
         {
             const string IS_ANY_USER_SELECTED_FOR_TRAINING =
-                @"SELECT 1 FROM [Application] WHERE TrainingId = @TrainingId AND ApplicationStatus = @ApplicationStatus";
+                @"SELECT 1 FROM [Application] WHERE TrainingId = @TrainingId";
             SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new
             {
                 TrainingId = trainingId,
-                // TODO: To change to selected once functionality is implemented
-                ApplicationStatus = ApplicationStatusEnum.Approved.ToString()
             });
             return await _dbCommand.IsRecordPresentAsync(IS_ANY_USER_SELECTED_FOR_TRAINING, parameters);
         }

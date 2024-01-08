@@ -71,16 +71,14 @@ namespace BusinessLayer.Services.TrainingService
                 return new OperationResult
                 {
                     Success = isDeleted,
-                    Messages = isDeleted
-                            ? new List<string> { "Training deleted successfully." }
-                            : new List<string> { "Failed to delete training" }
+                    Message = "Training deleted successfully."
                 };
 
             }
             return new OperationResult
             {
                 Success = false,
-                Messages = { "Users are selected for this training." }
+                Message = "Employees have applied for this training."
             };
         }
 

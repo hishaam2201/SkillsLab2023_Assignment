@@ -13,5 +13,6 @@ namespace BusinessLayer.Services.EnrollmentProcessService
         Task<bool> DeclineApplicationAsync(int applicationId, string managerName, string message);
         Task PerformAutomaticSelectionProcessAsync();
         Task<OperationResult> PerformManualSelectionProcessAsync(short trainingId);
+        Task<SelectedProcessUserDTO> GetSelectedUsersForTrainingAsync(short trainingId);
     }
 }

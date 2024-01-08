@@ -339,6 +339,7 @@
     <Content Include="Scripts\app\ChooseRole.js" />
     <Content Include="Scripts\app\Details.js" />
     <Content Include="Scripts\app\ViewApplications.js" />
+    <Content Include="Scripts\app\ViewSelectedUsers.js" />
     <Content Include="Scripts\app\ViewTrainings.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -12327,7 +12328,7 @@
     <Content Include="Views\Home\ManagerDashboard.cshtml" />
     <Content Include="Views\Home\AdministratorDashboard.cshtml" />
     <Content Include="Views\Account\ChooseRole.cshtml" />
-    <Content Include="Views\EnrollmentProcess\ProcessSelection.cshtml" />
+    <Content Include="Views\EnrollmentProcess\ViewSelectedUsers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
