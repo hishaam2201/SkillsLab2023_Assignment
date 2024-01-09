@@ -33,7 +33,7 @@ function downloadExcelFile() {
                 document.body.removeChild(downloadLink)
             })
         })
-        .catch((error) => {
-            console.error(error)
+        .catch(() => {
+            window.location.href = '/Common/InternalServerError'
         })
 }

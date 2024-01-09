@@ -1,4 +1,5 @@
 ﻿
+using BusinessLayer.Services.ApplicationService;
 using BusinessLayer.Services.TrainingService;
 using DAL.DTO;
 using Framework.Enums;
@@ -14,28 +15,32 @@ namespace SkillsLab2023_Assignment.Controllers
     public class HomeController : Controller
     {
         private readonly ITrainingService _trainingService;
-        public HomeController(ITrainingService trainingService)
+        private readonly IApplicationService _applicationService;
+        public HomeController(ITrainingService trainingService, IApplicationService applicationService)
         {
             _trainingService = trainingService;
+            _applicationService = applicationService;
         }
 
-        [CustomAuthorization(RoleEnum.Employee)]
-        public ActionResult EmployeeDashboard()
+        [HttpGet, CustomAuthorization(RoleEnum.Employee)]
+        public async Task<ActionResult> EmployeeDashboard()
         {
-            return View();
+            short userId = SessionManager.CurrentUser.Id;
+            var userApplications = (await _applicationService.GetApplicationByUserId(userId))?.ToList() ?? new List<UserApplicationDTO>();
+            return View(userApplications);
         }
 
-        [CustomAuthorization(RoleEnum.Manager)]
+        [HttpGet, CustomAuthorization(RoleEnum.Manager)]
         public ActionResult ManagerDashboard()
         {
+            // TODO: Data table for aprovals needs to be called here for razor view (Manager is a user as well, use session manager)
             return View();
         }
 
-        [CustomAuthorization(RoleEnum.Administrator)]
+        [HttpGet, CustomAuthorization(RoleEnum.Administrator)]
         public async Task<ActionResult> AdministratorDashboard()
         {
-            // TODO: Background job to check for deadline of application, if expired then do not display
-            List<TrainingDTO> trainingList = (await _trainingService.GetAllTrainingsAsync()).ToList();
+            var trainingList = (await _trainingService.GetAllTrainingsAsync())?.ToList() ?? new List<TrainingDTO>();
             return View(trainingList);
         }
     }

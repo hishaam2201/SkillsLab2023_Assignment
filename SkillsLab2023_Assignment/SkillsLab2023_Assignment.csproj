@@ -319,6 +319,7 @@
     <Content Include="Content\app\Admin.css" />
     <Content Include="Content\app\Details.css" />
     <Content Include="Content\app\ChooseRole.css" />
+    <Content Include="Content\app\EmployeeDashboard.css" />
     <Content Include="Content\app\Spinner.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -353,6 +354,7 @@
     <Content Include="Scripts\app\Admin.js" />
     <Content Include="Scripts\app\ChooseRole.js" />
     <Content Include="Scripts\app\Details.js" />
+    <Content Include="Scripts\app\Employee.js" />
     <Content Include="Scripts\app\ViewApplications.js" />
     <Content Include="Scripts\app\ViewSelectedUsers.js" />
     <Content Include="Scripts\app\ViewTrainings.js" />

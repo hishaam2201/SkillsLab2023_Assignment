@@ -1,6 +1,7 @@
 ﻿using DAL.DTO;
 using DAL.Models;
 using DAL.Repositories.ApplicationRepository;
+using Firebase.Auth;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,7 +17,12 @@ namespace BusinessLayer.Services.ApplicationService
             _applicationRepository = applicationRepository;
         }
 
-        public async Task<bool> ProcessApplication(List<DocumentUploadDTO> documentUploads)
+        public async Task<IEnumerable<UserApplicationDTO>> GetApplicationByUserId(short userId)
+        {
+            return await _applicationRepository.GetApplicationByUserIdAsync(userId);
+        }
+
+        public async Task<bool> ProcessApplicationAsync(List<DocumentUploadDTO> documentUploads)
         {
             if (documentUploads != null && documentUploads.Any())
             {
@@ -27,7 +33,7 @@ namespace BusinessLayer.Services.ApplicationService
                     TrainingId = firstDocument.TrainingId,
                 };
 
-                int applicationId = await _applicationRepository.InsertApplicationAndGetId(applicationEntity);
+                int applicationId = await _applicationRepository.InsertApplicationAndGetIdAsync(applicationEntity);
                 if (applicationId <= 0)
                 {
                     return false;
@@ -39,7 +45,7 @@ namespace BusinessLayer.Services.ApplicationService
                     {
                         // Read file content into a byte array
                         byte[] fileData;
-                        using (var  stream = new MemoryStream())
+                        using (var stream = new MemoryStream())
                         {
                             await documentUpload.File.InputStream.CopyToAsync(stream);
                             fileData = stream.ToArray();
@@ -52,8 +58,8 @@ namespace BusinessLayer.Services.ApplicationService
                             PreRequisiteId = documentUpload.PreRequisiteId,
                             FileName = documentUpload.FileName
                         };
-                        
-                        if (!await _applicationRepository.InsertDocumentUpload(documentUploadEntity))
+
+                        if (!await _applicationRepository.InsertDocumentUploadAsync(documentUploadEntity))
                         {
                             return false;
                         }

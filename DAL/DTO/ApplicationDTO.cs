@@ -11,6 +11,5 @@ namespace DAL.DTO
         public string TrainingName { get; set; }
         public string DepartmentName { get; set; }
         public string ApplicationStatus { get; set; }
-        public string DeclineReason { get; set; }
     }
 }

@@ -45,7 +45,7 @@ namespace SkillsLab2023_Assignment.Controllers
                 });
             }
 
-            bool isSuccessful = await _applicationService.ProcessApplication(enrollmentDataList);
+            bool isSuccessful = await _applicationService.ProcessApplicationAsync(enrollmentDataList);
             if (isSuccessful)
             {
                 return Json(new { success = true, message = "Application successful", redirectUrl = Url.Action("EmployeeDashboard", "Home") });

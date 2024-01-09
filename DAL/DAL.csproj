@@ -55,6 +55,7 @@
     <Compile Include="DTO\SendEmailDTO.cs" />
     <Compile Include="DTO\TrainingDTO.cs" />
     <Compile Include="DTO\TrainingPreRequisteDTO.cs" />
+    <Compile Include="DTO\UserApplicationDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\UserRoleDTO.cs" />
     <Compile Include="Models\Account.cs" />
