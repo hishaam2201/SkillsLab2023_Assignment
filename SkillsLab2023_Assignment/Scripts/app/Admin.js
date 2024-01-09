@@ -36,9 +36,11 @@
         drawCallback: function () {
             addButtonClickListener('selection-btn', function (button, trainingId) {
                 disableButton(button)
+                performSelectionForTraining(trainingId, button)
                 setTimeout(() => {
-                    performSelectionForTraining(trainingId, button)
-                }, 1000)
+                    document.getElementById('trainingIdInput').value = trainingId
+                    document.getElementById('selectionForm').submit()
+                }, 2000)
             })
             addButtonClickListener('edit-btn', function (button, trainingId) {
                 disableButton(button)
@@ -134,26 +136,21 @@ function performSelectionForTraining(trainingId, button) {
                     timeOut: 1000,
                     progressBar: true
                 })
-                setTimeout(() => {
-                    document.getElementById('trainingIdInput').value = trainingId
-                    document.getElementById('selectionForm').submit()
-                }, 1200)
             }
             else {
-                toastr.warning(`${data.message}`, "Users not found", {
-                    timeOut: 3000,
+                toastr.warning(`${data.message}`, "Users not found for selection", {
+                    timeOut: 2000,
                     progressBar: true
                 })
             }
         })
-        .catch(error => {
-            console.error(error)
+        .catch(() => {
             window.location.href = '/Common/InternalServerError'
         })
         .finally(() => {
             setTimeout(() => {
                 enableButton(button)
-            }, 1000)
+            }, 1500)
         })
 }
 

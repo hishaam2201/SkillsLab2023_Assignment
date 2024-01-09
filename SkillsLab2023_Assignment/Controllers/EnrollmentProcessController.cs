@@ -111,5 +111,17 @@ namespace SkillsLab2023_Assignment.Controllers
             SelectedProcessUserDTO selectedUsers = await _enrollmentProcessService.GetSelectedUsersForTrainingAsync(trainingId);
             return View(selectedUsers);
         }
+
+        [HttpPost, CustomAuthorization(RoleEnum.Administrator)]
+        public async Task<ActionResult> DownloadSelectedUsers(short trainingId)
+        {
+            byte[] excelFileBytes = await _enrollmentProcessService.ExportToExcel(trainingId);
+            string fileName = $"ExportedSelectedEmployees_{DateTime.Now:f}.xlsx";
+
+            Response.Clear();
+            string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", $"attachment; filename={fileName}");
+            return File(excelFileBytes, contentType);
+        }
     }
 }

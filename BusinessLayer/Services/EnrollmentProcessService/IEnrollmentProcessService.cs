@@ -14,5 +14,6 @@ namespace BusinessLayer.Services.EnrollmentProcessService
         Task PerformAutomaticSelectionProcessAsync();
         Task<OperationResult> PerformManualSelectionProcessAsync(short trainingId);
         Task<SelectedProcessUserDTO> GetSelectedUsersForTrainingAsync(short trainingId);
+        Task<byte[]> ExportToExcel(short trainingId);
     }
 }
