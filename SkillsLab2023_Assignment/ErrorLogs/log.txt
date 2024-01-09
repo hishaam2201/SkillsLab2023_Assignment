@@ -5290,3 +5290,351 @@ Stack Trace:    at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProces
    at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
    at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProcessRepository.<ProcessUsersSelectionAsync>d__8.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\DAL\Repositories\EnrollmentProcessRepository\EnrollmentProcessRepository.cs:line 265
 "---------------------------------------------------------";
+---------------------------------------------------------
+Id: 39e692e5-e374-4567-8b68-3a5eacf60713
+Timestamp: 1/8/2024 2:20:17 PM
+Exception Type: Framework.AppLogger.Logger
+Message: The else block is missing a closing "}" character.  Make sure you have a matching "}" character for all the "{" characters within this block, and that none of the "}" characters are being interpreted as markup.
+
+Inner Exception: 
+Stack Trace:    at System.Web.WebPages.Razor.RazorBuildProvider.EnsureGeneratedCode()
+   at System.Web.WebPages.Razor.RazorBuildProvider.get_CodeCompilerType()
+   at System.Web.Compilation.BuildProvider.GetCompilerTypeFromBuildProvider(BuildProvider buildProvider)
+   at System.Web.Compilation.BuildProvidersCompiler.ProcessBuildProviders()
+   at System.Web.Compilation.BuildProvidersCompiler.PerformBuild()
+   at System.Web.Compilation.BuildManager.CompileWebFile(VirtualPath virtualPath)
+   at System.Web.Compilation.BuildManager.GetVPathBuildResultInternal(VirtualPath virtualPath, Boolean noBuild, Boolean allowCrossApp, Boolean allowBuildInPrecompile, Boolean throwIfNotFound, Boolean ensureIsUpToDate)
+   at System.Web.Compilation.BuildManager.GetVPathBuildResultWithNoAssert(HttpContext context, VirtualPath virtualPath, Boolean noBuild, Boolean allowCrossApp, Boolean allowBuildInPrecompile, Boolean throwIfNotFound, Boolean ensureIsUpToDate)
+   at System.Web.Compilation.BuildManager.GetVirtualPathObjectFactory(VirtualPath virtualPath, HttpContext context, Boolean allowCrossApp, Boolean throwIfNotFound)
+   at System.Web.Compilation.BuildManager.GetCompiledType(VirtualPath virtualPath)
+   at System.Web.Mvc.BuildManagerCompiledView.Render(ViewContext viewContext, TextWriter writer)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: c83ddae9-62dd-4890-8b7d-3f27b103988b
+Timestamp: 1/8/2024 2:20:51 PM
+Exception Type: Framework.AppLogger.Logger
+Message: C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Views\EnrollmentProcess\ViewApprovedUsers.cshtml(39): error CS1579: foreach statement cannot operate on variables of type 'ApprovedUserDTO' because 'ApprovedUserDTO' does not contain a public instance or extension definition for 'GetEnumerator'
+Inner Exception: 
+Stack Trace:    at System.Web.Compilation.AssemblyBuilder.Compile()
+   at System.Web.Compilation.BuildProvidersCompiler.PerformBuild()
+   at System.Web.Compilation.BuildManager.CompileWebFile(VirtualPath virtualPath)
+   at System.Web.Compilation.BuildManager.GetVPathBuildResultInternal(VirtualPath virtualPath, Boolean noBuild, Boolean allowCrossApp, Boolean allowBuildInPrecompile, Boolean throwIfNotFound, Boolean ensureIsUpToDate)
+   at System.Web.Compilation.BuildManager.GetVPathBuildResultWithNoAssert(HttpContext context, VirtualPath virtualPath, Boolean noBuild, Boolean allowCrossApp, Boolean allowBuildInPrecompile, Boolean throwIfNotFound, Boolean ensureIsUpToDate)
+   at System.Web.Compilation.BuildManager.GetVirtualPathObjectFactory(VirtualPath virtualPath, HttpContext context, Boolean allowCrossApp, Boolean throwIfNotFound)
+   at System.Web.Compilation.BuildManager.GetCompiledType(VirtualPath virtualPath)
+   at System.Web.Mvc.BuildManagerCompiledView.Render(ViewContext viewContext, TextWriter writer)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: cc2cdccc-caff-4384-a4c6-86267e2aa92e
+Timestamp: 1/8/2024 2:21:17 PM
+Exception Type: Framework.AppLogger.Logger
+Message: C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Views\EnrollmentProcess\ViewApprovedUsers.cshtml(39): error CS1579: foreach statement cannot operate on variables of type 'ApprovedUserDTO' because 'ApprovedUserDTO' does not contain a public instance or extension definition for 'GetEnumerator'
+Inner Exception: 
+Stack Trace:    at System.Web.Compilation.AssemblyBuilder.Compile()
+   at System.Web.Compilation.BuildProvidersCompiler.PerformBuild()
+   at System.Web.Compilation.BuildManager.CompileWebFile(VirtualPath virtualPath)
+   at System.Web.Compilation.BuildManager.GetVPathBuildResultInternal(VirtualPath virtualPath, Boolean noBuild, Boolean allowCrossApp, Boolean allowBuildInPrecompile, Boolean throwIfNotFound, Boolean ensureIsUpToDate)
+   at System.Web.Compilation.BuildManager.GetVPathBuildResultWithNoAssert(HttpContext context, VirtualPath virtualPath, Boolean noBuild, Boolean allowCrossApp, Boolean allowBuildInPrecompile, Boolean throwIfNotFound, Boolean ensureIsUpToDate)
+   at System.Web.Compilation.BuildManager.GetVirtualPathObjectFactory(VirtualPath virtualPath, HttpContext context, Boolean allowCrossApp, Boolean throwIfNotFound)
+   at System.Web.Compilation.BuildManager.GetCompiledType(VirtualPath virtualPath)
+   at System.Web.Mvc.BuildManagerCompiledView.Render(ViewContext viewContext, TextWriter writer)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: 4c3e9867-821f-4e3c-b57a-17005d07f1ca
+Timestamp: 1/8/2024 3:00:44 PM
+Exception Type: Framework.AppLogger.Logger
+Message: The layout page "_Layout.cshtml" could not be found at the following path: "~/Views/EnrollmentProcess/_Layout.cshtml".
+Inner Exception: 
+Stack Trace:    at System.Web.WebPages.WebPageExecutingBase.NormalizeLayoutPagePath(String layoutPagePath)
+   at System.Web.WebPages.WebPageBase.PopContext()
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultFilterRecursive(IList`1 filters, Int32 filterIndex, ResultExecutingContext preContext, ControllerContext controllerContext, ActionResult actionResult)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeActionResultWithFilters(ControllerContext controllerContext, IList`1 filters, ActionResult actionResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: f6dfe854-747a-4fee-a6df-931765f2322e
+Timestamp: 1/9/2024 4:01:52 PM
+Exception Type: Framework.AppLogger.Logger
+Message: The parameters dictionary contains a null entry for parameter 'trainingId' of non-nullable type 'System.Int16' for method 'System.Threading.Tasks.Task`1[System.Web.Mvc.ActionResult] DownloadSelectedUsers(Int16)' in 'SkillsLab2023_Assignment.Controllers.EnrollmentProcessController'. An optional parameter must be a reference type, a nullable type, or be declared as an optional parameter.
+Parameter name: parameters
+Inner Exception: 
+Stack Trace:    at System.Web.Mvc.ActionDescriptor.ExtractParameterFromDictionary(ParameterInfo parameterInfo, IDictionary`2 parameters, MethodInfo methodInfo)
+   at System.Linq.Enumerable.WhereSelectArrayIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.BeginExecute(ControllerContext controllerContext, IDictionary`2 parameters, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__0(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.BeginInvokeAsynchronousActionMethod(ControllerContext controllerContext, AsyncActionDescriptor actionDescriptor, IDictionary`2 parameters, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.InvokeActionMethodFilterAsynchronouslyRecursive(Int32 filterIndex)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.InvokeActionMethodFilterAsynchronouslyRecursive(Int32 filterIndex)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.InvokeActionMethodFilterAsynchronouslyRecursive(Int32 filterIndex)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.InvokeActionMethodFilterAsynchronouslyRecursive(Int32 filterIndex)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass7_0.<BeginInvokeActionMethodWithFilters>b__0(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.BeginInvokeActionMethodWithFilters(ControllerContext controllerContext, IList`1 filters, ActionDescriptor actionDescriptor, IDictionary`2 parameters, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__0(AsyncCallback asyncCallback, Object asyncState)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: 4d722907-c271-4e76-894a-e79fab4b6aab
+Timestamp: 1/9/2024 4:01:52 PM
+Exception Type: Framework.AppLogger.Logger
+Message: The view 'InternalServerError' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/EnrollmentProcess/InternalServerError.aspx
+~/Views/EnrollmentProcess/InternalServerError.ascx
+~/Views/Shared/InternalServerError.aspx
+~/Views/Shared/InternalServerError.ascx
+~/Views/EnrollmentProcess/InternalServerError.cshtml
+~/Views/EnrollmentProcess/InternalServerError.vbhtml
+~/Views/Shared/InternalServerError.cshtml
+~/Views/Shared/InternalServerError.vbhtml
+Inner Exception: 
+Stack Trace:    at System.Web.Mvc.ViewResult.FindView(ControllerContext context)
+   at System.Web.Mvc.ViewResultBase.ExecuteResult(ControllerContext context)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: d79a68c5-c1c6-4634-83a1-824eb6cc2550
+Timestamp: 1/9/2024 4:03:31 PM
+Exception Type: Framework.AppLogger.Logger
+Message: Please set the ExcelPackage.LicenseContext property. See https://epplussoftware.com/developers/licenseexception
+Inner Exception: 
+Stack Trace:    at OfficeOpenXml.ExcelPackage.get_Workbook()
+   at OfficeOpenXml.ExcelPackage.CreateBlankWb()
+   at OfficeOpenXml.ExcelPackage.ConstructNewFile(String password)
+   at BusinessLayer.Services.EnrollmentProcessService.EnrollmentProcessService.<ExportToExcel>d__11.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\BusinessLayer\Services\EnrollmentProcessService\EnrollmentProcessService.cs:line 241
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at SkillsLab2023_Assignment.Controllers.EnrollmentProcessController.<DownloadSelectedUsers>d__9.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Controllers\EnrollmentProcessController.cs:line 118
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_5.<BeginInvokeAction>b__4()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: f63274e5-feeb-4cfe-aee6-331a06c799ca
+Timestamp: 1/9/2024 4:07:55 PM
+Exception Type: Framework.AppLogger.Logger
+Message: Please set the ExcelPackage.LicenseContext property. See https://epplussoftware.com/developers/licenseexception
+Inner Exception: 
+Stack Trace:    at OfficeOpenXml.ExcelPackage.get_Workbook()
+   at OfficeOpenXml.ExcelPackage.CreateBlankWb()
+   at OfficeOpenXml.ExcelPackage.ConstructNewFile(String password)
+   at BusinessLayer.Services.EnrollmentProcessService.EnrollmentProcessService.<ExportToExcel>d__11.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\BusinessLayer\Services\EnrollmentProcessService\EnrollmentProcessService.cs:line 241
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at SkillsLab2023_Assignment.Controllers.EnrollmentProcessController.<DownloadSelectedUsers>d__9.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Controllers\EnrollmentProcessController.cs:line 118
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_5.<BeginInvokeAction>b__4()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: 630169d2-128e-4a5a-baf6-cc19ae63ea86
+Timestamp: 1/9/2024 4:10:48 PM
+Exception Type: Framework.AppLogger.Logger
+Message: Specified cast is not valid.
+Inner Exception: 
+Stack Trace:    at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProcessRepository.<GetSelectedUserDetailsForExportAsync>g__mapFunction|11_0(IDataReader reader) in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\DAL\Repositories\EnrollmentProcessRepository\EnrollmentProcessRepository.cs:line 348
+   at Framework.DatabaseCommand.DatabaseCommand.DatabaseCommand`1.<ExecuteSelectQueryAsync>d__6`1.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\Framework\DatabaseCommand\DatabaseCommand.cs:line 128
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProcessRepository.<GetSelectedUserDetailsForExportAsync>d__11.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\DAL\Repositories\EnrollmentProcessRepository\EnrollmentProcessRepository.cs:line 358
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at BusinessLayer.Services.EnrollmentProcessService.EnrollmentProcessService.<ExportToExcel>d__11.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\BusinessLayer\Services\EnrollmentProcessService\EnrollmentProcessService.cs:line 253
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at SkillsLab2023_Assignment.Controllers.EnrollmentProcessController.<DownloadSelectedUsers>d__9.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Controllers\EnrollmentProcessController.cs:line 118
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_5.<BeginInvokeAction>b__4()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: 7aa38959-346f-490d-986a-7c022934d393
+Timestamp: 1/9/2024 4:12:05 PM
+Exception Type: Framework.AppLogger.Logger
+Message: Incorrect syntax near ')'.
+Inner Exception: 
+Stack Trace:    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at System.Data.SqlClient.SqlCommand.CompleteAsyncExecuteReader(Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.InternalEndExecuteReader(IAsyncResult asyncResult, String endMethod, Boolean isInternal)
+   at System.Data.SqlClient.SqlCommand.EndExecuteReaderInternal(IAsyncResult asyncResult)
+   at System.Data.SqlClient.SqlCommand.EndExecuteReaderAsync(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at Framework.DatabaseCommand.DatabaseCommand.DatabaseCommand`1.<ExecuteSelectQueryAsync>d__6`1.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\Framework\DatabaseCommand\DatabaseCommand.cs:line 119
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProcessRepository.<GetSelectedUserDetailsForExportAsync>d__11.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\DAL\Repositories\EnrollmentProcessRepository\EnrollmentProcessRepository.cs:line 358
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at BusinessLayer.Services.EnrollmentProcessService.EnrollmentProcessService.<ExportToExcel>d__11.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\BusinessLayer\Services\EnrollmentProcessService\EnrollmentProcessService.cs:line 253
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at SkillsLab2023_Assignment.Controllers.EnrollmentProcessController.<DownloadSelectedUsers>d__9.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Controllers\EnrollmentProcessController.cs:line 118
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_5.<BeginInvokeAction>b__4()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: 5ffe0915-d7c7-4427-b4c3-0da2da5b7c75
+Timestamp: 1/9/2024 4:13:44 PM
+Exception Type: Framework.AppLogger.Logger
+Message: Specified cast is not valid.
+Inner Exception: 
+Stack Trace:    at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProcessRepository.<GetSelectedUserDetailsForExportAsync>g__mapFunction|11_0(IDataReader reader)
+   at Framework.DatabaseCommand.DatabaseCommand.DatabaseCommand`1.<ExecuteSelectQueryAsync>d__6`1.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\Framework\DatabaseCommand\DatabaseCommand.cs:line 128
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProcessRepository.<GetSelectedUserDetailsForExportAsync>d__11.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at BusinessLayer.Services.EnrollmentProcessService.EnrollmentProcessService.<ExportToExcel>d__11.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\BusinessLayer\Services\EnrollmentProcessService\EnrollmentProcessService.cs:line 253
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at SkillsLab2023_Assignment.Controllers.EnrollmentProcessController.<DownloadSelectedUsers>d__9.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Controllers\EnrollmentProcessController.cs:line 118
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_5.<BeginInvokeAction>b__4()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";
+---------------------------------------------------------
+Id: 2d605d2e-302d-4423-bdd7-47706bf0175e
+Timestamp: 1/9/2024 4:14:00 PM
+Exception Type: Framework.AppLogger.Logger
+Message: Specified cast is not valid.
+Inner Exception: 
+Stack Trace:    at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProcessRepository.<GetSelectedUserDetailsForExportAsync>g__mapFunction|11_0(IDataReader reader)
+   at Framework.DatabaseCommand.DatabaseCommand.DatabaseCommand`1.<ExecuteSelectQueryAsync>d__6`1.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\Framework\DatabaseCommand\DatabaseCommand.cs:line 128
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DAL.Repositories.EnrollmentProcessRepository.EnrollmentProcessRepository.<GetSelectedUserDetailsForExportAsync>d__11.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at BusinessLayer.Services.EnrollmentProcessService.EnrollmentProcessService.<ExportToExcel>d__11.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\BusinessLayer\Services\EnrollmentProcessService\EnrollmentProcessService.cs:line 253
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at SkillsLab2023_Assignment.Controllers.EnrollmentProcessController.<DownloadSelectedUsers>d__9.MoveNext() in C:\Users\P12B1E0\source\repos\SkillsLab2023_Assignment\SkillsLab2023_Assignment\Controllers\EnrollmentProcessController.cs:line 118
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_5.<BeginInvokeAction>b__4()
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_0.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+"---------------------------------------------------------";

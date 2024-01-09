@@ -31,7 +31,7 @@ function submitLoginForm() {
                 displayToastToUser('success', data.message)
                 setTimeout(() => {
                     window.location.href = data.redirectUrl
-                }, 1500)
+                }, 500)
             }
             else {
                 displayToastToUser('error', data.message)
@@ -45,7 +45,7 @@ function submitLoginForm() {
 function displayToastToUser(toastColor, message) {
     if (toastColor === 'success') {
         toastr.success(`${message}`, "Success", {
-            timeOut: 1500,
+            timeOut: 500,
             progressBar: true
         })
     }

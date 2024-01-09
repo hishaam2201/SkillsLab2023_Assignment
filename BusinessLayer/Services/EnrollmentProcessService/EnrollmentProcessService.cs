@@ -5,11 +5,12 @@ using Framework.BackgroundEnrollmentProcessLogger;
 using Framework.Enums;
 using Framework.Notification;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
-using BusinessLayer.Services.TrainingService;
 using DAL.Repositories.TrainingRepository;
+using OfficeOpenXml;
+using System;
+using System.IO;
 
 namespace BusinessLayer.Services.EnrollmentProcessService
 {
@@ -106,6 +107,20 @@ namespace BusinessLayer.Services.EnrollmentProcessService
             return await _enrollmentProcessRepository.GetApplicationsAsync(managerId);
         }
 
+        public async Task<SelectedProcessUserDTO> GetSelectedUsersForTrainingAsync(short trainingId)
+        {
+            TrainingDTO training = await _trainingRepository.GetTrainingByIdAsync(trainingId);
+            List<SelectionProcessDTO> listOfSelectedUsers = (await _enrollmentProcessRepository.GetSelectedUsersForTrainingAsync(trainingId)).ToList();
+            SelectedProcessUserDTO selectedUsersDTO = new SelectedProcessUserDTO
+            {
+                TrainingName = training.TrainingName,
+                TrainingDepartment = training.DepartmentName,
+                TrainingStartDateTime = training.TrainingCourseStartingDateTime,
+                SelectedProcessUsers = listOfSelectedUsers
+            };
+            return selectedUsersDTO;
+        }
+
         public async Task PerformAutomaticSelectionProcessAsync()
         {
             const string DECLINE_REASON =
@@ -164,6 +179,15 @@ namespace BusinessLayer.Services.EnrollmentProcessService
 
         public async Task<OperationResult> PerformManualSelectionProcessAsync(short trainingId)
         {
+            if (await _enrollmentProcessRepository.SelectionAlreadyDoneForTodayAsync(trainingId))
+            {
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = $"Selection process has already been done for this training today."
+                };
+            }
+
             const string DECLINE_REASON =
                 @"We regret to inform you that your application for this training program has been declined. 
 	              Due to high demand, we have reached our maximum capacity. We appreciate your interest and 
@@ -180,7 +204,6 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                     Message = $"No employees found to select for the training {training.TrainingName}."
                 };
             }
-            short selected = 0, declined = 0;
             foreach (SelectionProcessDTO user in selectionProcessUsers)
             {
                 SendEmailDTO emailDTO = new SendEmailDTO
@@ -197,7 +220,6 @@ namespace BusinessLayer.Services.EnrollmentProcessService
 #pragma warning disable CS4014
                     EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
 #pragma warning restore CS4014
-                    selected++;
                 }
                 else
                 {
@@ -205,15 +227,49 @@ namespace BusinessLayer.Services.EnrollmentProcessService
 #pragma warning disable CS4014
                     EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
 #pragma warning restore CS4014
-                    declined++;
                 }
             }
             return new OperationResult
             {
                 Success = true,
-                Message = $"{selected} employee(s) have been selected for the training {training.TrainingName}.\n " +
-                $"{declined} employee(s) have been declined for the training due to availability of seats."
+                Message = $"Selection process completed."
             };
+        }
+
+        public async Task<byte[]> ExportToExcel(short trainingId)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add($"ExportedSelectedUsers_{DateTime.Now}");
+                var headers = new string[]
+                { "Employee_FirstName", "Employee_LastName", "Employee_MobileNumber", "Employee_Email", "Manager_FirstName", "Manager_LastName" };
+                for (byte i = 0; i < headers.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = headers[i];
+                }
+
+                // Adding Data to worksheet
+                List<ExportSelectedEmployeeDTO> exportSelectedEmployees =
+                    (await _enrollmentProcessRepository.GetSelectedUserDetailsForExportAsync(trainingId)).ToList();
+                byte rowIndex = 2;
+                foreach (var employee in exportSelectedEmployees)
+                {
+                    worksheet.Cells[rowIndex, 1].Value = employee.EmployeeFirstName;
+                    worksheet.Cells[rowIndex, 2].Value = employee.EmployeeLastName;
+                    worksheet.Cells[rowIndex, 3].Value = employee.EmployeeMobileNumber;
+                    worksheet.Cells[rowIndex, 4].Value = employee.EmployeeEmail;
+                    worksheet.Cells[rowIndex, 5].Value = employee.ManagerFirstName;
+                    worksheet.Cells[rowIndex, 6].Value = employee.ManagerLastName;
+
+                    rowIndex++;
+                }
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                var stream = new MemoryStream();
+                package.SaveAs(stream);
+                return stream.ToArray();
+            }
         }
 
         // PRIVATE HELPER METHODS

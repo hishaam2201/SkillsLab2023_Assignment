@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Services.Description;
-using System.Xml.Linq;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
@@ -94,13 +92,6 @@ namespace SkillsLab2023_Assignment.Controllers
             });
         }
 
-        [HttpGet]
-        [CustomAuthorization(RoleEnum.Administrator)]
-        public ActionResult ProcessSelection()
-        {
-            return View();
-        }
-
         [HttpPost]
         [CustomAuthorization(RoleEnum.Administrator)]
         public async Task<JsonResult> PerformManualSelectionProcess(short trainingId)
@@ -111,6 +102,26 @@ namespace SkillsLab2023_Assignment.Controllers
                 success = result.Success,
                 message = result.Message
             });
+        }
+
+        [HttpGet]
+        [CustomAuthorization(RoleEnum.Administrator)]
+        public async Task<ActionResult> ViewSelectedUsers(short trainingId)
+        {
+            SelectedProcessUserDTO selectedUsers = await _enrollmentProcessService.GetSelectedUsersForTrainingAsync(trainingId);
+            return View(selectedUsers);
+        }
+
+        [HttpPost, CustomAuthorization(RoleEnum.Administrator)]
+        public async Task<ActionResult> DownloadSelectedUsers(short trainingId)
+        {
+            byte[] excelFileBytes = await _enrollmentProcessService.ExportToExcel(trainingId);
+            string fileName = $"ExportedSelectedEmployees_{DateTime.Now:f}.xlsx";
+
+            Response.Clear();
+            string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", $"attachment; filename={fileName}");
+            return File(excelFileBytes, contentType);
         }
     }
 }

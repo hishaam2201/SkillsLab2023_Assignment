@@ -1,0 +1,62 @@
+﻿@model DAL.DTO.SelectedProcessUserDTO
+@{
+    ViewBag.Title = "View Selected Users";
+}
+
+<link href="~/Content/app/Details.css" rel="stylesheet" />
+<script defer src="~/Scripts/app/ViewSelectedUsers.js"></script>
+
+<h2>@Model.TrainingName</h2>
+<h5>Training department is @Model.TrainingDepartment and will be held on @Model.TrainingStartDateTime.ToString("dddd, MMMM d, yyyy, h:mm tt")</h5>
+@if (Model.SelectedProcessUsers == null || Model.SelectedProcessUsers.Count == 0)
+{
+    <div class="my-4 callout callout-warning">
+        <h4 class="alert-heading"><strong>No Selected Employees Found For Today:</strong></h4>
+        <p class="mb-0">There are currently no selected employees for this training.</p>
+    </div>
+}
+else
+{
+    <div class="callout callout-info">
+        <h4 class="alert-heading"><strong>Highest Priority Selection Criteria:</strong></h4>
+        <p class="mb-0">Employees who have applied for a training within their own department have been given the highest priority for selection.</p>
+        <p class="mb-0"><strong>Employees who have been declined in the selection process are mainly due to limited availability of seats.</strong></p>
+    </div>
+    <div class="d-flex justify-content-end pt-2">
+        <button id="exportBtn" class="btn btn-success" type="button">
+            <i id="exportIcon" class="fa-solid fa-file-export"></i>&nbsp;&nbsp;Export selected employees
+        </button>
+    </div>
+    <div class="table-wrapper pt-4">
+        <table id="selectedUsers" class="table table-striped table-hover" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th class="text-center">First Name</th>
+                    <th class="text-center">Last Name</th>
+                    <th class="text-center">User Department</th>
+                    <th class="text-center">Application Status</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @foreach (var user in Model.SelectedProcessUsers)
+                {
+                    <tr class="text-center">
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.DepartmentName</td>
+                        <td>
+                            @if (user.ApplicationStatus == Framework.Enums.ApplicationStatusEnum.Selected)
+                            {
+                                <span class="badge rounded-pill text-bg-success">Selected</span>
+                            }
+                            else
+                            {
+                                <span class="badge rounded-pill text-bg-danger">Declined</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

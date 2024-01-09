@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\ExportSelectedEmployeeDTO.cs" />
+    <Compile Include="DTO\SelectedProcessUserDTO.cs" />
     <Compile Include="DTO\AttachmentInfoDTO.cs" />
     <Compile Include="DTO\DepartmentDTO.cs" />
     <Compile Include="DTO\DocumentUploadDTO.cs" />

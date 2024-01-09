@@ -3,17 +3,9 @@
 @{
     ViewBag.Title = "Dashboard";
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.8.0/slimselect.css"
-      integrity="sha512-0jtuSOf2mf7BDdp4NdezEWR/IZ3UuXNxfeJ/AmdP6cyRbkBxGmVjKv91i/cxWksjJtnpSSOsuhxFN0t7xiPA0Q=="
-      crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link href="~/Content/app/Admin.css" rel="stylesheet" />
-<link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
-<script defer src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script defer src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.8.0/slimselect.min.js"
-        integrity="sha512-mG8eLOuzKowvifd2czChe3LabGrcIU8naD1b9FUVe4+gzvtyzSy+5AafrHR57rHB+msrHlWsFaEYtumxkC90rg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.8.0/slimselect.css" integrity="sha512-0jtuSOf2mf7BDdp4NdezEWR/IZ3UuXNxfeJ/AmdP6cyRbkBxGmVjKv91i/cxWksjJtnpSSOsuhxFN0t7xiPA0Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.8.0/slimselect.min.js" integrity="sha512-mG8eLOuzKowvifd2czChe3LabGrcIU8naD1b9FUVe4+gzvtyzSy+5AafrHR57rHB+msrHlWsFaEYtumxkC90rg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script defer src="~/Scripts/app/Admin.js"></script>
 
 <div class="d-flex justify-content-end pt-2 pb-3">
@@ -109,6 +101,7 @@ else
                     <th>Capacity</th>
                     <th>DepartmentName</th>
                     <th>Pre-Requisite</th>
+                    <th>Selection</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
@@ -150,6 +143,15 @@ else
                         </td>
                         <td>
                             <button data-training-id="@training.TrainingId" type="button"
+                                    class="btn btn-labeled btn-outline-success selection-btn" @(training.IsDeadlineExpired ? "" : "disabled")>
+                                <span class="btn-label"><i class="fa-regular fa-square-check icon"></i></span>
+                                <div class="spinner-border spinner-border-sm spinner" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </td>
+                        <td>
+                            <button data-training-id="@training.TrainingId" type="button"
                                     class="btn btn-labeled btn-outline-primary edit-btn"
                                     data-bs-target="#updateTrainingModal">
                                 <span class="btn-label"><i class="fa-regular fa-pen-to-square icon"></i></span>
@@ -171,7 +173,9 @@ else
             </tbody>
         </table>
     </div>
-
+    <form id="selectionForm" action="/EnrollmentProcess/ViewSelectedUsers" method="get">
+        <input type="hidden" id="trainingIdInput" name="trainingId" value="" />
+    </form>
     <!-- Edit Training Modal -->
     <div class="modal fade" id="updateTrainingModal" tabindex="-1" aria-labelledby="updateTrainingModalLabel" aria-hidden="true" data-bs-focus="false">
         <div class="modal-dialog modal-dialog-centered modal-lg">

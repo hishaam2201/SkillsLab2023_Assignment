@@ -23,63 +23,6 @@ namespace DAL.Repositories.EnrollmentProcessRepository
             _logger = logger;
         }
 
-        public async Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId)
-        {
-            const string GET_APPLICATIONS_QUERY =
-            @"SELECT a.Id AS ApplicationId, u.FirstName, u.LastName, u.Email, t.TrainingName, d.DepartmentName, ApplicationStatus
-                  FROM [Application] AS a
-                  INNER JOIN
-                      [User] AS u ON u.Id = a.UserId
-                  INNER JOIN
-                      Training AS t ON t.Id = a.TrainingId
-                  INNER JOIN 
-	              Department AS d ON d.Id = t.DepartmentId
-                  WHERE ApplicationStatus = 'Pending' AND u.ManagerId = @ManagerId;";
-
-            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { ManagerId = managerId });
-            Func<IDataReader, ApplicationDTO> mapFunction = reader =>
-            {
-                return new ApplicationDTO
-                {
-                    ApplicationId = (int)reader["ApplicationId"],
-                    FirstName = reader["FirstName"].ToString(),
-                    LastName = reader["LastName"].ToString(),
-                    Email = reader["Email"].ToString(),
-                    TrainingName = reader["TrainingName"].ToString(),
-                    DepartmentName = reader["DepartmentName"].ToString(),
-                    ApplicationStatus = reader["ApplicationStatus"].ToString()
-                };
-            };
-            var result = await _dbCommand.ExecuteSelectQueryAsync(GET_APPLICATIONS_QUERY, parameters, mapFunction);
-            return result;
-        }
-
-        public async Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId)
-        {
-
-            const string GET_APPLICATION_DOCUMENT_QUERY =
-                @"SELECT du.Id AS AttachmentId, du.[File], pr.[Name], pr.PreRequisiteDescription, du.[FileName]
-                  FROM DocumentUpload AS du
-                  INNER JOIN
-                      PreRequisite pr ON pr.Id = du.PreRequisiteId
-                  WHERE du.ApplicationId = @ApplicationId;";
-
-            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { ApplicationId = applicationId });
-            Func<IDataReader, ApplicationDocumentDTO> mapFunction = reader =>
-            {
-                return new ApplicationDocumentDTO
-                {
-                    AttachmentId = (int)reader["AttachmentId"],
-                    File = reader["File"] as byte[],
-                    FileName = reader["FileName"].ToString(),
-                    PreRequisiteName = reader["Name"].ToString(),
-                    PreRequisiteDescription = reader["PreRequisiteDescription"].ToString(),
-                };
-            };
-            var result = await _dbCommand.ExecuteSelectQueryAsync(GET_APPLICATION_DOCUMENT_QUERY, parameters, mapFunction);
-            return result;
-        }
-
         public async Task<(bool, SendEmailDTO)> ApproveApplicationAsync(int applicationId)
         {
             const string APPROVE_APPLICATION_QUERY = @"
@@ -149,6 +92,116 @@ namespace DAL.Repositories.EnrollmentProcessRepository
             return (true, result);
         }
 
+        public async Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId)
+        {
+            const string GET_APPLICATIONS_QUERY =
+            @"SELECT a.Id AS ApplicationId, u.FirstName, u.LastName, u.Email, t.TrainingName, d.DepartmentName, ApplicationStatus
+                  FROM [Application] AS a
+                  INNER JOIN
+                      [User] AS u ON u.Id = a.UserId
+                  INNER JOIN
+                      Training AS t ON t.Id = a.TrainingId
+                  INNER JOIN 
+	              Department AS d ON d.Id = t.DepartmentId
+                  WHERE ApplicationStatus = 'Pending' AND u.ManagerId = @ManagerId;";
+
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { ManagerId = managerId });
+            Func<IDataReader, ApplicationDTO> mapFunction = reader =>
+            {
+                return new ApplicationDTO
+                {
+                    ApplicationId = (int)reader["ApplicationId"],
+                    FirstName = reader["FirstName"].ToString(),
+                    LastName = reader["LastName"].ToString(),
+                    Email = reader["Email"].ToString(),
+                    TrainingName = reader["TrainingName"].ToString(),
+                    DepartmentName = reader["DepartmentName"].ToString(),
+                    ApplicationStatus = reader["ApplicationStatus"].ToString()
+                };
+            };
+            var result = await _dbCommand.ExecuteSelectQueryAsync(GET_APPLICATIONS_QUERY, parameters, mapFunction);
+            return result;
+        }
+
+        public async Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId)
+        {
+
+            const string GET_APPLICATION_DOCUMENT_QUERY =
+                @"SELECT du.Id AS AttachmentId, du.[File], pr.[Name], pr.PreRequisiteDescription, du.[FileName]
+                  FROM DocumentUpload AS du
+                  INNER JOIN
+                      PreRequisite pr ON pr.Id = du.PreRequisiteId
+                  WHERE du.ApplicationId = @ApplicationId;";
+
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { ApplicationId = applicationId });
+            Func<IDataReader, ApplicationDocumentDTO> mapFunction = reader =>
+            {
+                return new ApplicationDocumentDTO
+                {
+                    AttachmentId = (int)reader["AttachmentId"],
+                    File = reader["File"] as byte[],
+                    FileName = reader["FileName"].ToString(),
+                    PreRequisiteName = reader["Name"].ToString(),
+                    PreRequisiteDescription = reader["PreRequisiteDescription"].ToString(),
+                };
+            };
+            var result = await _dbCommand.ExecuteSelectQueryAsync(GET_APPLICATION_DOCUMENT_QUERY, parameters, mapFunction);
+            return result;
+        }
+
+        public async Task<bool> SelectionAlreadyDoneForTodayAsync(short trainingId)
+        {
+            const string GET_SELECTED_USERS_FOR_TODAY_QUERY =
+                    @"SELECT COUNT(*) AS SelectedUsersForToday
+                      FROM [User] AS u
+                      JOIN [Application] a ON a.UserId = u.Id
+                      JOIN Training t ON t.Id = a.TrainingId
+                      JOIN Department d ON d.Id = u.DepartmentId
+                      JOIN Department td ON td.Id = t.DepartmentId
+                      WHERE t.Id = @TrainingId AND (a.ApplicationStatus = @Selected AND CAST(a.SelectedDate AS DATE) = @CurrentDate)";
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new
+            {
+                TrainingId = trainingId,
+                Selected = ApplicationStatusEnum.Selected.ToString(),
+                CurrentDate = DateTime.Now.Date
+            });
+            return (int)await _dbCommand.GetScalerResultAsync(GET_SELECTED_USERS_FOR_TODAY_QUERY, parameters) > 0;
+            
+        }
+
+        public async Task<IEnumerable<SelectionProcessDTO>> GetSelectedUsersForTrainingAsync(short trainingId)
+        {
+            const string GET_SELECTED_USERS_QUERY =
+                @"SELECT 
+	                u.FirstName, u.LastName, d.DepartmentName AS UserDepartment, a.ApplicationStatus
+	              FROM [User] AS u
+	              JOIN [Application] a ON a.UserId = u.Id
+	              JOIN Training t ON t.Id = a.TrainingId
+	              JOIN Department d ON d.Id = u.DepartmentId
+	              JOIN Department td ON td.Id = t.DepartmentId
+	              WHERE t.Id = @TrainingId AND (a.ApplicationStatus = @Selected AND CAST(a.SelectedDate AS DATE) = @CurrentDate)
+	              ORDER BY
+		              IIF(u.DepartmentId = t.DepartmentId, 0, 1),
+                      d.DepartmentName";
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new
+            {
+                TrainingId = trainingId,
+                Selected = ApplicationStatusEnum.Selected.ToString(),
+                CurrentDate = DateTime.Now.Date
+            });
+            SelectionProcessDTO mapFunction(IDataReader reader)
+            {
+                return new SelectionProcessDTO
+                {
+                    FirstName = reader["FirstName"].ToString(),
+                    LastName = reader["LastName"].ToString(),
+                    DepartmentName = reader["UserDepartment"].ToString(),
+                    ApplicationStatus = Enum.TryParse(reader["ApplicationStatus"].ToString(), out ApplicationStatusEnum status) ? status : default
+                };
+            }
+            return await _dbCommand.ExecuteSelectQueryAsync(GET_SELECTED_USERS_QUERY, parameters, mapFunction);
+        }
+
         public async Task<IEnumerable<TrainingDTO>> GetAllExpiredTrainingIdsAsync()
         {
             try
@@ -158,7 +211,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                   WHERE
                     DeadlineOfApplication = @DeadlineOfApplication;";
                 SqlParameter[] parameter = _dbCommand.GetSqlParametersFromObject(new { DeadlineOfApplication = DateTime.Now.Date });
-                Func<IDataReader, TrainingDTO> mapFunction = reader =>
+                TrainingDTO mapFunction(IDataReader reader)
                 {
                     return new TrainingDTO
                     {
@@ -166,7 +219,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                         TrainingName = reader["TrainingName"].ToString(),
                         TrainingCourseStartingDateTime = (DateTime)reader["TrainingCourseStartingDateTime"]
                     };
-                };
+                }
                 var result = await _dbCommand.ExecuteSelectQueryAsync(GET_EXPIRED_TRAINING_IDS, parameter, mapFunction);
                 return result;
             }
@@ -195,10 +248,12 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                         u.Id AS UserId, u.Email, u.FirstName, u.LastName
                     FROM [User] AS u
                     JOIN [Application] a ON a.UserId = u.Id
+                    JOIN Department d ON d.Id = u.DepartmentId
                     JOIN Training t ON t.Id = a.TrainingId
                     WHERE t.Id = @TrainingId AND a.ApplicationStatus = @Approved
                     ORDER BY
                         IIF(u.DepartmentId = t.DepartmentId, 0, 1),
+                        d.DepartmentName,
                         a.ApplicationDateTime;
 
                     DECLARE @SelectedUsers TABLE (
@@ -271,6 +326,36 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                 _logger.LogError(ex, Guid.NewGuid());
                 throw;
             }
+        }
+
+        public async Task<IEnumerable<ExportSelectedEmployeeDTO>> GetSelectedUserDetailsForExportAsync(short trainingId)
+        {
+            const string GET_SELECTED_USER_DETAILS_QUERY =
+                @"SELECT u.FirstName, u.LastName, u.MobileNumber, u.Email AS EmployeeEmail, m.FirstName AS ManagerFirstName, m.LastName AS ManagerLastName
+	              FROM [User] AS u
+	              INNER JOIN [User] AS m ON m.Id = u.ManagerId
+	              INNER JOIN [Application] AS a ON a.UserId = u.Id
+	              INNER JOIN Training t ON t.Id = a.TrainingId
+	              WHERE t.Id = @TrainingId AND (a.ApplicationStatus = @Selected AND CAST(a.SelectedDate AS DATE) = @CurrentDate)";
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new
+            {
+                TrainingId = trainingId,
+                Selected = ApplicationStatusEnum.Selected.ToString(),
+                CurrentDate = DateTime.Now.Date
+            });
+            ExportSelectedEmployeeDTO mapFunction(IDataReader reader)
+            {
+                return new ExportSelectedEmployeeDTO
+                {
+                    EmployeeFirstName = reader["FirstName"].ToString(),
+                    EmployeeLastName = reader["LastName"].ToString(),
+                    EmployeeMobileNumber = reader["MobileNumber"].ToString(),
+                    EmployeeEmail = reader["EmployeeEmail"].ToString(),
+                    ManagerFirstName = reader["ManagerFirstName"].ToString(),
+                    ManagerLastName = reader["ManagerLastName"].ToString()
+                };
+            }
+            return await _dbCommand.ExecuteSelectQueryAsync(GET_SELECTED_USER_DETAILS_QUERY, parameters, mapFunction);
         }
     }
 }
