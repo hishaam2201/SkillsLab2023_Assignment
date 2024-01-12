@@ -43,15 +43,13 @@ namespace DAL.Repositories.TrainingRepository
 
             foreach (Training training in trainingList)
             {
-                object departmentName = await RetrieveDepartmentNameAsync((byte)training.DepartmentId);
-
                 trainingDTOs.Add(new TrainingDTO
                 {
                     TrainingId = (short)training.Id,
                     TrainingName = training.TrainingName,
                     DeadlineOfApplication = training.DeadlineOfApplication,
                     Capacity = training.Capacity,
-                    DepartmentName = departmentName?.ToString()
+                    DepartmentName = (await RetrieveDepartmentNameAsync((byte)training.DepartmentId)).ToString()
                 });
             }
             return trainingDTOs;
@@ -216,7 +214,7 @@ namespace DAL.Repositories.TrainingRepository
                        WHERE t.Id = @Id";
 
                 SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Id = trainingId });
-                Func<IDataReader, TrainingPreRequisteDTO> mapFunction = reader =>
+                TrainingPreRequisteDTO mapFunction(IDataReader reader)
                 {
                     return new TrainingPreRequisteDTO
                     {
@@ -225,7 +223,7 @@ namespace DAL.Repositories.TrainingRepository
                         PreRequisiteName = reader["Name"]?.ToString(),
                         PreRequisiteDescription = reader["PreRequisiteDescription"]?.ToString()
                     };
-                };
+                }
 
                 return await _dbCommand.ExecuteSelectQueryAsync(
                     GET_TRAINING_PRE_REQUISITES_QUERY, parameters, mapFunction);

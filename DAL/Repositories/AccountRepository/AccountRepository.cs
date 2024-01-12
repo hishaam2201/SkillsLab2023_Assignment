@@ -37,7 +37,7 @@ namespace DAL.Repositories.AccountRepository
                 var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_HASHEDPASSWORD_AND_SALT_QUERY, parameters, mapFunction);
                 return result?.FirstOrDefault();
             }
-            catch(Exception) { throw; }
+            catch (Exception) { throw; }
         }
 
         public async Task<bool> IsEmailInUseAsync(string email)
@@ -55,31 +55,33 @@ namespace DAL.Repositories.AccountRepository
 
         public async Task<UserDTO> GetUserDataAsync(string email, byte roleId)
         {
-            try
+            const string GET_USER_DATA_QUERY = @"
+                        SELECT u.Id, u.FirstName, u.LastName, u.DepartmentId, u.Email, ur.[RoleId], 
+                                u.ManagerId, CONCAT(m.FirstName, ' ',  m.LastName) AS ManagerName, m.Email AS ManagerEmail
+                        FROM [User] AS u
+                                LEFT JOIN [User] AS m ON m.Id = u.ManagerId
+                                INNER JOIN UserRole ur ON ur.UserId = u.Id
+                        WHERE u.Email = @Email  AND ur.RoleId = @RoleId";
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email, RoleId = roleId });
+            Func<IDataReader, UserDTO> mapFunction = reader =>
             {
-                const string GET_USER_DATA_QUERY = @"SELECT Id, FirstName, LastName, DepartmentId, ManagerId, Email, u.[RoleId] FROM [User]
-                                                     INNER JOIN UserRole u ON u.UserId = [User].Id
-                                                     WHERE Email = @Email AND RoleId = @RoleId";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email, RoleId = roleId });
-                Func<IDataReader, UserDTO> mapFunction = reader =>
+                return new UserDTO
                 {
-                    return new UserDTO
-                    {
-                        Id = (short)reader["Id"],
-                        FirstName = reader["FirstName"]?.ToString(),
-                        LastName = reader["LastName"]?.ToString(),
-                        DepartmentId = reader["DepartmentId"] == DBNull.Value ? (byte?)null : (byte)reader["DepartmentId"],
-                        ManagerId = reader["ManagerId"] == DBNull.Value ? (short?)null : (short)reader["ManagerId"],
-                        Email = reader["Email"]?.ToString(),
-                        RoleId = (byte)reader["RoleId"],
-                    };
+                    Id = (short)reader["Id"],
+                    FirstName = reader["FirstName"].ToString(),
+                    LastName = reader["LastName"].ToString(),
+                    DepartmentId = reader["DepartmentId"] == DBNull.Value ? (byte?)null : (byte)reader["DepartmentId"],
+                    ManagerId = reader["ManagerId"] == DBNull.Value ? (short?)null : (short)reader["ManagerId"],
+                    ManagerName = reader["ManagerName"] == DBNull.Value ? null : reader["ManagerName"].ToString(),
+                    ManagerEmail = reader["ManagerEmail"] == DBNull.Value ? null : reader["ManagerEmail"].ToString(),
+                    Email = reader["Email"].ToString(),
+                    RoleId = (byte)reader["RoleId"]
                 };
-                var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_DATA_QUERY, parameters, mapFunction);
-                return result.FirstOrDefault();
-            }
-            catch (Exception) { throw; }
+            };
+            var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_DATA_QUERY, parameters, mapFunction);
+            return result.FirstOrDefault();
         }
-        
+
         public async Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync(string email)
         {
             try
@@ -131,7 +133,7 @@ namespace DAL.Repositories.AccountRepository
                 bool isSuccessful = await _dbCommand.ExecuteTransactionAsync(new SqlCommand(INSERT_INTO_USER_QUERY), allParams);
                 return isSuccessful;
             }
-            catch(Exception) { throw; }
+            catch (Exception) { throw; }
         }
 
         public async Task<IEnumerable<DepartmentDTO>> GetAllDepartmentsAsync()

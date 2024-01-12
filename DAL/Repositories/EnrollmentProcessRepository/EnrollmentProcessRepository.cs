@@ -1,6 +1,5 @@
 ﻿using DAL.DTO;
 using DAL.Models;
-using DAL.Repositories.TrainingRepository;
 using Framework.AppLogger;
 using Framework.DatabaseCommand.DatabaseCommand;
 using Framework.Enums;
@@ -23,6 +22,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
             _logger = logger;
         }
 
+        // TODO: Put in Application Repository ==================================================================
         public async Task<(bool, SendEmailDTO)> ApproveApplicationAsync(int applicationId)
         {
             const string APPROVE_APPLICATION_QUERY = @"
@@ -41,17 +41,17 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                 ApplicationStatus = (ApplicationStatusEnum.Approved.ToString()),
                 ApplicationId = applicationId
             });
-            Func<IDataReader, SendEmailDTO> mapFunction = reader =>
+            SendEmailDTO mapFunction(IDataReader reader)
             {
                 string firstName = reader["FirstName"].ToString();
                 string lastName = reader["LastName"].ToString();
                 return new SendEmailDTO
                 {
                     EmployeeName = $"{firstName} {lastName}",
-                    EmployeeEmail = reader["Email"].ToString(),
+                    Email = reader["Email"].ToString(),
                     TrainingName = reader["TrainingName"].ToString()
                 };
-            };
+            }
             var result = (await _dbCommand.ExecuteSelectQueryAsync(APPROVE_APPLICATION_QUERY, parameters, mapFunction)).FirstOrDefault();
             return (true, result);
         }
@@ -84,7 +84,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                 return new SendEmailDTO
                 {
                     EmployeeName = $"{firstName} {lastName}",
-                    EmployeeEmail = reader["Email"].ToString(),
+                    Email = reader["Email"].ToString(),
                     TrainingName = reader["TrainingName"].ToString()
                 };
             };
@@ -95,30 +95,38 @@ namespace DAL.Repositories.EnrollmentProcessRepository
         public async Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId)
         {
             const string GET_APPLICATIONS_QUERY =
-            @"SELECT a.Id AS ApplicationId, u.FirstName, u.LastName, u.Email, t.TrainingName, d.DepartmentName, ApplicationStatus
+            @"SELECT a.Id AS ApplicationId, u.FirstName, u.LastName, u.Email, t.TrainingName, d.DepartmentName AS TrainingDepartment, ApplicationStatus
                   FROM [Application] AS a
                   INNER JOIN
                       [User] AS u ON u.Id = a.UserId
                   INNER JOIN
+                      [User] AS m ON m.Id = u.ManagerId
+                  INNER JOIN
                       Training AS t ON t.Id = a.TrainingId
                   INNER JOIN 
 	              Department AS d ON d.Id = t.DepartmentId
-                  WHERE ApplicationStatus = 'Pending' AND u.ManagerId = @ManagerId;";
+                  WHERE ApplicationStatus = @Pending AND u.ManagerId = @ManagerId
+                  ORDER BY
+                        IIF(m.DepartmentId = t.DepartmentId, 0, 1)";
 
-            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { ManagerId = managerId });
-            Func<IDataReader, ApplicationDTO> mapFunction = reader =>
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new
+            {
+                ManagerId = managerId,
+                Pending = ApplicationStatusEnum.Pending.ToString()
+            });
+            ApplicationDTO mapFunction(IDataReader reader)
             {
                 return new ApplicationDTO
                 {
-                    ApplicationId = (int)reader["ApplicationId"],
+                    ApplicationId = Convert.ToInt32(reader["ApplicationId"]),
                     FirstName = reader["FirstName"].ToString(),
                     LastName = reader["LastName"].ToString(),
                     Email = reader["Email"].ToString(),
                     TrainingName = reader["TrainingName"].ToString(),
-                    DepartmentName = reader["DepartmentName"].ToString(),
+                    TrainingDepartment = reader["TrainingDepartment"].ToString(),
                     ApplicationStatus = reader["ApplicationStatus"].ToString()
                 };
-            };
+            }
             var result = await _dbCommand.ExecuteSelectQueryAsync(GET_APPLICATIONS_QUERY, parameters, mapFunction);
             return result;
         }
@@ -149,6 +157,8 @@ namespace DAL.Repositories.EnrollmentProcessRepository
             return result;
         }
 
+        //=======================================================================================================
+
         public async Task<bool> SelectionAlreadyDoneForTodayAsync(short trainingId)
         {
             const string GET_SELECTED_USERS_FOR_TODAY_QUERY =
@@ -166,7 +176,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
                 CurrentDate = DateTime.Now.Date
             });
             return (int)await _dbCommand.GetScalerResultAsync(GET_SELECTED_USERS_FOR_TODAY_QUERY, parameters) > 0;
-            
+
         }
 
         public async Task<IEnumerable<SelectionProcessDTO>> GetSelectedUsersForTrainingAsync(short trainingId)

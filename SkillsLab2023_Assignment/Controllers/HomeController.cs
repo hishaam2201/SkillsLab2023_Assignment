@@ -1,5 +1,4 @@
-﻿
-using BusinessLayer.Services.ApplicationService;
+﻿using BusinessLayer.Services.ApplicationService;
 using BusinessLayer.Services.TrainingService;
 using DAL.DTO;
 using Framework.Enums;
@@ -31,10 +30,11 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpGet, CustomAuthorization(RoleEnum.Manager)]
-        public ActionResult ManagerDashboard()
+        public async Task<ActionResult> ManagerDashboard()
         {
-            // TODO: Data table for aprovals needs to be called here for razor view (Manager is a user as well, use session manager)
-            return View();
+            short managerId = SessionManager.CurrentUser.Id;
+            List<ApplicationDTO> applications = (await _applicationService.GetApplicationsAsync(managerId)).ToList();
+            return View(applications);
         }
 
         [HttpGet, CustomAuthorization(RoleEnum.Administrator)]

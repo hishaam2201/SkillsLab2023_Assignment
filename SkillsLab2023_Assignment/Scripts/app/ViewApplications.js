@@ -1,115 +1,52 @@
 (function () {
-    fetch('/EnrollmentProcess/ViewApplications', {
-        method: 'GET'
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                if (data.PendingApplications && data.PendingApplications.length > 0) {
-                    populateApplicationTable(data.PendingApplications)
-                }
-            }
-            else {
-                document.getElementById("dashboardContainer").innerHTML = '<h1>No pending applications found</h1>'
-                toastr.warning("No pending applications found", {
-                    timeOut: 5000,
-                    progressBar: true
-                })
-            }
-        })
-        .catch(() => {
-            window.location.href = '/Common/InternalServerError'
-        })
+    const applicationsTable = document.getElementById('applicationsTable')
+    new DataTable(applicationsTable, {
+        responsive: true,
+        paging: true,
+        ordering: false,
+        pageLength: 7,
+        language: {
+            lengthMenu:
+                '<span>Show: <select class="form-select mb-2">' +
+                '<option value="7">7</option>' +
+                '<option value="15">15</option>' +
+                '<option value="25">25</option>' +
+                '<option value="-1">All</option>' +
+                '</select> entries</span>',
+        },
+        drawCallback: function () {
+            addButtonClickListener('view-btn', function (button, applicationId) {
+                disableButton(button)
+                var employeeName = button.getAttribute('data-employee-name')
+                fetchDataAndPopulateModal(button, employeeName, applicationId)
+            })
+            addButtonClickListener('approve-btn', function (button, applicationId) {
+                disableButton(button)
+                approveApplication(button, applicationId)
+            });
+
+            addButtonClickListener('decline-btn', function (button, applicationId) {
+                var employeeName = button.getAttribute('data-employee-name')
+                submitDeclineModal(applicationId, employeeName)
+            });
+        }
+    });
 })()
 
-function populateApplicationTable(pendingApplications) {
-    const tableBody = document.getElementById('tableBody')
 
-    pendingApplications.forEach(pendingApplication => {
-        const row = document.createElement('tr')
-        var fullName = `${pendingApplication.FirstName} ${pendingApplication.LastName }`
-        const applicantNameCell = document.createElement('td')
-        applicantNameCell.textContent = `${fullName}`
-        row.appendChild(applicantNameCell)
-
-        const trainingNameCell = document.createElement('td')
-        trainingNameCell.textContent = pendingApplication.TrainingName
-        row.appendChild(trainingNameCell)
-
-        const trainingDepartmentCell = document.createElement('td')
-        trainingDepartmentCell.textContent = pendingApplication.DepartmentName
-        row.appendChild(trainingDepartmentCell)
-
-        const applicationId = pendingApplication.ApplicationId
-        const applicationStatusCell = document.createElement('td')
-        applicationStatusCell.id = `applicationStatus_${applicationId}`;
-        applicationStatusCell.textContent = pendingApplication.ApplicationStatus
-        row.appendChild(applicationStatusCell)
-
-        const viewDocumentButtonCell = createButton('view', 'View Document', () => {
-            const firstName = pendingApplication.FirstName
-            const lastName = pendingApplication.LastName
-            fetchDataAndPopulateModal(firstName, lastName, applicationId)
-        })
-
-        const approveApplicationButtonCell = createButton('approve', 'Approve Application', () => {
-            showSpinner()
-            approveApplication(applicationId)
-        });
-
-        const declineApplicationButtonCell = createButton('decline', 'Decline Application', () => {
-            submitDeclineModal(applicationId, fullName)
-        });
-
-        row.appendChild(viewDocumentButtonCell)
-        row.appendChild(approveApplicationButtonCell)
-        row.appendChild(declineApplicationButtonCell)
-
-        tableBody.appendChild(row)
-    })
-}
-
-function createButton(type, text, clickHandler) {
-    const buttonCell = document.createElement('td');
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.classList.add('btn');
-
-    switch (type) {
-        case 'view':
-            button.classList.add('btn-secondary');
-            button.setAttribute('data-bs-toggle', 'modal');
-            button.setAttribute('data-bs-target', '#viewDocModal');
-            button.addEventListener('click', clickHandler);
-            break;
-        case 'approve':
-            button.classList.add('btn-outline-success');
-            button.addEventListener('click', clickHandler);
-            break;
-        case 'decline':
-            button.classList.add('btn-outline-danger');
-            button.setAttribute('data-bs-toggle', 'modal');
-            button.setAttribute('data-bs-target', '#declineModal');
-            button.addEventListener('click', clickHandler);
-            break;
-        default:
-            break;
-    }
-    button.textContent = text;
-    buttonCell.appendChild(button);
-    return buttonCell;
-}    
-
-function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
-    fetch(`/EnrollmentProcess/ViewDocuments?applicationId=${applicationId}`, {
-        method: 'POST'
+function fetchDataAndPopulateModal(button, employeeName, applicationId) {
+    var formData = new FormData()
+    formData.append('applicationId', applicationId)
+    fetch(`/Application/ViewDocuments`, {
+        method: 'POST',
+        body: formData
     })
         .then(response => response.json())
         .then(data => {
             const modal = document.getElementById("viewDocModal");
             const modalTitle = modal.querySelector(".modal-title");
 
-            modalTitle.textContent = `Documents submitted by ${firstName} ${lastName}`
+            modalTitle.textContent = `Documents submitted by ${employeeName}`
 
             if (data.success) {
                 if (data.Attachments && data.Attachments.length > 0) {
@@ -124,6 +61,11 @@ function fetchDataAndPopulateModal(firstName, lastName, applicationId) {
         .catch(() => {
             window.location.href = "/Common/InternalServerError"
         })
+        .finally(() => {
+            setTimeout(() => {
+                enableButton(button)
+            }, 500)
+        })
 }
 
 function populateViewModal(attachmentInfoList) {
@@ -132,7 +74,7 @@ function populateViewModal(attachmentInfoList) {
 
     attachmentInfoList.forEach(function (attachmentInfo) {
         var rowDiv = document.createElement('div');
-        rowDiv.classList.add('row','p-2');
+        rowDiv.classList.add('row', 'p-2');
 
         var preRequisiteDiv = document.createElement('div');
         preRequisiteDiv.className = 'col-md-9';
@@ -146,7 +88,7 @@ function populateViewModal(attachmentInfoList) {
         buttonDiv.classList.add("col-md-3", "text-center")
 
         var viewButton = document.createElement('a');
-        viewButton.href = `/EnrollmentProcess/DownloadAttachment?attachmentId=${attachmentInfo.AttachmentId}`;
+        viewButton.href = `/Application/DownloadAttachment?attachmentId=${attachmentInfo.AttachmentId}`; // Downloading file
         viewButton.className = 'btn btn-primary';
         viewButton.textContent = 'View Document';
         buttonDiv.appendChild(viewButton);
@@ -158,43 +100,33 @@ function populateViewModal(attachmentInfoList) {
     })
 }
 
-function downloadAttachment(attachmentId) {
-    fetch(`/EnrollmentProcess/DownloadAttachment?attachmentId=${attachmentId}`, {
-        method: 'GET'
-    })
-        .then(response => response.blob())
-        .catch(() => {
-            window.location.href = "/Common/InternalServerError"
-        })
-}
-
-function approveApplication(applicationId) {
-    fetch(`/EnrollmentProcess/ApproveApplication?applicationId=${applicationId}`, {
-        method: 'POST'
+function approveApplication(button, applicationId) {
+    var formData = new FormData()
+    formData.append('applicationId', applicationId)
+    fetch(`/Application/ApproveApplication`, {
+        method: 'POST',
+        body: formData
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                toastr.success("Application approved!", "Approved", {
+                toastr.success(`${data.message}`, "Approved", {
                     timeOut: 1200,
                     progressBar: true
                 })
-
-                setTimeout(() => {
-                    hideSpinner();
-                    window.location.reload()
-                }, 1300)
             }
             else {
-                toastr.error("Could not approve application", "Error", {
-                    timeOut: 5000,
-                    progressBar: true
-                })
+                toastr.error(`${data.message}`, "Error")
             }
         })
         .catch(() => {
-            hideSpinner();
             window.location.href = "/Common/InternalServerError"
+        })
+        .finally(() => {
+            setTimeout(() => {
+                enableButton(button)
+                window.location.reload()
+            }, 2000)
         })
 }
 
@@ -206,54 +138,74 @@ function submitDeclineModal(applicationId, fullName) {
     }
     const declineButton = document.getElementById("declineButton");
     declineButton.addEventListener('click', function () {
-        const declineMessage = document.getElementById('decline-message-text').value;
-        showSpinner()
-        declineApplication(applicationId, declineMessage)
+        declineButton.disabled = true
+        const declineTextArea = document.getElementById('decline-message-text')
+        declineApplication(applicationId, declineTextArea)
     })
 }
 
-function declineApplication(applicationId, message) {
+function declineApplication(applicationId, declineTextArea) {
     var formData = new FormData()
     formData.append('applicationId', applicationId)
-    formData.append('message', message)
+    formData.append('message', declineTextArea.value)
 
-    fetch(`/EnrollmentProcess/DeclineApplication`, {
+    fetch(`/Application/DeclineApplication`, {
         method: 'POST',
         body: formData
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                toastr.success("Declined message sent successfully!", "Message sent", {
+                toastr.success(`${data.message}`, "Rejected", {
                     timeOut: 1200,
                     progressBar: true
                 })
-
-                setTimeout(() => {
-                    hideSpinner();
-                    window.location.reload()
-                }, 1300)
             }
             else {
-                toastr.error("Could not send declined reason", "Error", {
-                    timeOut: 5000,
-                    progressBar: true
-                })
+                toastr.error(`${data.message}`, "Error")
             }
         })
         .catch(() => {
-            hideSpinner();
             window.location.href = "/Common/InternalServerError"
+        })
+        .finally(() => {
+            setTimeout(() => {
+                window.location.reload()
+            }, 1500)
         })
 }
 
-function showSpinner() {
-    const spinnerWrapper = document.getElementById('emailSpinner');
-    spinnerWrapper.style.display = 'flex';
+function enableButton(button) {
+    if (button) {
+        toggleElementVisibility(button, '.spinner', false)
+        toggleElementVisibility(button, '.icon', true)
+        button.disabled = false;
+    }
 }
 
-function hideSpinner() {
-    const spinnerWrapper = document.getElementById('emailSpinner');
-    spinnerWrapper.style.opacity = '0';
-    spinnerWrapper.style.display = 'none';
+function disableButton(button) {
+    if (button) {
+        toggleElementVisibility(button, '.spinner', true)
+        toggleElementVisibility(button, '.icon', false)
+        button.disabled = true
+    }
+}
+
+function toggleElementVisibility(parentElement, selector, isVisible) {
+    var element = parentElement.querySelector(selector);
+    if (element) {
+        element.style.display = isVisible ? 'inline-block' : 'none';
+    }
+}
+
+function addButtonClickListener(className, action) {
+    var buttons = document.querySelectorAll(`.${className}`);
+    buttons.forEach(function (button) {
+        button.removeEventListener('click', button.clickHandler);
+        button.clickHandler = function () {
+            var applicationId = button.getAttribute('data-application-id');
+            action(button, applicationId);
+        };
+        button.addEventListener('click', button.clickHandler);
+    });
 }

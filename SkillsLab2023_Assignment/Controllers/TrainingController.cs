@@ -22,25 +22,13 @@ namespace SkillsLab2023_Assignment.Controllers
             _trainingService = trainingService;
         }
 
-        [HttpGet]
-        [CustomAuthorization(RoleEnum.Employee)]
-        public ActionResult ViewTrainings()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        [CustomAuthorization(RoleEnum.Employee)]
-        public async Task<JsonResult> GetAllUnappliedTrainings()
+        [HttpGet, CustomAuthorization(RoleEnum.Employee)]
+        public async Task<ActionResult> ViewTrainings()
         {
             byte userDepartmentId = (byte)SessionManager.CurrentUser.DepartmentId;
             short userId = SessionManager.CurrentUser.Id;
             List<TrainingDTO> listOfTrainings = (await _trainingService.GetUnappliedTrainingsAsync(userDepartmentId, userId)).ToList();
-            return Json(new
-            {
-                success = listOfTrainings != null && listOfTrainings.Any(),
-                trainings = listOfTrainings
-            }, JsonRequestBehavior.AllowGet);
+            return View(listOfTrainings);
         }
 
         [HttpPost]
