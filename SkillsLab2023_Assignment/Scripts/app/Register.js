@@ -1,4 +1,21 @@
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
+    getAllDepartments()
+    const registrationForm = document.getElementById('registrationForm')
+    registrationForm.addEventListener('submit', event => {
+        if (!registrationForm.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+        else {
+            submitRegistrationForm();
+        }
+
+        registrationForm.classList.add('was-validated')
+
+    }, false)
+})()
+
+function getAllDepartments() {
     fetch('/Account/GetAllDepartments', {
         method: 'GET'
     })
@@ -19,61 +36,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 departmentSelectElement.addEventListener('change', function () {
                     var selectedDepartmentId = departmentSelectElement.value
-
-                    fetch(`/Account/GetAllManagersFromDepartment?departmentId=${selectedDepartmentId}`, {
-                        method: 'GET'
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            var managerSelectElement = document.getElementById('manager')
-                            managerSelectElement.innerHTML = '<option selected disabled value="">Select your Manager</option>'
-
-                            if (data.success && data.managers.length > 0) {
-                                var managers = data.managers;
-
-                                managers.forEach(function (manager) {
-                                    var option = document.createElement('option')
-                                    option.value = manager.Id
-                                    option.text = `${manager.FirstName} ${manager.LastName}`
-                                    managerSelectElement.appendChild(option)
-                                })
-                            }
-                            else {
-                                toastr.warning("No managers available for the selected department", "No Managers Found", {
-                                    progressBar: true,
-                                    timeOut: 3000
-                                })
-                            }
-                        })
-                        .catch(() => {
-                            toastr.error("Error fetching Managers", "Error", {
-                                closeButton: true
-                            })
-                        })
+                    getAllManagersFromDepartment(selectedDepartmentId)
                 })
             }
         })
         .catch(() => {
             toastr.error("Error fetching Departments", "Error", {
-                closeButton: true                
+                closeButton: true
             })
         })
-})
+}
 
-const registrationForm = document.getElementById('registrationForm')
+function getAllManagersFromDepartment(selectedDepartmentId) {
+    fetch(`/Account/GetAllManagersFromDepartment?departmentId=${selectedDepartmentId}`, {
+        method: 'GET'
+    })
+        .then(response => response.json())
+        .then(data => {
+            var managerSelectElement = document.getElementById('manager')
+            managerSelectElement.innerHTML = '<option selected disabled value="">Select your Manager</option>'
 
-registrationForm.addEventListener('submit', event => {
-    if (!registrationForm.checkValidity()) {
-        event.preventDefault()
-        event.stopPropagation()
-    }
-    else {
-        submitRegistrationForm();
-    }
+            if (data.success && data.managers.length > 0) {
+                var managers = data.managers;
 
-    registrationForm.classList.add('was-validated')
-
-}, false)
+                managers.forEach(function (manager) {
+                    var option = document.createElement('option')
+                    option.value = manager.Id
+                    option.text = `${manager.FirstName} ${manager.LastName}`
+                    managerSelectElement.appendChild(option)
+                })
+            }
+            else {
+                toastr.warning("No managers available for the selected department", "No Managers Found", {
+                    progressBar: true,
+                    timeOut: 3000
+                })
+            }
+        })
+        .catch(() => {
+            toastr.error("Error fetching Managers", "Error", {
+                closeButton: true
+            })
+        })
+}
 
 function submitRegistrationForm() {
 
@@ -84,7 +89,15 @@ function submitRegistrationForm() {
     var department = document.getElementById("department").value.trim()
     var manager = document.getElementById("manager").value.trim()
     var email = document.getElementById("email").value.trim()
-    var password = document.getElementById("password").value.trim()
+
+    var password = document.getElementById("password")
+    var confirmPassword = document.getElementById("confirmPassword")
+    if (password.value.trim() != confirmPassword.value.trim()) {
+        toastr.error("Passwords do not match", "Error", {
+            closeButton: true
+        })
+        return false;
+    }
 
     var formData = new FormData()
     formData.append("FirstName", firstName)
@@ -106,13 +119,13 @@ function submitRegistrationForm() {
                 displayToastToUser('success', data.message)
                 setTimeout(() => {
                     window.location.href = data.redirectUrl
-                }, 2000)
+                }, 1500)
             }
             else {
                 displayToastToUser('error', data.message)
             }
         })
-        .catch(error => {
+        .catch(() => {
             window.location.href = '/Common/InternalServerError'
         })
 }
@@ -120,14 +133,13 @@ function submitRegistrationForm() {
 function displayToastToUser(toastColor, message) {
     if (toastColor === 'success') {
         toastr.success(`${message}`, "Success", {
-            timeOut: 1500,
+            timeOut: 1000,
             progressBar: true
         })
     }
     else {
         toastr.error(`${message}`, "Error", {
-            timeOut: 5000,
-            progressBar: true
+            closeButton: true
         })
     }
 }

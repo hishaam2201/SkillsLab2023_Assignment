@@ -1,34 +1,41 @@
-﻿
+﻿@model  List<DAL.DTO.UserRoleDTO>
 @{
-    ViewBag.Title = "ChooseRole";
-    @model List<DAL.DTO.UserRoleDTO>
+    ViewBag.Title = "Choose Role";
 }
 
 <link href="~/Content/app/ChooseRole.css" rel="stylesheet" />
+<script defer src="~/Scripts/app/ChooseRole.js"></script>
 
-
-<div class="row justify-content-center">
-    <div class="card p-4" style="width:30%; border-radius: 1.2em">
-        <div class="card-body">
-            <h5 class="card-title mb-4"><strong>Select Role</strong></h5>
-            <form id="chooseRoleForm" method="post" onsubmit="return false;">
-                @foreach (var role in Model)
-                {
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="role" id="@($"role_{role.RoleId}")"
-                               value="@role.RoleId" checked="@(role.RoleId == Model.First().RoleId)" />
-                        <label class="form-check-label" for="@($"role_{role.RoleId}")">
-                            @role.RoleName
-                        </label>
+@if (Model == null || Model.Count == 0)
+{
+    <h1>An unexpected error occurred!</h1>
+}
+else
+{
+    <div class="row justify-content-center">
+        <div class="card p-4" style="width:30%; border-radius: 1.2em">
+            <div class="card-body">
+                <h5 class="card-title mb-4"><strong>Select Role</strong></h5>
+                <form id="chooseRoleForm" method="post" onsubmit="return false;">
+                    @foreach (var role in Model)
+                    {
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="role" id="@($"role_{role.RoleId}")"
+                                   value="@role.RoleId" checked="@(role.RoleId == Model.First().RoleId)" />
+                            <label class="form-check-label" for="@($"role_{role.RoleId}")">
+                                @role.RoleName
+                            </label>
+                        </div>
+                    }
+                    <div class="d-grid mt-3">
+                        <input class="btn btn-primary" type="submit" value="Next" />
                     </div>
-                }
-                <div class="d-grid mt-3">
-                    <input class="btn btn-primary" type="submit" value="Next" />
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+}
 
-<script src="~/Scripts/app/ChooseRole.js"></script>
+
+
 

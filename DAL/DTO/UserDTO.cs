@@ -1,7 +1,4 @@
 ﻿
-
-using System;
-
 namespace DAL.DTO
 {
     public class UserDTO
@@ -15,7 +12,5 @@ namespace DAL.DTO
         public string ManagerEmail { get; set; }
         public string Email { get; set; }
         public byte RoleId { get; set; }
-        public string DepartmentName { get; set; }
-        public DateTime ApplicationDateTime { get; set; }
     }
 }

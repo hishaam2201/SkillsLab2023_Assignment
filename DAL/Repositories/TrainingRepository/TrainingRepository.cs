@@ -55,11 +55,9 @@ namespace DAL.Repositories.TrainingRepository
             return trainingDTOs;
         }
 
-        public async Task<TrainingDTO> GetTrainingByIdAsync(int id)
+        public async Task<TrainingDTO> GetTrainingByIdAsync(int trainingId)
         {
-            Training training = await _dbCommand.GetByIdAsync(id);
-            object departmentName = await RetrieveDepartmentNameAsync((byte)training.DepartmentId);
-
+            Training training = await _dbCommand.GetByIdAsync(trainingId);
             return new TrainingDTO
             {
                 TrainingId = (short)training.Id,
@@ -67,7 +65,7 @@ namespace DAL.Repositories.TrainingRepository
                 Description = training.Description,
                 DeadlineOfApplication = training.DeadlineOfApplication,
                 Capacity = training.Capacity,
-                DepartmentName = departmentName?.ToString(),
+                DepartmentName = (await RetrieveDepartmentNameAsync((byte)training.DepartmentId)).ToString(),
                 TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime,
                 PreRequisites = (await RetrieveTrainingPreRequisitesAsync(training.Id)).ToList()
             };
