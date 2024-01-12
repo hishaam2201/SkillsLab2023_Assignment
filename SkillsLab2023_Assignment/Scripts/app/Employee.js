@@ -1,6 +1,9 @@
 (function () {
-    const unappliedTrainings = document.getElementById('unappliedTrainings')
-    new DataTable(unappliedTrainings, {
+    var modal = document.getElementById('declineMessageModal')
+    var textArea = modal.querySelector('#message-text')
+
+    var userApplications = document.getElementById('userApplications');
+    new DataTable(userApplications, {
         responsive: true,
         paging: true,
         ordering: false,
@@ -15,14 +18,16 @@
                 '</select> entries</span>',
         },
         drawCallback: function () {
-            addButtonClickListener('view-more-btn', function (button, trainingId) {
+            addButtonClickListener('decline-btn', function (button) {
                 disableButton(button)
-                document.getElementById('trainingIdInput').value = trainingId;
-                document.getElementById('trainingForm').submit();
-                enableButton(button)
-            })
+                var dataDeclineReason = button.getAttribute('data-decline-reason');
+                dataDeclineReason == '' ? textArea.value = 'Not applicable' : textArea.value = dataDeclineReason.replace(/\s+/g, ' ').trim();
+                setTimeout(() => {
+                    enableButton(button)
+                }, 500)
+            }, textArea)
         }
-    })
+    });
 })()
 
 function enableButton(button) {
@@ -48,13 +53,12 @@ function toggleElementVisibility(parentElement, selector, isVisible) {
     }
 }
 
-function addButtonClickListener(className, action) {
+function addButtonClickListener(className, action, textArea) {
     var buttons = document.querySelectorAll(`.${className}`);
     buttons.forEach(function (button) {
         button.removeEventListener('click', button.clickHandler);
         button.clickHandler = function () {
-            var trainingId = button.getAttribute('data-training-id');
-            action(button, trainingId);
+            action(button, textArea);
         };
         button.addEventListener('click', button.clickHandler);
     });

@@ -25,3 +25,127 @@ Timestamp: 1/8/2024 7:37:10 PM
 5 employee(s) have been selected for the training Testing background job 1.
  2 employee(s) have been declined for the training due to availability of seats.
 "---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/9/2024 11:41:35 PM
+No employees found to select for the training Testing background job 1.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 10:27:05 AM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 10:27:05 AM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 10:27:05 AM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 10:44:35 AM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 10:52:51 AM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 10:53:36 AM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 11:16:22 AM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 5:33:00 PM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 5:33:00 PM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 5:33:00 PM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 5:33:15 PM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 7:49:42 PM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/10/2024 11:41:44 PM
+No employees found to select for the training CSharpMastery.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 10:27:08 AM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 11:16:31 AM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 11:54:32 AM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 2:45:51 PM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 6:55:33 PM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 6:55:33 PM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 8:12:40 PM
+No employees found to select for the training TechInnovation.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 8:12:40 PM
+No employees found to select for the training Testing Application Submission 5.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 8:12:40 PM
+No employees found to select for the training Testing Application Submission 5.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 8:12:40 PM
+No employees found to select for the training Testing Application Submission 5.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 8:12:40 PM
+No employees found to select for the training Testing Application Submission 5.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/11/2024 8:12:40 PM
+No employees found to select for the training Testing Application Submission 5.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/12/2024 10:54:02 AM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/12/2024 10:54:02 AM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/12/2024 10:54:02 AM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/12/2024 10:54:02 AM
+No expired training sessions found.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/12/2024 10:54:02 AM
+No expired training sessions found.
+"---------------------------------------------------------";

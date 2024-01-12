@@ -1,25 +1,60 @@
-﻿
+﻿@model  List<DAL.DTO.TrainingDTO>
 @{
     ViewBag.Title = "View Trainings";
 }
 
-<h2>Browse Training</h2>
-<div class="table-responsive">
-    <table class="table table-light table-hover mt-4">
-        <thead class="text-center">
-            <tr>
-                <th scope="col">Training Programme</th>
-                <th scope="col">Department</th>
-                <th scope="col">Deadline of Application</th>
-                <th scope="col" colspan="1">Action</th>
-            </tr>
-        </thead>
-        <tbody class="text-center table-group-divider" id="tableBody">
-        </tbody>
-    </table>
+<link href="~/Content/app/ViewTrainings.css" rel="stylesheet" />
+<link href="~/Content/app/Callout.css" rel="stylesheet" />
+<script defer src="~/Scripts/app/ViewTrainings.js"></script>
+
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="callout callout-warning">
+        <h4 class="alert-heading"><strong>No available trainings</strong></h4>
+        <div><span>Check back later for new opportunities.</span></div>
+    </div>
+}
+else
+{
+    <div class="callout callout-info">
+        <h4 class="alert-heading"><strong>Exciting Opportunities Await!</strong></h4>
+        <div>
+            <p class="mb-0">Explore the available trainings below and increase your chances of selection by considering opportunities in your department.</p>
+        </div>
+    </div>
+    <div class="table-responsive pt-3">
+        <table id="unappliedTrainings" class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Training Programme</th>
+                    <th>Department</th>
+                    <th>Deadline of Application</th>
+                    <th>View More</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @foreach (var training in Model)
+                {
+                    <tr>
+                        <td>@training.TrainingName</td>
+                        <td>@training.DepartmentName</td>
+                        <td>@training.DeadlineOfApplication.ToString("D")</td>
+                        <td>
+                            <button data-training-id="@training.TrainingId" type="button"
+                                    class="btn btn-labeled btn-outline-info view-more-btn">
+                                <span class="btn-label"><i class="fa-solid fa-arrow-right icon"></i></span>
+                                <div class="spinner-border spinner-border-sm spinner" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
     <form id="trainingForm" action="/Training/TrainingDetails" method="post">
         <input type="hidden" id="trainingIdInput" name="trainingId" value="" />
     </form>
-</div>
-
-<script src="~/Scripts/app/ViewTrainings.js"></script>
+}

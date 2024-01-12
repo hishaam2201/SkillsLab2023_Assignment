@@ -33,6 +33,16 @@
                 "orderable": false,
             }
         ],
+        pageLength: 7,
+        language: {
+            lengthMenu:
+                '<span>Show: <select class="form-select mb-2">' +
+                '<option value="7">7</option>' +
+                '<option value="15">15</option>' +
+                '<option value="25">25</option>' +
+                '<option value="-1">All</option>' +
+                '</select> entries</span>',
+        },
         drawCallback: function () {
             addButtonClickListener('selection-btn', function (button, trainingId) {
                 disableButton(button)
@@ -301,7 +311,7 @@ function populateEditTrainingForm(slimSelect, training, departmentsData,
 
     document.getElementById('trainingTitle').textContent = training.TrainingName;
     document.getElementById('trainingName').value = training.TrainingName;
-    document.getElementById('trainingDescription').value = training.Description;
+    document.getElementById('trainingDescription').value = training.Description.replace(/\s+/g, ' ').trim();
 
     const applicationDeadline = document.getElementById('applicationDeadline')
     applicationDeadline.value = formatDateTime(training.DeadlineOfApplication);

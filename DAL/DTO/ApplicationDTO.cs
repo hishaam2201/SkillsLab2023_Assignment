@@ -9,8 +9,7 @@ namespace DAL.DTO
         public string LastName { get; set; }
         public string Email { get; set; }
         public string TrainingName { get; set; }
-        public string DepartmentName { get; set; }
+        public string TrainingDepartment { get; set; }
         public string ApplicationStatus { get; set; }
-        public string DeclineReason { get; set; }
     }
 }

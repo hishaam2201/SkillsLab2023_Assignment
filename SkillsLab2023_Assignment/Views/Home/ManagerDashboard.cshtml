@@ -1,70 +1,121 @@
-﻿
+﻿@model List<DAL.DTO.ApplicationDTO>
 @{
     ViewBag.Title = "Dashboard";
 }
 
-<link href="~/Content/app/Spinner.css" rel="stylesheet" />
+<link href="~/Content/app/Callout.css" rel="stylesheet" />
+<link href="~/Content/app/Manager.css" rel="stylesheet" />
+<script defer src="~/Scripts/app/ViewApplications.js"></script>
 
-<div id="dashboardContainer">
-    <h2>Training Approval Dashboard</h2>
-    <div class="table-responsive">
-        <table class="table table-light table-hover mt-4">
-            <thead class="text-center">
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="callout callout-warning">
+        <h4 class="alert-heading"><strong>No pending applications found</strong></h4>
+        <div><span>There are currently no pending applications for review.</span></div>
+    </div>
+}
+else
+{
+    <div class="callout callout-info">
+        <h4 class="alert-heading"><strong>Pending Applications</strong></h4>
+        <div>
+            <p>There are pending applications that require your attention.</p>
+            <p class="mb-0">Please review and take necessary actions.</p>
+        </div>
+    </div>
+    <div class="table-responsive pt-3">
+        <table id="applicationsTable" class="table table-striped table-hover">
+            <thead>
                 <tr>
-                    <th scope="col">Applicant's Name</th>
+                    <th scope="col">Employee Name</th>
                     <th scope="col">Training Name</th>
                     <th scope="col">Training Department</th>
                     <th scope="col">Application Status</th>
-                    <th scope="col" colspan="3">Actions</th>
+                    <th scope="col">Documents</th>
+                    <th scope="col">Approve</th>
+                    <th scope="col">Decline</th>
                 </tr>
             </thead>
-            <tbody class="text-center table-group-divider" id="tableBody">
+            <tbody id="tableBody">
+                @foreach (var application in Model)
+                {
+                    <tr>
+                        <td>@($"{application.FirstName} {application.LastName}")</td>
+                        <td>@application.TrainingName</td>
+                        <td>@application.TrainingDepartment</td>
+                        <td><span class="badge rounded-pill text-bg-warning">Pending</span></td>
+                        <td>
+                            <button data-application-id="@application.ApplicationId" type="button"
+                                    class="btn btn-labeled btn-outline-info view-btn" data-bs-toggle="modal" data-bs-target="#viewDocModal" 
+                                    data-employee-name="@($"{application.FirstName} {application.LastName}")">
+                                <span class="btn-label"><i class="fa-solid fa-up-right-from-square icon"></i></span>
+                                <div class="spinner-border spinner-border-sm spinner" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </td>
+                        <td>
+                            <button data-application-id="@application.ApplicationId" type="button"
+                                    class="btn btn-labeled btn-outline-success approve-btn">
+                                <span class="btn-label"><i class="fa-solid fa-envelope-circle-check icon"></i></span>
+                                <div class="spinner-border spinner-border-sm spinner" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </td>
+                        <td>
+                            <button data-application-id="@application.ApplicationId" type="button"
+                                    class="btn btn-labeled btn-outline-danger decline-btn" 
+                                    data-employee-name="@($"{application.FirstName} {application.LastName}")"
+                                    data-bs-toggle="modal" data-bs-target="#declineModal">
+                                <span class="btn-label"><i class="fa-regular fa-circle-xmark icon"></i></span>
+                                <div class="spinner-border spinner-border-sm spinner" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
-</div>
 
-@*Modal for Viewing Document*@
-<div class="modal modal-lg fade" id="viewDocModal" tabindex="-1" aria-labelledby="viewDocModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="viewDocModalLabel">Documents submitted</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div id="modalBody" class="modal-body">
+    @*Modal for Viewing Document*@
+    <div class="modal modal-lg fade" id="viewDocModal" tabindex="-1" aria-labelledby="viewDocModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="viewDocModalLabel"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="modalBody" class="modal-body">
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-@*Modal for declining application*@
-<div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="declineModalTitle"></h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body pt-1">
-                <form>
-                    <div class="mb-3">
-                        <label for="message-text" class="col-form-label">Message:</label>
-                        <textarea class="form-control" id="decline-message-text" placeholder="Enter decline reason..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button id="declineButton" type="button" data-bs-dismiss="modal" class="btn btn-danger">Send Message</button>
+    @*Modal for declining application*@
+    <div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="declineModalTitle"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-1">
+                    <form>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Message:</label>
+                            <textarea class="form-control" id="decline-message-text" placeholder="Enter decline reason..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="declineButton" type="button" class="btn btn-danger" data-bs-dismiss="modal">Send Message</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<div class="spinner-wrapper" id="emailSpinner" style="display: none;">
-    <div class="spinner-border d-block text-info" role="status"></div>
-    <div class="spinner-text">Please wait...</div>
-</div>
-
-<script src="~/Scripts/app/ViewApplications.js"></script>
+}
 

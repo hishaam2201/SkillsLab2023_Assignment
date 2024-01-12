@@ -1,7 +1,107 @@
-﻿
+﻿@model List<DAL.DTO.UserApplicationDTO>
 @{
     ViewBag.Title = "Dashboard";
 }
 
-<h2>EmployeeDashboard</h2>
+<link href="~/Content/app/Callout.css" rel="stylesheet" />
+<link href="~/Content/app/EmployeeDashboard.css" rel="stylesheet" />
+<script defer src="~/Scripts/app/Employee.js"></script>
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="callout callout-warning">
+        <h4 class="alert-heading"><strong>No applications found:</strong></h4>
+        <p>You have not yet applied to any of the available trainings.</p>
+    </div>
+}
+else
+{
+<div class="callout callout-info">
+    <h4 class="alert-heading"><strong>View your training applications below</strong></h4>
+    <div>Explore the status and details of your training applications in the section below</div>
+</div>
+
+    <div class="table-wrapper pt-4">
+        <table id="userApplications" class="table table-striped table-hover" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Application Status</th>
+                    <th>Training Name</th>
+                    <th>Training Department</th>
+                    <th>DateTime of Application</th>
+                    <th>Decline Reason</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @foreach (var application in Model)
+                {
+                    <tr>
+                        <td>
+                            @switch (application.ApplicationStatus)
+                            {
+                                case Framework.Enums.ApplicationStatusEnum.Pending:
+                                    <span class="badge rounded-pill text-bg-warning">Pending</span>
+                                    break;
+
+                                case Framework.Enums.ApplicationStatusEnum.Approved:
+                                    <span class="badge rounded-pill text-bg-info">Approved</span>
+                                    break;
+
+                                case Framework.Enums.ApplicationStatusEnum.Selected:
+                                    <span class="badge rounded-pill text-bg-success">Selected</span>
+                                    break;
+
+                                case Framework.Enums.ApplicationStatusEnum.Declined:
+                                    <span class="badge rounded-pill text-bg-danger">Declined</span>
+                                    break;
+                            }
+                        </td>
+                        <td>@application.TrainingName</td>
+                        <td>@application.TrainingDepartment</td>
+                        <td>@application.ApplicationDateTime.ToString("f")</td>
+                        <td>
+                            <button data-bs-toggle="modal" data-bs-target="#declineMessageModal" type="button"
+                                    class="btn btn-labeled btn-outline-danger decline-btn" data-decline-reason="@application.DeclineReason"
+                                    @(string.IsNullOrEmpty(application.DeclineReason) ? "disabled" : "")>
+                                <span class="btn-label">
+                                    @if (string.IsNullOrEmpty(application.DeclineReason))
+                                    {
+                                        <i class="fa-regular fa-eye-slash"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-regular fa-eye icon"></i>
+                                    }
+                                </span>
+                                <div class="spinner-border spinner-border-sm spinner" role="status" style="display: none;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @* Decline message Modal *@
+    <div class="modal fade" id="declineMessageModal" tabindex="-1" aria-labelledby="declineMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="declineMessageModalLabel">Decline Message</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Message</label>
+                            <textarea class="form-control" id="message-text" rows="5" disabled readonly></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 

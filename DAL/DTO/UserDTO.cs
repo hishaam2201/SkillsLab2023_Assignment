@@ -11,6 +11,8 @@ namespace DAL.DTO
         public string LastName { get; set; }
         public byte? DepartmentId { get; set; }
         public short? ManagerId { get; set; }
+        public string ManagerName { get; set; }
+        public string ManagerEmail { get; set; }
         public string Email { get; set; }
         public byte RoleId { get; set; }
         public string DepartmentName { get; set; }

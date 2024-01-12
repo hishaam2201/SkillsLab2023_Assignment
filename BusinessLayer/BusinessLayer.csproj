@@ -207,6 +207,7 @@
     <Compile Include="Services\EnrollmentProcessService\EnrollmentProcessService.cs" />
     <Compile Include="Services\TrainingService\ITrainingService.cs" />
     <Compile Include="Services\TrainingService\TrainingService.cs" />
+    <Compile Include="EmailBodyGenerator\EmailContentGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">

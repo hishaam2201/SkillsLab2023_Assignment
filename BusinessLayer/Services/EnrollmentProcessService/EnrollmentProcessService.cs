@@ -11,6 +11,7 @@ using DAL.Repositories.TrainingRepository;
 using OfficeOpenXml;
 using System;
 using System.IO;
+using Framework.StaticClass;
 
 namespace BusinessLayer.Services.EnrollmentProcessService
 {
@@ -25,86 +26,6 @@ namespace BusinessLayer.Services.EnrollmentProcessService
             _enrollmentProcessRepository = enrollmentProcessRepository;
             _backgroundJobLogger = backgroundJobLogger;
             _trainingRepository = trainingRepository;
-        }
-
-        // TODO: Try to combine approve and decline in the same service call if possible  
-        public async Task<bool> ApproveApplicationAsync(int applicationId, string managerName)
-        {
-            var (isApproved, result) = await _enrollmentProcessRepository.ApproveApplicationAsync(applicationId);
-            if (isApproved)
-            {
-                SendEmailDTO emailDTO = new SendEmailDTO
-                {
-                    EmployeeName = result.EmployeeName,
-                    EmployeeEmail = result.EmployeeEmail,
-                    ManagerName = managerName,
-                    TrainingName = result.TrainingName
-                };
-                GenerateEmailBody(emailDTO, result: ApplicationStatusEnum.Approved, out string body, out string subject);
-
-#pragma warning disable CS4014
-                EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
-#pragma warning restore CS4014
-
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<bool> DeclineApplicationAsync(int applicationId, string managerName, string message)
-        {
-            var (isDeclined, result) = await _enrollmentProcessRepository.DeclineApplicationAsync(applicationId, message);
-            if (isDeclined)
-            {
-                SendEmailDTO emailDTO = new SendEmailDTO
-                {
-                    EmployeeName = result.EmployeeName,
-                    EmployeeEmail = result.EmployeeEmail,
-                    ManagerName = managerName,
-                    TrainingName = result.TrainingName
-                };
-                GenerateEmailBody(emailDTO, result: ApplicationStatusEnum.Declined, out string body, out string subject, message: message);
-
-#pragma warning disable CS4014
-                EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
-#pragma warning restore CS4014
-
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<OperationResult> GetApplicationDocumentAsync(int applicationId)
-        {
-            var documents = (await _enrollmentProcessRepository.GetApplicationDocumentAsync(applicationId)).ToList();
-            if (documents != null && documents.Any())
-            {
-                List<AttachmentInfoDTO> attachmentInfoList = documents.Select(doc => new AttachmentInfoDTO
-                {
-                    AttachmentId = doc.AttachmentId,
-                    PreRequisiteName = doc.PreRequisiteName,
-                    PreRequisiteDescription = doc.PreRequisiteDescription
-                }).ToList();
-
-                return new OperationResult
-                {
-                    Success = true,
-                    ListOfData = new List<object> { documents, attachmentInfoList }
-                };
-            }
-            else
-            {
-                return new OperationResult
-                {
-                    Success = false,
-                    Message = "No documents found."
-                };
-            }
-        }
-
-        public async Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId)
-        {
-            return await _enrollmentProcessRepository.GetApplicationsAsync(managerId);
         }
 
         public async Task<SelectedProcessUserDTO> GetSelectedUsersForTrainingAsync(short trainingId)
@@ -150,24 +71,25 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                     SendEmailDTO emailDTO = new SendEmailDTO
                     {
                         EmployeeName = $"{user.FirstName} {user.LastName}",
-                        EmployeeEmail = user.Email,
+                        Email = user.Email,
                         TrainingName = trainingDTO.TrainingName
                     };
                     // Perform filtering which email to send (Selected or rejected)
                     if (user.ApplicationStatus == ApplicationStatusEnum.Selected)
                     {
                         emailDTO.TrainingStartDate = trainingDTO.TrainingCourseStartingDateTime;
-                        GenerateEmailBody(emailDTO, ApplicationStatusEnum.Selected, out string body, out string subject);
+                        EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Selected, out string body, out string subject);
 #pragma warning disable CS4014
-                        EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
+                        EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
 #pragma warning restore CS4014
                         selected++;
                     }
                     else
                     {
-                        GenerateEmailBody(emailDTO, ApplicationStatusEnum.Declined, out string body, out string subject, isDeclinedByCapacity: true);
+                        EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Declined, 
+                            out string body, out string subject, isDeclinedByCapacity: true);
 #pragma warning disable CS4014
-                        EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
+                        EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
 #pragma warning restore CS4014
                         declined++;
                     }
@@ -209,23 +131,24 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                 SendEmailDTO emailDTO = new SendEmailDTO
                 {
                     EmployeeName = $"{user.FirstName} {user.LastName}",
-                    EmployeeEmail = user.Email,
+                    Email = user.Email,
                     TrainingName = training.TrainingName
                 };
                 // Perform filtering which email to send (Selected or rejected)
                 if (user.ApplicationStatus == ApplicationStatusEnum.Selected)
                 {
                     emailDTO.TrainingStartDate = training.TrainingCourseStartingDateTime;
-                    GenerateEmailBody(emailDTO, ApplicationStatusEnum.Selected, out string body, out string subject);
+                    EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Selected, out string body, out string subject);
 #pragma warning disable CS4014
-                    EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
+                    EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
 #pragma warning restore CS4014
                 }
                 else
                 {
-                    GenerateEmailBody(emailDTO, ApplicationStatusEnum.Declined, out string body, out string subject, isDeclinedByCapacity: true);
+                    EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Declined, 
+                        out string body, out string subject, isDeclinedByCapacity: true);
 #pragma warning disable CS4014
-                    EmailSender.SendEmailAsync(subject, body, emailDTO.EmployeeEmail);
+                    EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
 #pragma warning restore CS4014
                 }
             }
@@ -270,101 +193,6 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                 package.SaveAs(stream);
                 return stream.ToArray();
             }
-        }
-
-        // PRIVATE HELPER METHODS
-        private void GenerateEmailBody(SendEmailDTO emailDTO, ApplicationStatusEnum result, out string htmlBody, out string subject,
-            string message = "", bool isDeclinedByCapacity = false)
-        {
-            htmlBody = "";
-            if (result == ApplicationStatusEnum.Approved)
-            {
-                htmlBody = $@"
-                    <html>
-                        <head>
-                            <title>Training Notification</title>
-                        </head>
-                       <body style='font-family: Arial, sans-serif;'>
-                            <p>Dear <strong>{emailDTO.EmployeeName},</strong></p>
-                            <p>This is an automated notification from the training system.</p>
-                            <p>Your training request for <strong>{emailDTO.TrainingName}</strong> has been <strong>{result}</strong> by your manager, 
-                             <strong>{emailDTO.ManagerName}</strong>.</p>
-                            <br/>
-                            <p>You are now one step closer to being selected. Please patiently await the next steps in the selection process to determine if you have been officially enrolled in the training.</p>
-                            <br/>
-                            <p>Best regards</p>
-                        </body>
-                    </html>";
-            }
-            else if (result == ApplicationStatusEnum.Declined)
-            {
-                if (isDeclinedByCapacity)
-                {
-                    htmlBody = $@"
-                    <html>
-                        <head>
-                            <title>Training Notification</title>
-                        </head>
-                        <body style='font-family: Arial, sans-serif;'>
-                            <p>Dear <strong>{emailDTO.EmployeeName},</strong></p>
-                            <p>This is an automated notification from the training system.</p>
-                            <p>We regret to inform you that your application for the training program <strong>{emailDTO.TrainingName}</strong> has been declined. 
-                               Due to high demand, we have reached our maximum capacity. We appreciate your interest and encourage you to apply for future opportunities. 
-                               Thank you for understanding.</p>
-                            <br/>
-                            <p>Best regards</p>
-                        </body>
-                    </html>";
-                }
-                else
-                {
-                    htmlBody = $@"
-                    <html>
-                        <head>
-                            <title>Training Notification</title>
-                        </head>
-                        <body style='font-family: Arial, sans-serif;'>
-                            <p>Dear <strong>{emailDTO.EmployeeName},</strong></p>
-                            <p>This is an automated notification from the training system.</p>
-                            <p>Unfortunately, your training request for <strong>{emailDTO.TrainingName}</strong> has been declined by your manager, 
-                                <strong>{emailDTO.ManagerName}</strong>.</p>
-                            <br/>
-                            <h5>Reason</h5>
-                            <p><em>{message}</em></p>
-                            <br/>
-                            <p>Feel free to reach out to your manager for further clarification or explore other training opportunities.</p>
-                            <br/>
-                            <p>Best regards</p>
-                        </body>
-                    </html>";
-                }
-            }
-            else if (result == ApplicationStatusEnum.Selected)
-            {
-                htmlBody = $@"
-                    <html>
-                        <head>
-                            <title>Training Notification</title>
-                        </head>
-                        <body style='font-family: Arial, sans-serif;'>
-                            <p>Dear <strong>{emailDTO.EmployeeName},</strong></p>
-                            <p>Congratulations! You have been selected for the training program <strong>{emailDTO.TrainingName}</strong>.</p>
-                            <br/>
-                            <p>Your dedication and commitment have been recognized, and we look forward to your active participation in the upcoming training sessions.</p>
-                            <br/>
-                            <p>Details of the training:</p>
-                            <ul>
-                                <li><strong>Training Name:</strong> {emailDTO.TrainingName}</li>
-                                <li><strong>Training Start Date:</strong> {emailDTO.TrainingStartDate:dd-MM-yyyy HH:mm}</li>
-                            </ul>
-                            <br/>
-                            <p>Should you have any questions or require further information, please do not hesitate to reach out to your manager.</p>
-                            <br/>
-                            <p>Best regards</p>
-                        </body>
-                    </html>";
-            }
-            subject = $"Training Request for {emailDTO.TrainingName} - {result}";
         }
     }
 }

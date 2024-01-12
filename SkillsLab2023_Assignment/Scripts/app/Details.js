@@ -31,7 +31,7 @@ form.addEventListener('submit', event => {
         }
 
         // Check file size (in bytes)
-        const maxSizeInBytes = 1024 * 1024 * 10; 
+        const maxSizeInBytes = 1024 * 1024 * 6; 
         if (file.size > maxSizeInBytes) {
             isValid = false;
             sizeFeedback.style.display = 'block';
