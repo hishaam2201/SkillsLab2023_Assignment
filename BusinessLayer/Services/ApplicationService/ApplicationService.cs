@@ -141,6 +141,7 @@ namespace BusinessLayer.Services.ApplicationService
 
                     if (!await _applicationRepository.InsertDocumentUploadAsync(documentUploadEntity))
                     {
+                        // TODO: Delete record if application has failed
                         return false;
                     }
                 }

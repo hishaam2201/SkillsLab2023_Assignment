@@ -8,6 +8,7 @@ using DAL.DTO;
 using Framework.Enums;
 using System.Data;
 using System.Threading.Tasks;
+using System.Net.NetworkInformation;
 
 namespace DAL.Repositories.AccountRepository
 {
@@ -19,7 +20,7 @@ namespace DAL.Repositories.AccountRepository
             _dbCommand = dbCommand;
         }
 
-        public async Task<PasswordDTO> GetUserHashedPasswordAndSalt(string email)
+        public async Task<PasswordDTO> GetUserHashedPasswordAndSaltAsync(string email)
         {
             try
             {
@@ -40,17 +41,12 @@ namespace DAL.Repositories.AccountRepository
             catch (Exception) { throw; }
         }
 
-        public async Task<bool> IsEmailInUseAsync(string email)
-        {
-            try
-            {
-                const string EMAIL_EXISTS_QUERY = @"SELECT 1 FROM [User] WHERE Email=@Email";
-                SqlParameter[] emailExistsParams = _dbCommand.GetSqlParametersFromObject(new { Email = email });
-
-                bool isPresent = await _dbCommand.IsRecordPresentAsync(EMAIL_EXISTS_QUERY, emailExistsParams);
-                return isPresent;
-            }
-            catch (Exception) { throw; }
+        public async Task<bool> IsFieldInUseAsync(string columnName, string columnValue)
+        { 
+            string query = $@"SELECT 1 FROM [User] WHERE [{columnName}]=@columnName";
+            SqlParameter[] parameter = _dbCommand.GetSqlParametersFromObject(new { columnName = columnValue });
+            var result = await _dbCommand.IsRecordPresentAsync(query, parameter);
+            return result;
         }
 
         public async Task<UserDTO> GetUserDataAsync(string email, byte roleId)
@@ -109,10 +105,8 @@ namespace DAL.Repositories.AccountRepository
 
         public async Task<bool> RegisterUserAsync(User user, string email)
         {
-            try
-            {
-                string INSERT_INTO_USER_QUERY =
-                      $@"INSERT INTO [User] (FirstName, LastName, MobileNumber, NationalIdentityCard, DepartmentId, ManagerId, 
+            string INSERT_INTO_USER_QUERY =
+                  $@"INSERT INTO [User] (FirstName, LastName, MobileNumber, NationalIdentityCard, DepartmentId, ManagerId, 
                          Email, HashedPassword, Salt)
                          VALUES (@FirstName, @LastName, @MobileNumber, @NationalIdentityCard, @DepartmentId, @ManagerId, 
                          @Email, @Password, @Salt);
@@ -122,18 +116,16 @@ namespace DAL.Repositories.AccountRepository
                          INSERT INTO UserRole (UserId, RoleId) VALUES
                          (@UserId, @RoleId)";
 
-                List<string> excludedUserProperties = new List<string> { "Id" };
-                SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
-                SqlParameter roleIdParam = new SqlParameter("@RoleId", SqlDbType.TinyInt)
-                {
-                    Value = (byte)RoleEnum.Employee
-                };
-                SqlParameter[] allParams = userQueryParams.Concat(new[] { roleIdParam }).ToArray();
+            List<string> excludedUserProperties = new List<string> { "Id" };
+            SqlParameter[] userQueryParams = _dbCommand.GetSqlParametersFromObject(user, excludedUserProperties);
+            SqlParameter roleIdParam = new SqlParameter("@RoleId", SqlDbType.TinyInt)
+            {
+                Value = (byte)RoleEnum.Employee
+            };
+            SqlParameter[] allParams = userQueryParams.Concat(new[] { roleIdParam }).ToArray();
 
-                bool isSuccessful = await _dbCommand.ExecuteTransactionAsync(new SqlCommand(INSERT_INTO_USER_QUERY), allParams);
-                return isSuccessful;
-            }
-            catch (Exception) { throw; }
+            bool isSuccessful = await _dbCommand.ExecuteTransactionAsync(new SqlCommand(INSERT_INTO_USER_QUERY), allParams);
+            return isSuccessful;
         }
 
         public async Task<IEnumerable<DepartmentDTO>> GetAllDepartmentsAsync()
@@ -154,7 +146,7 @@ namespace DAL.Repositories.AccountRepository
             catch (Exception) { throw; }
         }
 
-        public async Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(int departmentId)
+        public async Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(byte departmentId)
         {
             try
             {

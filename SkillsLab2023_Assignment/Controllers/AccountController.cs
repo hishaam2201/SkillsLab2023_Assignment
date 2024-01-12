@@ -4,6 +4,7 @@ using DAL.Models;
 using Framework.Enums;
 using Framework.StaticClass;
 using SkillsLab2023_Assignment.Custom;
+using SkillsLab2023_Assignment.Mapper;
 using SkillsLab2023_Assignment.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,16 +31,22 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpPost]
         public async Task<ActionResult> Login(LoginViewModel loginViewModel)
         {
-            bool isValid = await _accountService.AuthenticateLoginCredentialsAsync(loginViewModel.Email, loginViewModel.Password);
-            if (isValid)
+            if (loginViewModel == null)
+            {
+                return Json(new { success = false, message = "Invalid input" });
+            }
+
+            OperationResult result = await _accountService.AuthenticateLoginCredentialsAsync(loginViewModel.Email, loginViewModel.Password);
+            if (result.Success)
             {
                 SessionManager.Email = loginViewModel.Email;
-                return Json(new { success = true, message = "Login Successful", redirectUrl = Url.Action("ChooseRole", "Account") });
             }
-            else
+            return Json(new
             {
-                return Json(new { success = false, message = "Invalid email or password" });
-            }
+                success = result.Success,
+                message = result.Message,
+                redirectUrl = result.Success ? Url.Action("ChooseRole", "Account") : null
+            });
         }
 
         [HttpGet]
@@ -55,77 +62,53 @@ namespace SkillsLab2023_Assignment.Controllers
         {
             string email = SessionManager.Email;
             UserDTO user = await _accountService.GetUserDataAsync(email, selectedRole);
-
-            if (user != null)
+            bool isUserNotNull = user != null;
+            if (isUserNotNull)
             {
                 SessionManager.Remove(email);
                 SessionManager.CurrentUser = user;
                 SessionManager.UserRole = ((RoleEnum)selectedRole).ToString();
-                string dashboardAction = Extensions.GetDashboardAction(selectedRole);
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Redirecting to dashboard...",
-                    redirectUrl = Url.Action(dashboardAction, "Home")
-                });
             }
-            else
+            string dashboardAction = Extensions.GetDashboardAction(selectedRole);
+            return Json(new
             {
-                return Json(new
-                {
-                    success = false,
-                    message = "User data not found",
-                    redirectUrl = Url.Action("Login", "Account")
-                });
-            }
+                success = isUserNotNull,
+                message = isUserNotNull ? "Redirecting to dashboard..." : "User data not found",
+                redirectUrl = isUserNotNull ? Url.Action(dashboardAction, "Home") : null
+            });
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetAllManagersFromDepartment(int departmentId)
+        public async Task<JsonResult> GetAllManagersFromDepartment(byte departmentId)
         {
             List<ManagerDTO> managerDTO = (await _accountService.GetAllManagersFromDepartmentAsync(departmentId)).ToList();
             return Json(new { success = true, managers = managerDTO }, JsonRequestBehavior.AllowGet);
-        }
-
-        /// <summary>
-        /// // When user logs in by default he is an employee, when admin changes role then he will have more roles available
-        /// </summary>
-        [HttpPost]
-        public async Task<ActionResult> Register(RegisterViewModel registerViewModel)
-        {
-            User user = new User
-            {
-                FirstName = registerViewModel.FirstName,
-                LastName = registerViewModel.LastName,
-                MobileNumber = registerViewModel.MobileNumber,
-                NationalIdentityCard = registerViewModel.NationalIdentityCard,
-                DepartmentId = registerViewModel.DepartmentId,
-                ManagerId = registerViewModel.ManagerId,
-                Email = registerViewModel.Email
-            };
-            bool isRegistered = await _accountService.RegisterUserAsync(user, registerViewModel.Email, registerViewModel.Password);
-
-            if (isRegistered)
-            {
-                UserDTO userData = await _accountService.GetUserDataAsync(user.Email, (byte)RoleEnum.Employee);
-                SessionManager.CurrentUser = userData;
-                SessionManager.UserRole = RoleEnum.Employee.ToString();
-
-                string dashboardAction = Extensions.GetDashboardAction((byte)RoleEnum.Employee);
-                return Json(new { success = true, message = "Registration Successful", 
-                    redirectUrl = Url.Action(dashboardAction, "Home") });
-            }
-            else
-            {
-                return Json(new { success = false, message = "Email already exists!" });
-            }
         }
 
         [HttpGet]
         public ActionResult Register()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Register(RegisterViewModel registerViewModel)
+        {
+            User user = registerViewModel.ToUser();
+            OperationResult result = await _accountService.RegisterUserAsync(user, registerViewModel.Email, registerViewModel.Password);
+            if (result.Success)
+            {
+                UserDTO userData = await _accountService.GetUserDataAsync(user.Email, (byte)RoleEnum.Employee);
+                SessionManager.CurrentUser = userData;
+                SessionManager.UserRole = RoleEnum.Employee.ToString();
+            }
+            string dashboardAction = Extensions.GetDashboardAction((byte)RoleEnum.Employee);
+            return Json(new
+            {
+                success = result.Success,
+                message = result.Message,
+                redirectUrl = result.Success ? Url.Action(dashboardAction, "Home") : null
+            });
         }
 
         [HttpGet]

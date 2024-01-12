@@ -5,12 +5,11 @@ form.addEventListener('submit', function (e) {
     var selectedRole = document.querySelector('input[name="role"]:checked')
     if (selectedRole) {
         var selectedRoleValue = selectedRole.value
+        var formData = new FormData()
+        formData.append('selectedRole', selectedRoleValue)
         fetch('/Account/ChooseRole', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ selectedRole: selectedRoleValue })
+            body: formData
         })
             .then(response => response.json())
             .then(data => {
@@ -18,7 +17,7 @@ form.addEventListener('submit', function (e) {
                     displayToastToUser('success', data.message)
                     setTimeout(() => {
                         window.location.href = data.redirectUrl
-                    }, 500)
+                    }, 700)
                 }
                 else {
                     displayToastToUser('error', data.message)
@@ -30,8 +29,7 @@ form.addEventListener('submit', function (e) {
     }
     else {
         toastr.error(`${selectedRoleValue}`, 'Error', {
-            timeOut: 1500,
-            progressBar: true
+            closeButton: true
         })
     }
 })
@@ -39,14 +37,13 @@ form.addEventListener('submit', function (e) {
 function displayToastToUser(toastColor, message) {
     if (toastColor === 'success') {
         toastr.success(`${message}`, "Success", {
-            timeOut: 500,
+            timeOut: 700,
             progressBar: true
         })
     }
     else {
         toastr.error(`${message}`, "Error", {
-            timeOut: 5000,
-            progressBar: true
+            closeButton: true
         })
     }
 }

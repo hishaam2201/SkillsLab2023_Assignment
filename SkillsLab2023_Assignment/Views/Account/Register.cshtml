@@ -4,6 +4,7 @@
 }
 
 <link href="~/Content/app/Login-Register.css" rel="stylesheet" />
+<script defer src="~/Scripts/app/Register.js"></script>
 
 
 <div class="row justify-content-center">
@@ -33,7 +34,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="nationalIdentityCard" class="form-label">NIC Number</label>
-                            <input type="text" pattern="[A-Z]\d{12}[A-Z]" class="form-control" id="nationalIdentityCard" required>
+                            <input type="text" pattern="[A-Z]\d{12}[A-Z\d]" class="form-control" id="nationalIdentityCard" required>
                             <div class="invalid-feedback">Please enter a valid NIC number</div>
                         </div>
                     </div>
@@ -57,9 +58,18 @@
                         <div class="invalid-feedback">Please enter a valid email address</div>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" required>
-                        <div class="invalid-feedback">Password field is required</div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" required>
+                                <div class="invalid-feedback">Password field is required</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" required>
+                                <div class="invalid-feedback">Confirm Password field is required</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col text-center mb-3">
                         <input class="btn btn-primary" type="submit" value="Sign Up" />
@@ -72,10 +82,3 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    
-</script>
-
-<script src="~/Scripts/app/Common.js" type="module"></script>
-<script src="~/Scripts/app/Register.js"></script>

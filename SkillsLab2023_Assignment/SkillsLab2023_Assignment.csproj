@@ -308,6 +308,7 @@
     </Compile>
     <Compile Include="Mapper\DocumentUploadMapper.cs" />
     <Compile Include="Mapper\TrainingMapper.cs" />
+    <Compile Include="Mapper\UserMapper.cs" />
     <Compile Include="Models\DocumentUploadViewModel.cs" />
     <Compile Include="Models\EditTrainingViewModel.cs" />
     <Compile Include="Models\TrainingViewModel.cs" />

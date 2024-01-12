@@ -1,6 +1,5 @@
 
 const loginForm = document.getElementById('loginForm')
-
 loginForm.addEventListener('submit', event => {
     if (!loginForm.checkValidity()) {
         event.preventDefault()
@@ -31,7 +30,7 @@ function submitLoginForm() {
                 displayToastToUser('success', data.message)
                 setTimeout(() => {
                     window.location.href = data.redirectUrl
-                }, 500)
+                }, 700)
             }
             else {
                 displayToastToUser('error', data.message)
@@ -45,14 +44,13 @@ function submitLoginForm() {
 function displayToastToUser(toastColor, message) {
     if (toastColor === 'success') {
         toastr.success(`${message}`, "Success", {
-            timeOut: 500,
+            timeOut: 700,
             progressBar: true
         })
     }
     else {
         toastr.error(`${message}`, "Error", {
-            timeOut: 5000,
-            progressBar: true
+            closeButton: true
         })
     }
 }

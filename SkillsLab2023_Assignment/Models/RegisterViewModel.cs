@@ -15,7 +15,7 @@ namespace SkillsLab2023_Assignment.Models
         public string MobileNumber { get; set; }
         [Required]
         [StringLength(14, ErrorMessage = "NIC must be exactly 14 characters.", MinimumLength = 14)]
-        [RegularExpression("^[A-Z][0-9]{12}[A-Z]$", ErrorMessage = "Invalid NIC format.")]
+        [RegularExpression("^[A-Z]\\d{12}[A-Z\\d]$", ErrorMessage = "Invalid NIC format.")]
         public string NationalIdentityCard { get; set; }
         [Required(ErrorMessage = "Department is required.")]
         public byte DepartmentId { get; set; }
@@ -24,7 +24,7 @@ namespace SkillsLab2023_Assignment.Models
         [Required(ErrorMessage = "Email is required.")]
         [RegularExpression("^[\\w\\.-]+@[a-zA-Z\\d\\.-]+\\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid Email Format.")]
         public string Email { get; set; }
-        [Required(ErrorMessage = "Password is required.")] // TODO: Validation
+        [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
     }
 }
