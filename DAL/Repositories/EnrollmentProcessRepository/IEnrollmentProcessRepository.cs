@@ -6,15 +6,10 @@ namespace DAL.Repositories.EnrollmentProcessRepository
 {
     public interface IEnrollmentProcessRepository
     {
-        Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId);
-        Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId);
         Task<bool> SelectionAlreadyDoneForTodayAsync(short trainingId);
-        Task<IEnumerable<SelectionProcessDTO>> GetSelectedUsersForTrainingAsync(short trainingId);
-        // TODO: Change to OperationResult for approve and decline application async
-        Task<(bool, SendEmailDTO)> ApproveApplicationAsync(int applicationId);
-        Task<(bool, SendEmailDTO)> DeclineApplicationAsync(int applicationId, string message);
+        Task<IEnumerable<SelectedUserDTO>> GetSelectedUsersForTrainingAsync(short trainingId);
         Task<IEnumerable<TrainingDTO>> GetAllExpiredTrainingIdsAsync();
-        Task<IEnumerable<SelectionProcessDTO>> ProcessUsersSelectionAsync(short trainingId, string declineReason = "");
+        Task<IEnumerable<SelectedUserDTO>> ProcessUsersSelectionAsync(short trainingId, string declineReason = "");
         Task<IEnumerable<ExportSelectedEmployeeDTO>> GetSelectedUserDetailsForExportAsync(short trainingId);
     }
 }

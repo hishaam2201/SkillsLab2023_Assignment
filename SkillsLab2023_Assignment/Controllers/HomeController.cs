@@ -33,8 +33,8 @@ namespace SkillsLab2023_Assignment.Controllers
         public async Task<ActionResult> ManagerDashboard()
         {
             short managerId = SessionManager.CurrentUser.Id;
-            List<ApplicationDTO> applications = (await _applicationService.GetApplicationsAsync(managerId)).ToList();
-            return View(applications);
+            List<ApplicationDTO> employeeApplications = (await _applicationService.GetApplicationsAsync(managerId)).ToList();
+            return View(employeeApplications);
         }
 
         [HttpGet, CustomAuthorization(RoleEnum.Administrator)]

@@ -56,7 +56,7 @@ namespace SkillsLab2023_Assignment.Controllers
             OperationResult result = await _trainingService.GetAllPreRequisitesAsync();
             return Json(new
             {
-                success = result?.Success ?? false,
+                success = result.Success,
                 preRequisites = result?.ListOfData.ToList()
             }, JsonRequestBehavior.AllowGet);
         }
@@ -69,8 +69,8 @@ namespace SkillsLab2023_Assignment.Controllers
             OperationResult result = await _trainingService.SaveTrainingAsync(training, trainingViewModel.PreRequisiteIds, isUpdate: false);
             return Json(new
             {
-                success = result?.Success ?? false,
-                message = result?.Message ?? "An error occurred"
+                success = result.Success,
+                message = result.Message
             });
         }
 
@@ -82,8 +82,8 @@ namespace SkillsLab2023_Assignment.Controllers
             OperationResult result = await _trainingService.SaveTrainingAsync(training, editTrainingViewModel.PreRequisiteIds, isUpdate: true);
             return Json(new
             {
-                success = result?.Success ?? false,
-                message = result?.Message ?? "An error occurred"
+                success = result.Success,
+                message = result.Message
             });
         }
 
@@ -94,8 +94,8 @@ namespace SkillsLab2023_Assignment.Controllers
             OperationResult result = await _trainingService.DeleteTrainingAsync(trainingId);
             return Json(new
             {
-                success = result?.Success ?? false,
-                message = result?.Message ?? "An error occurred"
+                success = result.Success,
+                message = result.Message
             });
         }
     }

@@ -57,7 +57,7 @@ namespace BusinessLayer.Services.ApplicationService
                     ManagerName = managerName,
                     TrainingName = result.TrainingName
                 };
-                EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Declined, 
+                EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Declined,
                     out string body, out string subject, message: message);
 #pragma warning disable CS4014
                 EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
@@ -100,64 +100,74 @@ namespace BusinessLayer.Services.ApplicationService
             return await _applicationRepository.GetApplicationsAsync(managerId);
         }
 
-        public async Task<bool> ProcessApplicationAsync(UserDTO userInformation, List<DocumentUploadDTO> documentUploads)
+        public async Task<OperationResult> ProcessEmployeeApplicationAsync(UserDTO userInformation, List<DocumentUploadDTO> enrollmentDataList)
         {
-            if (documentUploads == null || !documentUploads.Any())
-            {
-                return false;
-            }
-            var firstDocument = documentUploads.First();
-            var applicationEntity = new Application
-            {
-                UserId = firstDocument.UsertId,
-                TrainingId = firstDocument.TrainingId,
-            };
-
-            ApplicationDTO application = await _applicationRepository.InsertApplicationAndGetIdAsync(applicationEntity);
-            if (application.ApplicationId <= 0)
-            {
-                return false;
-            }
-
-            foreach (var documentUpload in documentUploads)
-            {
-                if (documentUpload.File != null && documentUpload.File.ContentLength > 0)
+            if (enrollmentDataList == null || !enrollmentDataList.Any())
+                return new OperationResult
                 {
-                    // Read file content into a byte array
-                    byte[] fileData;
-                    using (var stream = new MemoryStream())
-                    {
-                        await documentUpload.File.InputStream.CopyToAsync(stream);
-                        fileData = stream.ToArray();
-                    }
+                    Success = false,
+                    Message = "No enrollment data found to enroll employee."
+                };
 
-                    var documentUploadEntity = new DocumentUpload
+            bool isApplicationSuccessful;
+            var firstEnrollmentDocument = enrollmentDataList.First();
+            if (firstEnrollmentDocument.File == null)
+            {
+                isApplicationSuccessful = await _applicationRepository.InsertIntoApplicationAsync(userInformation.Id, firstEnrollmentDocument.TrainingId);
+            }
+            else
+            {
+                List<DocumentUpload> documentUploads = new List<DocumentUpload>();
+                foreach (var enrollmentData in enrollmentDataList)
+                {
+                    if (enrollmentData.File != null && enrollmentData.File.ContentLength > 0)
                     {
-                        ApplicationId = application.ApplicationId,
-                        File = fileData,
-                        PreRequisiteId = documentUpload.PreRequisiteId,
-                        FileName = documentUpload.FileName
-                    };
-
-                    if (!await _applicationRepository.InsertDocumentUploadAsync(documentUploadEntity))
-                    {
-                        // TODO: Delete record if application has failed
-                        return false;
+                        // Read file content into a byte array
+                        byte[] fileData;
+                        using (var stream = new MemoryStream())
+                        {
+                            await enrollmentData.File.InputStream.CopyToAsync(stream);
+                            fileData = stream.ToArray();
+                        }
+                        documentUploads.Add(new DocumentUpload
+                        {
+                            File = fileData,
+                            PreRequisiteId = enrollmentData.PreRequisiteId,
+                            FileName = enrollmentData.FileName
+                        });
                     }
                 }
+                isApplicationSuccessful = await _applicationRepository.ProcessEmployeeApplicationAndDocumentsAsync
+                    (userInformation.Id, firstEnrollmentDocument.TrainingId, documentUploads);
             }
-            SendEmailDTO emailDTO = new SendEmailDTO
+
+            if (isApplicationSuccessful)
             {
-                EmployeeName = $"{userInformation.FirstName} {userInformation.LastName}",
-                Email = userInformation.ManagerEmail,
-                ManagerName = userInformation.ManagerName,
-                TrainingName = application.TrainingName
-            };
-            EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Pending, out string body, out string subject);
+                SendEmailDTO emailDTO = new SendEmailDTO
+                {
+                    EmployeeName = $"{userInformation.FirstName} {userInformation.LastName}",
+                    Email = userInformation.ManagerEmail,
+                    ManagerName = userInformation.ManagerName,
+                    TrainingName = firstEnrollmentDocument.TrainingName
+                };
+                EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Pending, out string body, out string subject);
 #pragma warning disable CS4014
-            EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
+                EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
 #pragma warning restore CS4014
-            return true;
+                return new OperationResult
+                {
+                    Success = true,
+                    Message = "Manager notified of your application."
+                };
+            }
+            else
+            {
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = "Could not perform application..."
+                };
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace SkillsLab2023_Assignment.Models
 {
     public class EditTrainingViewModel : TrainingViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "TrainingId is required")]
         public int TrainingId { get; set; }
 
     }

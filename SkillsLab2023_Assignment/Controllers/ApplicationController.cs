@@ -26,20 +26,20 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpPost, CustomAuthorization(RoleEnum.Employee)]
-        public async Task<JsonResult> Enroll(short trainingId, List<DocumentUploadViewModel> files)
+        public async Task<JsonResult> Enroll(short trainingId, string trainingName, List<DocumentUploadViewModel> files)
         {
             UserDTO userInformation = SessionManager.CurrentUser; 
 
             List<DocumentUploadDTO> enrollmentDataList =
                 files != null && files.Any()
-                    ? files.ToEnrollmentDataWithPreRequisites(userInformation.Id, trainingId)
-                    : new List<DocumentUploadDTO> { new DocumentUploadDTO { UsertId = userInformation.Id, TrainingId = trainingId } };
+                    ? files.ToDocumentUploadWithPreRequisites(trainingId, trainingName)
+                    : new List<DocumentUploadDTO> { new DocumentUploadDTO { TrainingId = trainingId, TrainingName = trainingName } };
 
-            bool isSuccessful = await _applicationService.ProcessApplicationAsync(userInformation, enrollmentDataList);
+            OperationResult result = await _applicationService.ProcessEmployeeApplicationAsync(userInformation, enrollmentDataList);
             return Json(new { 
-                success = isSuccessful, 
-                message = isSuccessful ? "Manager notified of your application." : "Could not perform application...", 
-                redirectUrl = isSuccessful ? Url.Action("EmployeeDashboard", "Home") : null 
+                success = result.Success, 
+                message = result.Message, 
+                redirectUrl = result.Success ? Url.Action("EmployeeDashboard", "Home") : null 
             });
         }
 

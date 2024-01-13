@@ -1,4 +1,4 @@
-﻿
+﻿using Framework.AppLogger;
 using Framework.DAL;
 using System;
 using System.Collections.Generic;
@@ -13,15 +13,16 @@ namespace Framework.DatabaseCommand.DatabaseCommand
     public class DatabaseCommand<T> : IDatabaseCommand<T>
     {
         private readonly IDataAccessLayer _dataAccessLayer;
-        public DatabaseCommand(IDataAccessLayer dataAccessLayer)
+        private readonly ILogger _logger;
+        public DatabaseCommand(IDataAccessLayer dataAccessLayer, ILogger logger)
         {
             _dataAccessLayer = dataAccessLayer;
+            _logger = logger;
         }
 
         public async Task<bool> ExecuteTransactionAsync(SqlCommand command, SqlParameter[] parameters)
         {
             bool isSuccessful;
-
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             using (SqlTransaction sqlTransaction = sqlConnection.BeginTransaction())
             {
@@ -39,11 +40,11 @@ namespace Framework.DatabaseCommand.DatabaseCommand
                     sqlTransaction.Commit();
                     isSuccessful = true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     sqlTransaction.Rollback();
                     isSuccessful = false;
-                    throw;
+                    _logger.LogError(ex, Guid.NewGuid());
                 }
             }
             return isSuccessful;
@@ -54,18 +55,14 @@ namespace Framework.DatabaseCommand.DatabaseCommand
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             using (SqlCommand command = new SqlCommand(query, sqlConnection))
             {
-                try
+                if (parameters != null && parameters.Any())
                 {
-                    if (parameters != null && parameters.Any())
-                    {
-                        command.Parameters.AddRange(parameters);
-                    }
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                    {
-                        return reader.HasRows;
-                    }
+                    command.Parameters.AddRange(parameters);
                 }
-                catch (Exception) { throw; }
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    return reader.HasRows;
+                }
             }
         }
 
@@ -74,15 +71,11 @@ namespace Framework.DatabaseCommand.DatabaseCommand
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
             {
-                try
+                if (parameters != null && parameters.Any())
                 {
-                    if (parameters != null && parameters.Any())
-                    {
-                        sqlCommand.Parameters.AddRange(parameters);
-                    }
-                    return await sqlCommand.ExecuteScalarAsync();
+                    sqlCommand.Parameters.AddRange(parameters);
                 }
-                catch (Exception) { throw; }
+                return await sqlCommand.ExecuteScalarAsync();
             }
         }
 
@@ -91,16 +84,11 @@ namespace Framework.DatabaseCommand.DatabaseCommand
             using (SqlConnection sqlConnection = await _dataAccessLayer.CreateConnectionAsync())
             using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
             {
-                try
+                if (parameters != null && parameters.Length > 0)
                 {
-                    if (parameters != null && parameters.Length > 0)
-                    {
-                        sqlCommand.Parameters.AddRange(parameters);
-                    }
-
-                    return await sqlCommand.ExecuteNonQueryAsync();
+                    sqlCommand.Parameters.AddRange(parameters);
                 }
-                catch (Exception) { throw; }
+                return await sqlCommand.ExecuteNonQueryAsync();
             }
         }
 
@@ -167,7 +155,6 @@ namespace Framework.DatabaseCommand.DatabaseCommand
         {
             PropertyInfo[] properties = obj.GetType().GetProperties();
             List<SqlParameter> parameters = new List<SqlParameter>();
-
             foreach (PropertyInfo property in properties)
             {
                 if (excludedProperties == null || !excludedProperties.Contains(property.Name))

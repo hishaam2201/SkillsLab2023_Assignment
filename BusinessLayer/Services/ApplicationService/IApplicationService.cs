@@ -11,7 +11,7 @@ namespace BusinessLayer.Services.ApplicationService
         Task<OperationResult> GetApplicationDocumentAsync(int applicationId);
         Task<bool> ApproveApplicationAsync(int applicationId, string managerName);
         Task<bool> DeclineApplicationAsync(int applicationId, string managerName, string message);
-        Task<bool> ProcessApplicationAsync(UserDTO userInformation, List<DocumentUploadDTO> documentUploads);
+        Task<OperationResult> ProcessEmployeeApplicationAsync(UserDTO userInformation, List<DocumentUploadDTO> enrollmentDataList);
         Task<IEnumerable<UserApplicationDTO>> GetApplicationByUserId(short userId);
     }
 }

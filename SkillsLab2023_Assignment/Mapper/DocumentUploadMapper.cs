@@ -7,12 +7,12 @@ namespace SkillsLab2023_Assignment.Mapper
 {
     public static class DocumentUploadMapper
     {
-        public static List<DocumentUploadDTO> ToEnrollmentDataWithPreRequisites(this List<DocumentUploadViewModel> files, short userId, short trainingId)
+        public static List<DocumentUploadDTO> ToDocumentUploadWithPreRequisites(this List<DocumentUploadViewModel> files, short trainingId, string trainingName)
         {
             return files.Select(file => new DocumentUploadDTO
             {
-                UsertId = userId,
                 TrainingId = trainingId,
+                TrainingName = trainingName,
                 PreRequisiteId = file.PreRequisiteId,
                 File = file.File,
                 FileName = file.FileName

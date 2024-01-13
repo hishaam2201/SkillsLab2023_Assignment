@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\ExportSelectedEmployeeDTO.cs" />
-    <Compile Include="DTO\SelectedProcessUserDTO.cs" />
+    <Compile Include="DTO\SelectionProcessDTO.cs" />
     <Compile Include="DTO\AttachmentInfoDTO.cs" />
     <Compile Include="DTO\DepartmentDTO.cs" />
     <Compile Include="DTO\DocumentUploadDTO.cs" />
@@ -51,7 +51,7 @@
     <Compile Include="DTO\PasswordDTO.cs" />
     <Compile Include="DTO\ApplicationDocumentDTO.cs" />
     <Compile Include="DTO\ApplicationDTO.cs" />
-    <Compile Include="DTO\SelectionProcessDTO.cs" />
+    <Compile Include="DTO\SelectedUserDTO.cs" />
     <Compile Include="DTO\SendEmailDTO.cs" />
     <Compile Include="DTO\TrainingDTO.cs" />
     <Compile Include="DTO\TrainingPreRequisteDTO.cs" />

@@ -12,7 +12,6 @@ using BusinessLayer.Services.ApplicationService;
 using DAL.Repositories.ApplicationRepository;
 using BusinessLayer.Services.EnrollmentProcessService;
 using DAL.Repositories.EnrollmentProcessRepository;
-using System.Runtime.InteropServices;
 using Framework.BackgroundEnrollmentProcessLogger;
 
 namespace SkillsLab2023_Assignment

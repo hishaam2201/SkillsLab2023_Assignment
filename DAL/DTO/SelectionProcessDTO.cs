@@ -1,15 +1,14 @@
-﻿
-using Framework.Enums;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DAL.DTO
 {
     public class SelectionProcessDTO
     {
-        public short UserId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public ApplicationStatusEnum ApplicationStatus { get; set; }
-        public string DepartmentName { get; set; }
+        public int TrainingId { get; set; }
+        public string TrainingName { get; set; }
+        public string TrainingDepartment { get; set; }
+        public DateTime TrainingStartDateTime { get; set; }
+        public List<SelectedUserDTO> SelectedUsersList { get; set; }
     }
 }

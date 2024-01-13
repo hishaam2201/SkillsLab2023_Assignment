@@ -13,11 +13,12 @@
 })()
 
 function downloadExcelFile() {
-    var currentUrl = window.location.href
-    var url = new URL(currentUrl)
-    var trainingId = url.searchParams.get("trainingId")
-    fetch(`/EnrollmentProcess/DownloadSelectedUsers?trainingId=${trainingId}`, {
-        method: 'POST'
+    var trainingId = document.getElementById('trainingId').value
+    var formData = new FormData()
+    formData.append('trainingId', trainingId)
+    fetch(`/EnrollmentProcess/DownloadSelectedUsers`, {
+        method: 'POST',
+        body: formData
     })
         .then(response => {
             var fileName = response.headers.get('content-disposition').split('filename=')[1]

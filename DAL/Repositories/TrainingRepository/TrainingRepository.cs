@@ -7,8 +7,6 @@ using Framework.DatabaseCommand.DatabaseCommand;
 using DAL.DTO;
 using DAL.Models;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
-using Framework.Enums;
 
 namespace DAL.Repositories.TrainingRepository
 {
@@ -189,44 +187,35 @@ namespace DAL.Repositories.TrainingRepository
         // PRIVATE HELPER METHODS
         private async Task<object> RetrieveDepartmentNameAsync(byte departmentId)
         {
-            try
-            {
-                string GET_DEPARTMENT_NAME_QUERY = @"SELECT DepartmentName FROM Department WHERE Id = @DepartmentId";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
+            string GET_DEPARTMENT_NAME_QUERY = @"SELECT DepartmentName FROM Department WHERE Id = @DepartmentId";
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
 
-                return await _dbCommand.GetScalerResultAsync(GET_DEPARTMENT_NAME_QUERY, parameters);
-            }
-            catch (Exception) { throw; }
+            return await _dbCommand.GetScalerResultAsync(GET_DEPARTMENT_NAME_QUERY, parameters);
         }
 
         private async Task<IEnumerable<TrainingPreRequisteDTO>> RetrieveTrainingPreRequisitesAsync(int trainingId)
         {
-            try
-            {
-                string GET_TRAINING_PRE_REQUISITES_QUERY =
-                    $@"SELECT t.Id as TrainingId, p.Id as PreRequisiteId, p.[Name], p.PreRequisiteDescription FROM Training AS t
+            string GET_TRAINING_PRE_REQUISITES_QUERY =
+                $@"SELECT t.Id as TrainingId, p.Id as PreRequisiteId, p.[Name], p.PreRequisiteDescription FROM Training AS t
                        INNER JOIN TrainingPreRequisites
                        ON TrainingPreRequisites.TrainingId = t.Id
                        INNER JOIN PreRequisite AS p
                        ON TrainingPreRequisites.PreRequisiteId = p.Id
                        WHERE t.Id = @Id";
 
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Id = trainingId });
-                TrainingPreRequisteDTO mapFunction(IDataReader reader)
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Id = trainingId });
+            TrainingPreRequisteDTO mapFunction(IDataReader reader)
+            {
+                return new TrainingPreRequisteDTO
                 {
-                    return new TrainingPreRequisteDTO
-                    {
-                        TrainingId = reader["TrainingId"] == DBNull.Value ? (short)0 : (short)reader["TrainingId"],
-                        PreRequisiteId = reader["PreRequisiteId"] == DBNull.Value ? 0 : (int)reader["PreRequisiteId"],
-                        PreRequisiteName = reader["Name"]?.ToString(),
-                        PreRequisiteDescription = reader["PreRequisiteDescription"]?.ToString()
-                    };
-                }
-
-                return await _dbCommand.ExecuteSelectQueryAsync(
-                    GET_TRAINING_PRE_REQUISITES_QUERY, parameters, mapFunction);
+                    TrainingId = reader["TrainingId"] == DBNull.Value ? (short)0 : (short)reader["TrainingId"],
+                    PreRequisiteId = reader["PreRequisiteId"] == DBNull.Value ? 0 : (int)reader["PreRequisiteId"],
+                    PreRequisiteName = reader["Name"]?.ToString(),
+                    PreRequisiteDescription = reader["PreRequisiteDescription"]?.ToString()
+                };
             }
-            catch (Exception) { throw; }
+            return await _dbCommand.ExecuteSelectQueryAsync(
+                GET_TRAINING_PRE_REQUISITES_QUERY, parameters, mapFunction);
         }
 
         private async Task<bool> ExecuteTrainingTransactionAsync(string query, Training training, string preRequisiteIds, bool excludeTrainingId = true)

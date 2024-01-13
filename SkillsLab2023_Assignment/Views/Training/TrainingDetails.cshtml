@@ -6,27 +6,28 @@
 
 <link href="~/Content/app/Callout.css" rel="stylesheet" />
 
-<h2 id="trainingName" class="mb-3">@Model.TrainingName</h2>
+<h2 class="mb-3">@Model.TrainingName</h2>
 <div class="fs-5">
-    <p id="description">
+    <p>
         <strong>Description: </strong>
         @Model.Description
     </p>
-    <p id="departmentName">
+    <p>
         <strong>Department: </strong>
         @Model.DepartmentName
     </p>
-    <p id="deadline" class="mb-3">
+    <p class="mb-3">
         <strong>Deadline of Application: </strong>
         @Model.DeadlineOfApplication.ToString("d MMMM, yyyy")
     </p>
-    <p id="startingDate" class="mb-3">
+    <p class="mb-3">
         <strong>Training Course Starting Date: </strong>
         @Model.TrainingCourseStartingDateTime.ToString("d MMMM yyyy 'at' HH:mm")
     </p>
 </div>
 <form id="uploadForm" method="post" onsubmit="return false;" enctype="multipart/form-data" novalidate>
     <input type="hidden" id="trainingId" value="@Model.TrainingId" />
+    <input type="hidden" id="trainingName" value="@Model.TrainingName" />
     @if (Model.PreRequisites.Count == 0)
     {
         <div class="callout callout-info">

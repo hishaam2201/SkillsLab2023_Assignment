@@ -54,7 +54,9 @@ form.addEventListener('submit', event => {
 function submitApplication() {
     var formData = new FormData();
     var trainingId = document.getElementById('trainingId').value
+    var trainingName = document.getElementById('trainingName').value
     formData.append(`TrainingId`, trainingId)
+    formData.append(`TrainingName`, trainingName)
 
     var fileInputs = document.querySelectorAll('.file-upload');
     var hasPreRequisites = fileInputs.length > 0
@@ -101,8 +103,7 @@ function displayToastToUser(toastColor, message) {
     }
     else {
         toastr.error(`${message}`, "Error", {
-            timeOut: 5000,
-            progressBar: true
+            closeButton: true
         })
     }
 }
