@@ -28,18 +28,19 @@ namespace BusinessLayer.Services.EnrollmentProcessService
             _trainingRepository = trainingRepository;
         }
 
-        public async Task<SelectedProcessUserDTO> GetSelectedUsersForTrainingAsync(short trainingId)
+        public async Task<SelectionProcessDTO> GetSelectedUsersForTrainingAsync(short trainingId)
         {
             TrainingDTO training = await _trainingRepository.GetTrainingByIdAsync(trainingId);
-            List<SelectionProcessDTO> listOfSelectedUsers = (await _enrollmentProcessRepository.GetSelectedUsersForTrainingAsync(trainingId)).ToList();
-            SelectedProcessUserDTO selectedUsersDTO = new SelectedProcessUserDTO
+            List<SelectedUserDTO> listOfSelectedUsers = (await _enrollmentProcessRepository.GetSelectedUsersForTrainingAsync(trainingId)).ToList();
+            SelectionProcessDTO selectionProcessDTO = new SelectionProcessDTO
             {
+                TrainingId = trainingId,
                 TrainingName = training.TrainingName,
                 TrainingDepartment = training.DepartmentName,
                 TrainingStartDateTime = training.TrainingCourseStartingDateTime,
-                SelectedProcessUsers = listOfSelectedUsers
+                SelectedUsersList = listOfSelectedUsers
             };
-            return selectedUsersDTO;
+            return selectionProcessDTO;
         }
 
         public async Task PerformAutomaticSelectionProcessAsync()
@@ -57,7 +58,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
 
             foreach (TrainingDTO trainingDTO in trainingDTOs)
             {
-                List<SelectionProcessDTO> selectionProcessUsers =
+                List<SelectedUserDTO> selectionProcessUsers =
                     (await _enrollmentProcessRepository.ProcessUsersSelectionAsync(trainingDTO.TrainingId, DECLINE_REASON))?.ToList();
 
                 if (selectionProcessUsers == null || !selectionProcessUsers.Any())
@@ -66,7 +67,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                     continue;
                 }
                 short selected = 0, declined = 0;
-                foreach (SelectionProcessDTO user in selectionProcessUsers)
+                foreach (SelectedUserDTO user in selectionProcessUsers)
                 {
                     SendEmailDTO emailDTO = new SendEmailDTO
                     {
@@ -115,7 +116,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
 	              Due to high demand, we have reached our maximum capacity. We appreciate your interest and 
                   encourage you to apply for future opportunities. Thank you for understanding.";
             TrainingDTO training = await _trainingRepository.GetTrainingByIdAsync(trainingId);
-            List<SelectionProcessDTO> selectionProcessUsers =
+            List<SelectedUserDTO> selectionProcessUsers =
                     (await _enrollmentProcessRepository.ProcessUsersSelectionAsync(trainingId, DECLINE_REASON))?.ToList();
 
             if (selectionProcessUsers == null || !selectionProcessUsers.Any())
@@ -126,7 +127,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                     Message = $"No employees found to select for the training {training.TrainingName}."
                 };
             }
-            foreach (SelectionProcessDTO user in selectionProcessUsers)
+            foreach (SelectedUserDTO user in selectionProcessUsers)
             {
                 SendEmailDTO emailDTO = new SendEmailDTO
                 {

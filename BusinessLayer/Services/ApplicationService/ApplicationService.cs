@@ -100,16 +100,20 @@ namespace BusinessLayer.Services.ApplicationService
             return await _applicationRepository.GetApplicationsAsync(managerId);
         }
 
-        public async Task<bool> ProcessEmployeeApplicationAsync(UserDTO userInformation, List<DocumentUploadDTO> enrollmentDataList)
+        public async Task<OperationResult> ProcessEmployeeApplicationAsync(UserDTO userInformation, List<DocumentUploadDTO> enrollmentDataList)
         {
             if (enrollmentDataList == null || !enrollmentDataList.Any())
-                return false;
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = "No enrollment data found to enroll employee."
+                };
 
-            var firstDocument = enrollmentDataList.First();
             bool isApplicationSuccessful;
-            if (firstDocument.File == null)
+            var firstEnrollmentDocument = enrollmentDataList.First();
+            if (firstEnrollmentDocument.File == null)
             {
-                isApplicationSuccessful = await _applicationRepository.InsertIntoApplicationAsync(userInformation.Id, firstDocument.TrainingId);
+                isApplicationSuccessful = await _applicationRepository.InsertIntoApplicationAsync(userInformation.Id, firstEnrollmentDocument.TrainingId);
             }
             else
             {
@@ -133,8 +137,8 @@ namespace BusinessLayer.Services.ApplicationService
                         });
                     }
                 }
-                isApplicationSuccessful = await _applicationRepository.ProcessEmployeeApplicationAsync
-                    (firstDocument.UsertId, firstDocument.TrainingId, documentUploads);
+                isApplicationSuccessful = await _applicationRepository.ProcessEmployeeApplicationAndDocumentsAsync
+                    (userInformation.Id, firstEnrollmentDocument.TrainingId, documentUploads);
             }
 
             if (isApplicationSuccessful)
@@ -144,17 +148,25 @@ namespace BusinessLayer.Services.ApplicationService
                     EmployeeName = $"{userInformation.FirstName} {userInformation.LastName}",
                     Email = userInformation.ManagerEmail,
                     ManagerName = userInformation.ManagerName,
-                    TrainingName = firstDocument.TrainingName
+                    TrainingName = firstEnrollmentDocument.TrainingName
                 };
                 EmailContentGenerator.GenerateTrainingNotificationEmailBody(emailDTO, ApplicationStatusEnum.Pending, out string body, out string subject);
 #pragma warning disable CS4014
                 EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
 #pragma warning restore CS4014
-                return true;
+                return new OperationResult
+                {
+                    Success = true,
+                    Message = "Manager notified of your application."
+                };
             }
             else
             {
-                return false;
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = "Could not perform application..."
+                };
             }
         }
     }

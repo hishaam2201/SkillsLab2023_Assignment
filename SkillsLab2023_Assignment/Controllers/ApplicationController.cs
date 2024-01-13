@@ -32,14 +32,14 @@ namespace SkillsLab2023_Assignment.Controllers
 
             List<DocumentUploadDTO> enrollmentDataList =
                 files != null && files.Any()
-                    ? files.ToDocumentUploadWithPreRequisites(userInformation.Id, trainingId, trainingName)
-                    : new List<DocumentUploadDTO> { new DocumentUploadDTO { UsertId = userInformation.Id, TrainingId = trainingId, TrainingName = trainingName } };
+                    ? files.ToDocumentUploadWithPreRequisites(trainingId, trainingName)
+                    : new List<DocumentUploadDTO> { new DocumentUploadDTO { TrainingId = trainingId, TrainingName = trainingName } };
 
-            bool isSuccessful = await _applicationService.ProcessEmployeeApplicationAsync(userInformation, enrollmentDataList);
+            OperationResult result = await _applicationService.ProcessEmployeeApplicationAsync(userInformation, enrollmentDataList);
             return Json(new { 
-                success = isSuccessful, 
-                message = isSuccessful ? "Manager notified of your application." : "Could not perform application...", 
-                redirectUrl = isSuccessful ? Url.Action("EmployeeDashboard", "Home") : null 
+                success = result.Success, 
+                message = result.Message, 
+                redirectUrl = result.Success ? Url.Action("EmployeeDashboard", "Home") : null 
             });
         }
 

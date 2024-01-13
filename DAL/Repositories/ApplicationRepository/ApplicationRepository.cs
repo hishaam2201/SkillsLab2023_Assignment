@@ -199,7 +199,7 @@ namespace DAL.Repositories.ApplicationRepository
             return await _dbCommand.AffectedRowsCountAsync(INSERT_APPLICATION_QUERY, applicationParameters) > 0;
         }
 
-        public async Task<bool> ProcessEmployeeApplicationAsync(short userId, short trainingId, List<DocumentUpload> documentUploads)
+        public async Task<bool> ProcessEmployeeApplicationAndDocumentsAsync(short userId, short trainingId, List<DocumentUpload> documentUploads)
         {
             StringBuilder documentUploadQuery = new StringBuilder();
             documentUploadQuery.Append("INSERT INTO [Application] (UserId, TrainingId) VALUES (@UserId, @TrainingId);");

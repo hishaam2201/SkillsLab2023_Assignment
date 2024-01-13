@@ -1,4 +1,4 @@
-﻿@model DAL.DTO.SelectedProcessUserDTO
+﻿@model DAL.DTO.SelectionProcessDTO
 @{
     ViewBag.Title = "View Selected Users";
 }
@@ -8,7 +8,7 @@
 
 <h2>@Model.TrainingName</h2>
 <h5>Training department is @Model.TrainingDepartment and will be held on @Model.TrainingStartDateTime.ToString("dddd, MMMM d, yyyy, h:mm tt")</h5>
-@if (Model.SelectedProcessUsers == null || Model.SelectedProcessUsers.Count == 0)
+@if (Model.SelectedUsersList == null || Model.SelectedUsersList.Count == 0)
 {
     <div class="my-4 callout callout-warning">
         <h4 class="alert-heading"><strong>No Selected Employees Found For Today:</strong></h4>
@@ -27,6 +27,7 @@ else
             <i id="exportIcon" class="fa-solid fa-file-export"></i>&nbsp;&nbsp;Export selected employees
         </button>
     </div>
+    <input id="trainingId" type="hidden" value="@Model.TrainingId"/>
     <div class="table-wrapper pt-4">
         <table id="selectedUsers" class="table table-striped table-hover" style="width: 100%;">
             <thead>
@@ -38,7 +39,7 @@ else
                 </tr>
             </thead>
             <tbody id="tableBody">
-                @foreach (var user in Model.SelectedProcessUsers)
+                @foreach (var user in Model.SelectedUsersList)
                 {
                     <tr class="text-center">
                         <td>@user.FirstName</td>

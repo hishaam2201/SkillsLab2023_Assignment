@@ -13,6 +13,6 @@ namespace DAL.Repositories.ApplicationRepository
         Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId);
         Task<IEnumerable<UserApplicationDTO>> GetApplicationByUserIdAsync(short userId);
         Task<bool> InsertIntoApplicationAsync(short userId, short trainingId);
-        Task<bool> ProcessEmployeeApplicationAsync(short userId, short trainingId, List<DocumentUpload> documentUploads);
+        Task<bool> ProcessEmployeeApplicationAndDocumentsAsync(short userId, short trainingId, List<DocumentUpload> documentUploads);
     }
 }

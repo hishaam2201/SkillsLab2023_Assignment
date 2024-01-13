@@ -7,11 +7,11 @@
         responsive: true,
         paging: true,
         ordering: false,
-        pageLength: 7,
+        pageLength: 10,
         language: {
             lengthMenu:
                 '<span>Show: <select class="form-select mb-2">' +
-                '<option value="7">7</option>' +
+                '<option value="10">10</option>' +
                 '<option value="15">15</option>' +
                 '<option value="25">25</option>' +
                 '<option value="-1">All</option>' +

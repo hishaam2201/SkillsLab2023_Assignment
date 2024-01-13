@@ -53,11 +53,11 @@ namespace BusinessLayer.Services.TrainingService
                 ? new Func<Training, string, Task<bool>>(_trainingRepository.UpdateTrainingAsync)
                 : new Func<Training, string, Task<bool>>(_trainingRepository.AddTrainingAsync);
 
-            var result = await operation(training, preRequisitesIds);
+            var isSuccessful = await operation(training, preRequisitesIds);
             return new OperationResult
             {
-                Success = result,
-                Message = result
+                Success = isSuccessful,
+                Message = isSuccessful
                     ? $"Training {(isUpdate ? "updated" : "added")} successfully."
                     : $"An error occurred while {(isUpdate ? "updating" : "adding")} training."
             };
