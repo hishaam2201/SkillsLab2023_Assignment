@@ -8,6 +8,7 @@ using DAL.DTO;
 using System.Data;
 using Framework.Enums;
 using System.Linq;
+using System.Text;
 
 namespace DAL.Repositories.ApplicationRepository
 {
@@ -186,37 +187,55 @@ namespace DAL.Repositories.ApplicationRepository
             return await _dbCommand.ExecuteSelectQueryAsync(GET_USER_APPLICATION_QUERY, parameters, mapFunction);
         }
 
-        public async Task<ApplicationDTO> InsertApplicationAndGetIdAsync(Application application)
+        public async Task<bool> InsertIntoApplicationAsync(short userId, short trainingId)
         {
             const string INSERT_APPLICATION_QUERY = @"INSERT INTO [Application] (UserId, TrainingId)
-                                                      VALUES (@UserId, @TrainingId)
-                                                      
-                                                      SELECT SCOPE_IDENTITY() AS ApplicationId, t.TrainingName 
-                                                      FROM [Application] AS a 
-                                                      INNER JOIN Training AS t ON t.Id = a.TrainingId 
-                                                      WHERE a.Id = SCOPE_IDENTITY()";
-            var excludedApplicationParameters = new List<string> { "Id", "ApplicationStatus", "ApplicationDateTime", "DeclineReason" };
-            SqlParameter[] applicationParameters = _dbCommand.GetSqlParametersFromObject(application, excludedApplicationParameters);
-            ApplicationDTO mapFunction(IDataReader reader)
+                                                      VALUES (@UserId, @TrainingId)";
+            SqlParameter[] applicationParameters = _dbCommand.GetSqlParametersFromObject(new
             {
-                return new ApplicationDTO
-                {
-                    ApplicationId = Convert.ToInt32(reader["ApplicationId"]),
-                    TrainingName = reader["TrainingName"].ToString()
-                };
-            }
-            var result = (await _dbCommand.ExecuteSelectQueryAsync(INSERT_APPLICATION_QUERY, applicationParameters, mapFunction)).FirstOrDefault();
-            return result;
+                UserId = userId,
+                TrainingId = trainingId
+            });
+            return await _dbCommand.AffectedRowsCountAsync(INSERT_APPLICATION_QUERY, applicationParameters) > 0;
         }
 
-        public async Task<bool> InsertDocumentUploadAsync(DocumentUpload documentUpload)
+        public async Task<bool> ProcessEmployeeApplicationAsync(short userId, short trainingId, List<DocumentUpload> documentUploads)
         {
-            const string INSERT_DOCUMENT_UPLOAD_QUERY = @"INSERT INTO DocumentUpload (ApplicationId, [File], PreRequisiteId, FileName) 
-                                                          VALUES (@ApplicationId, @File, @PreRequisiteId, @FileName);";
-            var excludedDocumentUploadParameters = new List<string> { "Id" };
-            SqlParameter[] documentUploadPreRequisite = _dbCommand.GetSqlParametersFromObject(documentUpload, excludedDocumentUploadParameters);
-            return (await _dbCommand.AffectedRowsCountAsync(INSERT_DOCUMENT_UPLOAD_QUERY, documentUploadPreRequisite)) > 0;
+            StringBuilder documentUploadQuery = new StringBuilder();
+            documentUploadQuery.Append("INSERT INTO [Application] (UserId, TrainingId) VALUES (@UserId, @TrainingId);");
+            SqlParameter[] applicationTableParams = _dbCommand.GetSqlParametersFromObject(new { UserId = userId, TrainingId = trainingId});
+
+            documentUploadQuery.Append("DECLARE @ApplicationId INT; SET @ApplicationId = SCOPE_IDENTITY();");
+
+            documentUploadQuery.Append("INSERT INTO DocumentUpload (ApplicationId, [File], PreRequisiteId, FileName) VALUES ");
+            List<SqlParameter[]> documentUploadsParams = new List<SqlParameter[]>();
+            short index = 0;
+            foreach (var document in documentUploads)
+            {
+                string binaryFileParamName = $"@BinaryFile{index}";
+                string preRequisiteIdParamName = $"@PreRequisiteId{index}";
+                string fileNameParamName = $"@FileName{index}";
+
+                documentUploadQuery.Append($"(@ApplicationId, {binaryFileParamName}, {preRequisiteIdParamName}, {fileNameParamName})");
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter(binaryFileParamName, document.File),
+                    new SqlParameter(preRequisiteIdParamName, document.PreRequisiteId),
+                    new SqlParameter(fileNameParamName, document.FileName)
+                };
+                documentUploadsParams.Add(parameters);
+                if (index < documentUploads.Count - 1)
+                {
+                    documentUploadQuery.Append(", ");
+                }
+                index++;
+            }
+            string finalQueryString = documentUploadQuery.ToString();
+            SqlParameter[] documentParameters = documentUploadsParams.SelectMany(parameterArray => parameterArray).ToArray();
+            SqlParameter[] allParameters = applicationTableParams.Concat(documentParameters).ToArray();
+            return await _dbCommand.ExecuteTransactionAsync(new SqlCommand(finalQueryString), allParameters);
         }
+
     }
 
 }

@@ -11,8 +11,8 @@ namespace DAL.Repositories.ApplicationRepository
         Task<(bool, SendEmailDTO)> DeclineApplicationAsync(int applicationId, string message);
         Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId);
         Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId);
-        Task<ApplicationDTO> InsertApplicationAndGetIdAsync(Application application);
-        Task<bool> InsertDocumentUploadAsync(DocumentUpload documentUpload);
         Task<IEnumerable<UserApplicationDTO>> GetApplicationByUserIdAsync(short userId);
+        Task<bool> InsertIntoApplicationAsync(short userId, short trainingId);
+        Task<bool> ProcessEmployeeApplicationAsync(short userId, short trainingId, List<DocumentUpload> documentUploads);
     }
 }
