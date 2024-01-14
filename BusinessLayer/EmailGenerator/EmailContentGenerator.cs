@@ -1,12 +1,7 @@
 ﻿using DAL.DTO;
 using Framework.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Framework.StaticClass
+namespace BusinessLayer.EmailGenerator
 {
     public static class EmailContentGenerator
     {

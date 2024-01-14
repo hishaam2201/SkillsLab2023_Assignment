@@ -1,7 +1,6 @@
-using BusinessLayer.Services.AccountService;
 using BusinessLayer.Services.TrainingService;
 using Framework.DatabaseCommand.DatabaseCommand;
-using DAL.Repositories.AccountRepository;
+using DAL.Repositories.UserRepository;
 using DAL.Repositories.TrainingRepository;
 using Framework.AppLogger;
 using Framework.DAL;
@@ -13,6 +12,7 @@ using DAL.Repositories.ApplicationRepository;
 using BusinessLayer.Services.EnrollmentProcessService;
 using DAL.Repositories.EnrollmentProcessRepository;
 using Framework.BackgroundEnrollmentProcessLogger;
+using BusinessLayer.Services.UserService;
 
 namespace SkillsLab2023_Assignment
 {
@@ -32,8 +32,8 @@ namespace SkillsLab2023_Assignment
             Container.RegisterType<IEnrollmentProcessService, EnrollmentProcessService>();
             Container.RegisterType<IEnrollmentProcessRepository, EnrollmentProcessRepository>();
 
-            Container.RegisterType<IAccountService, AccountService>();
-            Container.RegisterType<IAccountRepository, AccountRepository>();
+            Container.RegisterType<IUserService, UserService>();
+            Container.RegisterType<IUserRepository, UserRepository>();
 
             Container.RegisterType<ITrainingService, TrainingService>();
             Container.RegisterType<ITrainingRepository, TrainingRepository>();

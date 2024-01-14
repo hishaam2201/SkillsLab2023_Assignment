@@ -2,7 +2,7 @@
 using DAL.DTO;
 using DAL.Models;
 using Framework.Enums;
-using Framework.StaticClass;
+using Framework.HelperClasses;
 using SkillsLab2023_Assignment.Custom;
 using SkillsLab2023_Assignment.Mapper;
 using SkillsLab2023_Assignment.Models;
