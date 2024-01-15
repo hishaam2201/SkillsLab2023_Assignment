@@ -134,17 +134,21 @@ namespace DAL.Repositories.UserRepository
 
         public async Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(byte departmentId)
         {
-            string GET_MANAGERS_FROM_DEPARTMENT_QUERY =
-                  $@"SELECT Id, FirstName, LastName FROM [User] AS u
+            const string GET_MANAGERS_FROM_DEPARTMENT_QUERY =
+                  @"SELECT Id, FirstName, LastName FROM [User] AS u
                        INNER JOIN UserRole AS ur
                        ON ur.UserId = u.Id
-                       WHERE ur.RoleId = {(byte)RoleEnum.Manager} and DepartmentId = @DepartmentId";
-            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
+                       WHERE ur.RoleId = @RoleId and DepartmentId = @DepartmentId";
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new 
+            { 
+                RoleId = (byte)RoleEnum.Manager, 
+                DepartmentId = departmentId 
+            });
             Func<IDataReader, ManagerDTO> mapFunction = reader =>
             {
                 return new ManagerDTO
                 {
-                    Id = (short)reader["Id"],
+                    Id = reader["Id"] as short?,
                     FirstName = reader["FirstName"]?.ToString(),
                     LastName = reader["LastName"]?.ToString(),
                 };

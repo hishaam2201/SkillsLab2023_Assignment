@@ -351,3 +351,12 @@ No expired training sessions found.
 Timestamp: 1/14/2024 7:53:52 PM
 No expired training sessions found.
 "---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/15/2024 2:53:08 PM
+3 employee(s) have been selected for the training SupportExcellence.
+ 0 employee(s) have been declined for the training due to availability of seats.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/15/2024 3:00:02 PM
+No employees found to select for the training SupportExcellence.
+"---------------------------------------------------------";

@@ -1,7 +1,6 @@
 
 const form = document.getElementById('uploadForm')
 form.addEventListener('submit', event => {
-
     const fileInputs = form.querySelectorAll('input[type="file"]');
     let isValid = true;
 
@@ -80,6 +79,8 @@ function submitApplication() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                const applyBtn = document.getElementById('applyBtn')
+                applyBtn.disabled = true
                 displayToastToUser("success", `${data.message}`)
                 setTimeout(() => {
                     window.location.href = data.redirectUrl
