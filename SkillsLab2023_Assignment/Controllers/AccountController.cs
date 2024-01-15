@@ -1,8 +1,8 @@
-﻿using BusinessLayer.Services.AccountService;
+﻿using BusinessLayer.Services.UserService;
 using DAL.DTO;
 using DAL.Models;
 using Framework.Enums;
-using Framework.StaticClass;
+using Framework.HelperClasses;
 using SkillsLab2023_Assignment.Custom;
 using SkillsLab2023_Assignment.Mapper;
 using SkillsLab2023_Assignment.Models;
@@ -16,10 +16,10 @@ namespace SkillsLab2023_Assignment.Controllers
     [ValidationFilter]
     public class AccountController : Controller
     {
-        private readonly IAccountService _accountService;
-        public AccountController(IAccountService accountService)
+        private readonly IUserService _userService;
+        public AccountController(IUserService userService)
         {
-            _accountService = accountService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -36,7 +36,7 @@ namespace SkillsLab2023_Assignment.Controllers
                 return Json(new { success = false, message = "Invalid input" });
             }
 
-            OperationResult result = await _accountService.AuthenticateLoginCredentialsAsync(loginViewModel.Email, loginViewModel.Password);
+            OperationResult result = await _userService.AuthenticateLoginCredentialsAsync(loginViewModel.Email, loginViewModel.Password);
             if (result.Success)
             {
                 SessionManager.Email = loginViewModel.Email;
@@ -53,7 +53,7 @@ namespace SkillsLab2023_Assignment.Controllers
         public async Task<ActionResult> ChooseRole()
         {
             string email = SessionManager.Email;
-            List<UserRoleDTO> userRoles = (await _accountService.GetUserRolesAsync(email)).ToList();
+            List<UserRoleDTO> userRoles = (await _userService.GetUserRolesAsync(email)).ToList();
             return View(userRoles);
         }
 
@@ -61,7 +61,7 @@ namespace SkillsLab2023_Assignment.Controllers
         public async Task<JsonResult> ChooseRole(byte selectedRole)
         {
             string email = SessionManager.Email;
-            UserDTO user = await _accountService.GetUserDataAsync(email, selectedRole);
+            UserDTO user = await _userService.GetUserDataAsync(email, selectedRole);
             bool isUserNotNull = user != null;
             if (isUserNotNull)
             {
@@ -81,7 +81,7 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllManagersFromDepartment(byte departmentId)
         {
-            List<ManagerDTO> managerDTO = (await _accountService.GetAllManagersFromDepartmentAsync(departmentId)).ToList();
+            List<ManagerDTO> managerDTO = (await _userService.GetAllManagersFromDepartmentAsync(departmentId)).ToList();
             return Json(new { success = true, managers = managerDTO }, JsonRequestBehavior.AllowGet);
         }
 
@@ -95,10 +95,10 @@ namespace SkillsLab2023_Assignment.Controllers
         public async Task<ActionResult> Register(RegisterViewModel registerViewModel)
         {
             User user = registerViewModel.ToUser();
-            OperationResult result = await _accountService.RegisterUserAsync(user, registerViewModel.Email, registerViewModel.Password);
+            OperationResult result = await _userService.RegisterUserAsync(user, registerViewModel.Password);
             if (result.Success)
             {
-                UserDTO userData = await _accountService.GetUserDataAsync(user.Email, (byte)RoleEnum.Employee);
+                UserDTO userData = await _userService.GetUserDataAsync(user.Email, (byte)RoleEnum.Employee);
                 SessionManager.CurrentUser = userData;
                 SessionManager.UserRole = RoleEnum.Employee.ToString();
             }
@@ -114,7 +114,7 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAllDepartments()
         {
-            List<DepartmentDTO> departmentDTO = (await _accountService.GetAllDepartmentsAsync()).ToList();
+            List<DepartmentDTO> departmentDTO = (await _userService.GetAllDepartmentsAsync()).ToList();
             return Json(new { success = true, departments = departmentDTO }, JsonRequestBehavior.AllowGet);
         }
 

@@ -56,15 +56,23 @@ function getAllManagersFromDepartment(selectedDepartmentId) {
             var managerSelectElement = document.getElementById('manager')
             managerSelectElement.innerHTML = '<option selected disabled value="">Select your Manager</option>'
 
-            if (data.success && data.managers.length > 0) {
+            if (data.success) {
                 var managers = data.managers;
 
-                managers.forEach(function (manager) {
+                if (managers.length > 0) {
+                    managers.forEach(function (manager) {
+                        var option = document.createElement('option')
+                        option.value = manager.Id
+                        option.text = `${manager.FirstName} ${manager.LastName}`
+                        managerSelectElement.appendChild(option)
+                    })
+                }
+                else {
                     var option = document.createElement('option')
-                    option.value = manager.Id
-                    option.text = `${manager.FirstName} ${manager.LastName}`
+                    option.text = "No managers available"
+                    option.selected = true
                     managerSelectElement.appendChild(option)
-                })
+                }
             }
             else {
                 toastr.warning("No managers available for the selected department", "No Managers Found", {
@@ -90,9 +98,9 @@ function submitRegistrationForm() {
     var manager = document.getElementById("manager").value.trim()
     var email = document.getElementById("email").value.trim()
 
-    var password = document.getElementById("password")
-    var confirmPassword = document.getElementById("confirmPassword")
-    if (password.value.trim() != confirmPassword.value.trim()) {
+    var password = document.getElementById("password").value.trim()
+    var confirmPassword = document.getElementById("confirmPassword").value.trim()
+    if (password != confirmPassword) {
         toastr.error("Passwords do not match", "Error", {
             closeButton: true
         })

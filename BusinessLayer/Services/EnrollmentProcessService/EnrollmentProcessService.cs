@@ -11,7 +11,7 @@ using DAL.Repositories.TrainingRepository;
 using OfficeOpenXml;
 using System;
 using System.IO;
-using Framework.StaticClass;
+using BusinessLayer.EmailGenerator;
 
 namespace BusinessLayer.Services.EnrollmentProcessService
 {

@@ -3,7 +3,7 @@ using DAL.Models;
 using DAL.Repositories.ApplicationRepository;
 using Framework.Enums;
 using Framework.Notification;
-using Framework.StaticClass;
+using BusinessLayer.EmailGenerator;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

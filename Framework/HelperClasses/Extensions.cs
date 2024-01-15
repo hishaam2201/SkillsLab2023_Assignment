@@ -1,7 +1,7 @@
 ﻿using Framework.Enums;
 using System.IO;
 
-namespace Framework.StaticClass
+namespace Framework.HelperClasses
 {
     public static class Extensions
     {

@@ -1,4 +1,6 @@
 ﻿
+using Framework.Enums;
+
 namespace DAL.DTO
 {
     public class UserRoleDTO

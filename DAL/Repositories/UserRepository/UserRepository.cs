@@ -8,41 +8,36 @@ using DAL.DTO;
 using Framework.Enums;
 using System.Data;
 using System.Threading.Tasks;
-using System.Net.NetworkInformation;
 
-namespace DAL.Repositories.AccountRepository
+namespace DAL.Repositories.UserRepository
 {
-    public class AccountRepository : IAccountRepository
+    public class UserRepository : IUserRepository
     {
         private readonly IDatabaseCommand<User> _dbCommand;
-        public AccountRepository(IDatabaseCommand<User> dbCommand)
+        public UserRepository(IDatabaseCommand<User> dbCommand)
         {
             _dbCommand = dbCommand;
         }
 
         public async Task<PasswordDTO> GetUserHashedPasswordAndSaltAsync(string email)
         {
-            try
+            const string GET_USER_HASHEDPASSWORD_AND_SALT_QUERY =
+                @"SELECT HashedPassword, Salt FROM [User] WHERE Email = @Email";
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email });
+            Func<IDataReader, PasswordDTO> mapFunction = reader =>
             {
-                const string GET_USER_HASHEDPASSWORD_AND_SALT_QUERY =
-                    @"SELECT HashedPassword, Salt FROM [User] WHERE Email = @Email";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email });
-                Func<IDataReader, PasswordDTO> mapFunction = reader =>
+                return new PasswordDTO
                 {
-                    return new PasswordDTO
-                    {
-                        HashedPassword = (byte[])reader["HashedPassword"],
-                        Salt = (byte[])reader["Salt"]
-                    };
+                    HashedPassword = (byte[])reader["HashedPassword"],
+                    Salt = (byte[])reader["Salt"]
                 };
-                var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_HASHEDPASSWORD_AND_SALT_QUERY, parameters, mapFunction);
-                return result?.FirstOrDefault();
-            }
-            catch (Exception) { throw; }
+            };
+            var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_HASHEDPASSWORD_AND_SALT_QUERY, parameters, mapFunction);
+            return result.FirstOrDefault();
         }
 
         public async Task<bool> IsFieldInUseAsync(string columnName, string columnValue)
-        { 
+        {
             string query = $@"SELECT 1 FROM [User] WHERE [{columnName}]=@columnName";
             SqlParameter[] parameter = _dbCommand.GetSqlParametersFromObject(new { columnName = columnValue });
             var result = await _dbCommand.IsRecordPresentAsync(query, parameter);
@@ -80,30 +75,26 @@ namespace DAL.Repositories.AccountRepository
 
         public async Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync(string email)
         {
-            try
-            {
-                const string GET_USER_ROLES_QUERY = @"SELECT u.RoleId, r.RoleName FROM [User]
+            const string GET_USER_ROLES_QUERY = @"SELECT u.RoleId, r.RoleName FROM [User]
                                                       INNER JOIN UserRole AS u
                                                       ON u.UserId = [User].Id
                                                       INNER JOIN [Role] AS r
                                                       ON r.Id = u.RoleId
                                                       WHERE Email = @Email";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email });
-                Func<IDataReader, UserRoleDTO> mapFunction = reader =>
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { Email = email });
+            Func<IDataReader, UserRoleDTO> mapFunction = reader =>
+            {
+                return new UserRoleDTO
                 {
-                    return new UserRoleDTO
-                    {
-                        RoleId = (byte)reader["RoleId"],
-                        RoleName = reader["RoleName"].ToString()
-                    };
+                    RoleId = (byte)reader["RoleId"],
+                    RoleName = reader["RoleName"].ToString()
                 };
-                var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_ROLES_QUERY, parameters, mapFunction);
-                return result;
-            }
-            catch (Exception) { throw; }
+            };
+            var result = await _dbCommand.ExecuteSelectQueryAsync(GET_USER_ROLES_QUERY, parameters, mapFunction);
+            return result;
         }
 
-        public async Task<bool> RegisterUserAsync(User user, string email)
+        public async Task<bool> RegisterUserAsync(User user)
         {
             string INSERT_INTO_USER_QUERY =
                   $@"INSERT INTO [User] (FirstName, LastName, MobileNumber, NationalIdentityCard, DepartmentId, ManagerId, 
@@ -123,52 +114,46 @@ namespace DAL.Repositories.AccountRepository
                 Value = (byte)RoleEnum.Employee
             };
             SqlParameter[] allParams = userQueryParams.Concat(new[] { roleIdParam }).ToArray();
-
             bool isSuccessful = await _dbCommand.ExecuteTransactionAsync(new SqlCommand(INSERT_INTO_USER_QUERY), allParams);
             return isSuccessful;
         }
 
         public async Task<IEnumerable<DepartmentDTO>> GetAllDepartmentsAsync()
         {
-            try
+            string GET_ALL_DEPARTMENTS_QUERY = $@"SELECT * FROM Department;";
+            Func<IDataReader, DepartmentDTO> mapFunction = reader =>
             {
-                string GET_ALL_DEPARTMENTS_QUERY = $@"SELECT * FROM Department;";
-                Func<IDataReader, DepartmentDTO> mapFunction = reader =>
+                return new DepartmentDTO
                 {
-                    return new DepartmentDTO
-                    {
-                        Id = (byte)reader["Id"],
-                        DepartmentName = reader["DepartmentName"]?.ToString(),
-                    };
+                    Id = (byte)reader["Id"],
+                    DepartmentName = reader["DepartmentName"]?.ToString(),
                 };
-                return await _dbCommand.ExecuteSelectQueryAsync(query: GET_ALL_DEPARTMENTS_QUERY, mapFunction: mapFunction);
-            }
-            catch (Exception) { throw; }
+            };
+            return await _dbCommand.ExecuteSelectQueryAsync(query: GET_ALL_DEPARTMENTS_QUERY, mapFunction: mapFunction);
         }
 
         public async Task<IEnumerable<ManagerDTO>> GetAllManagersFromDepartmentAsync(byte departmentId)
         {
-            try
-            {
-                string GET_MANAGERS_FROM_DEPARTMENT_QUERY =
-                    $@"SELECT Id, FirstName, LastName FROM [User] AS u
+            const string GET_MANAGERS_FROM_DEPARTMENT_QUERY =
+                  @"SELECT Id, FirstName, LastName FROM [User] AS u
                        INNER JOIN UserRole AS ur
                        ON ur.UserId = u.Id
-                       WHERE ur.RoleId = {(byte)RoleEnum.Manager} and DepartmentId = @DepartmentId";
-                SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { DepartmentId = departmentId });
-                Func<IDataReader, ManagerDTO> mapFunction = reader =>
+                       WHERE ur.RoleId = @RoleId and DepartmentId = @DepartmentId";
+            SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new 
+            { 
+                RoleId = (byte)RoleEnum.Manager, 
+                DepartmentId = departmentId 
+            });
+            Func<IDataReader, ManagerDTO> mapFunction = reader =>
+            {
+                return new ManagerDTO
                 {
-                    return new ManagerDTO
-                    {
-                        Id = (short)reader["Id"],
-                        FirstName = reader["FirstName"]?.ToString(),
-                        LastName = reader["LastName"]?.ToString(),
-                    };
+                    Id = reader["Id"] as short?,
+                    FirstName = reader["FirstName"]?.ToString(),
+                    LastName = reader["LastName"]?.ToString(),
                 };
-                return await _dbCommand.ExecuteSelectQueryAsync
-                    (GET_MANAGERS_FROM_DEPARTMENT_QUERY, parameters, mapFunction);
-            }
-            catch (Exception) { throw; }
+            };
+            return await _dbCommand.ExecuteSelectQueryAsync(GET_MANAGERS_FROM_DEPARTMENT_QUERY, parameters, mapFunction);
         }
 
     }

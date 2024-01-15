@@ -199,15 +199,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AccountService\AccountService.cs" />
-    <Compile Include="Services\AccountService\IAccountService.cs" />
+    <Compile Include="Services\UserService\UserService.cs" />
+    <Compile Include="Services\UserService\IUserService.cs" />
     <Compile Include="Services\ApplicationService\ApplicationService.cs" />
     <Compile Include="Services\ApplicationService\IApplicationService.cs" />
     <Compile Include="Services\EnrollmentProcessService\IEnrollmentProcessService.cs" />
     <Compile Include="Services\EnrollmentProcessService\EnrollmentProcessService.cs" />
     <Compile Include="Services\TrainingService\ITrainingService.cs" />
     <Compile Include="Services\TrainingService\TrainingService.cs" />
-    <Compile Include="EmailBodyGenerator\EmailContentGenerator.cs" />
+    <Compile Include="EmailGenerator\EmailContentGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">

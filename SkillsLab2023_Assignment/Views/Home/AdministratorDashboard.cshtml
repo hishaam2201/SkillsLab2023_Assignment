@@ -1,5 +1,4 @@
 ﻿@model List<DAL.DTO.TrainingDTO>
-
 @{
     ViewBag.Title = "Dashboard";
 }
@@ -36,7 +35,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="addTrainingStartDate" class="form-label">Training Start Date</label>
-                            <input type="date" class="form-control" id="addTrainingStartDate" required />
+                            <input type="date" class="form-control" id="addTrainingStartDate" required onchange="enableApplicationDeadline()"/>
                             <div class="invalid-feedback">Training start date is required</div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -48,7 +47,7 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="addTrainingApplicationDeadline" class="form-label">Application Deadline</label>
-                            <input type="date" class="form-control" id="addTrainingApplicationDeadline" required />
+                            <input type="date" class="form-control" id="addTrainingApplicationDeadline" required disabled/>
                             <div class="invalid-feedback">Application deadline is required</div>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -252,4 +251,17 @@ else
             </div>
         </div>
     </div>
+
+    <script>
+        var addTrainingStartDate = document.getElementById('addTrainingStartDate');
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + 1)
+        const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+        addTrainingStartDate.min = formattedCurrentDate
+
+        function enableApplicationDeadline() {
+            var addTrainingApplicationDeadline = document.getElementById('addTrainingApplicationDeadline');
+            addTrainingApplicationDeadline.disabled = false;
+        }
+    </script>
 }
