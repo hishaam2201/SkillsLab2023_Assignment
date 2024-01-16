@@ -15,7 +15,7 @@ namespace SkillsLab2023_Assignment.Models
         [Required]
         public int Capacity { get; set; }
         [Required]
-        public short DepartmentId { get; set; }
+        public byte DepartmentId { get; set; }
         [Required]
         public DateTime TrainingStartDateTime { get; set; }
         public string PreRequisiteIds { get; set; }

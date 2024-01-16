@@ -8,7 +8,7 @@ namespace BusinessLayer.Services.TrainingService
     public interface ITrainingService
     {
         Task<IEnumerable<TrainingDTO>> GetUnappliedTrainingsAsync(byte userDepartmentId, short userId);
-        Task<TrainingDTO> GetTrainingByIdAsync(int id);
+        Task<TrainingDTO> GetTrainingByIdAsync(int trainingId);
         Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync();
         Task PerformAutomaticDeadlineExpiryStatusUpdateAsync();
         Task<OperationResult> GetAllPreRequisitesAsync();

@@ -63,6 +63,7 @@
     <Compile Include="Models\OperationResult.cs" />
     <Compile Include="Models\PreRequisite.cs" />
     <Compile Include="Models\Training.cs" />
+    <Compile Include="Models\TrainingPreRequisite.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

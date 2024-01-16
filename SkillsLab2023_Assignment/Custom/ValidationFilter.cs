@@ -21,7 +21,6 @@ namespace SkillsLab2023_Assignment.Custom
                         Errors = error
                     },
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet,
-             
                 };
             }
         }
