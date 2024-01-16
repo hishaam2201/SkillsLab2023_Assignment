@@ -21,9 +21,9 @@ namespace BusinessLayer.Services.TrainingService
             return await _trainingRepository.GetUnappliedTrainingsAsync(userDepartmentId, userId);
         }
 
-        public async Task<TrainingDTO> GetTrainingByIdAsync(int id)
+        public async Task<TrainingDTO> GetTrainingByIdAsync(int trainingId)
         {
-            return await _trainingRepository.GetTrainingByIdAsync(id);
+            return await _trainingRepository.GetTrainingByIdAsync(trainingId);
         }
 
         public async Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync()
@@ -38,7 +38,7 @@ namespace BusinessLayer.Services.TrainingService
 
         public async Task<OperationResult> GetAllPreRequisitesAsync()
         {
-            IEnumerable<PreRequisite> preRequisites = (await _trainingRepository.GetAllPreRequisitesAsync());
+            var preRequisites = (await _trainingRepository.GetAllPreRequisitesAsync());
             return new OperationResult
             {
                 Success = preRequisites != null && preRequisites.Any(),
@@ -65,20 +65,19 @@ namespace BusinessLayer.Services.TrainingService
 
         public async Task<OperationResult> DeleteTrainingAsync(int trainingId)
         {
-            if (!await AreUsersSelectedForTrainingAsync(trainingId))
+            if (await AreUsersSelectedForTrainingAsync(trainingId))
             {
-                bool isDeleted = await _trainingRepository.DeleteTrainingAsync(trainingId);
                 return new OperationResult
                 {
-                    Success = isDeleted,
-                    Message = "Training deleted successfully."
+                    Success = false,
+                    Message = "Employees have applied for this training."
                 };
-
             }
+            bool isDeleted = await _trainingRepository.DeleteTrainingAsync(trainingId);
             return new OperationResult
             {
-                Success = false,
-                Message = "Employees have applied for this training."
+                Success = isDeleted,
+                Message = isDeleted ? "Training deleted successfully." : "Failed to delete training."
             };
         }
 

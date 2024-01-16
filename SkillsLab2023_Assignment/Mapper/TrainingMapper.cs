@@ -10,13 +10,13 @@ namespace SkillsLab2023_Assignment.Mapper
         {
             return new Training()
             {
-                Id = editTrainingViewModel.TrainingId,
+                Id = (short)editTrainingViewModel.TrainingId,
                 TrainingName = editTrainingViewModel.TrainingName,
                 Description = editTrainingViewModel.Description,
                 TrainingCourseStartingDateTime = editTrainingViewModel.TrainingStartDateTime,
                 DeadlineOfApplication = editTrainingViewModel.ApplicationDeadline,
                 Capacity = editTrainingViewModel.Capacity,
-                DepartmentId = editTrainingViewModel.DepartmentId,
+                DepartmentId = (byte)editTrainingViewModel.DepartmentId,
                 IsDeadlineExpired = editTrainingViewModel.ApplicationDeadline < DateTime.Now
             };
         }
@@ -30,7 +30,7 @@ namespace SkillsLab2023_Assignment.Mapper
                 TrainingCourseStartingDateTime = trainingViewModel.TrainingStartDateTime,
                 DeadlineOfApplication = trainingViewModel.ApplicationDeadline,
                 Capacity = trainingViewModel.Capacity,
-                DepartmentId = trainingViewModel.DepartmentId,
+                DepartmentId = (byte)trainingViewModel.DepartmentId,
                 IsDeadlineExpired = trainingViewModel.ApplicationDeadline < DateTime.Now
             };
         }
