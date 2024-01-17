@@ -37,6 +37,7 @@ namespace SkillsLabAssignment_TestProject
                 CreateTraining(3, "Training 3", "Description of Training 3", DateTime.Now.Date.AddDays(5d), DateTime.Now.Date.AddDays(-1d), 5, 3, true),
                 CreateTraining(4, "Training 4", "Description of Training 4", DateTime.Now.Date.AddDays(2d), DateTime.Now.Date.AddDays(-2d), 5, 4, true),
                 CreateTraining(5, "Training 5", "Description of Training 5", DateTime.Now.Date.AddDays(20d), DateTime.Now.Date.AddDays(10d), 5, 5, false),
+                CreateTraining(6, "Training 6", "Description of Training 6", DateTime.Now.Date.AddDays(20d), DateTime.Now.Date.AddDays(10d), 5, 1, false),
             };
             _departmentRepository = new List<DepartmentDTO>
             {
@@ -55,7 +56,7 @@ namespace SkillsLabAssignment_TestProject
                 new PreRequisite{ Id = 5, Name = "PreRequisite 5", PreRequisiteDescription = "Description for PreRequisite 5"},
                 new PreRequisite{ Id = 6, Name = "PreRequisite 6", PreRequisiteDescription = "Description for PreRequisite 6"},
                 new PreRequisite{ Id = 7, Name = "PreRequisite 7", PreRequisiteDescription = "Description for PreRequisite 7"},
-                new PreRequisite{ Id = 8, Name = "PreRequisite 8", PreRequisiteDescription = "Description for PreRequisite 8"}, 
+                new PreRequisite{ Id = 8, Name = "PreRequisite 8", PreRequisiteDescription = "Description for PreRequisite 8"},
                 new PreRequisite{ Id = 9, Name = "PreRequisite 9", PreRequisiteDescription = "Description for PreRequisite 9"},
                 new PreRequisite{ Id = 10, Name = "PreRequisite 10", PreRequisiteDescription = "Description for PreRequisite 10"}
             };
@@ -68,7 +69,9 @@ namespace SkillsLabAssignment_TestProject
                 new TrainingPreRequisite { TrainingId = 3, PreRequisiteId = 7 },
                 new TrainingPreRequisite { TrainingId = 4, PreRequisiteId = 4 },
                 new TrainingPreRequisite { TrainingId = 5, PreRequisiteId = 6 },
-                new TrainingPreRequisite { TrainingId = 9, PreRequisiteId = 1 },
+                new TrainingPreRequisite { TrainingId = 6, PreRequisiteId = 1 },
+                new TrainingPreRequisite { TrainingId = 6, PreRequisiteId = 2 },
+                new TrainingPreRequisite { TrainingId = 6, PreRequisiteId = 4 },
             };
             _applicationRepository = new List<Application>
             {
@@ -147,6 +150,68 @@ namespace SkillsLabAssignment_TestProject
             _stubTrainingRepository.Setup(iTrainingRepository => iTrainingRepository.GetAllPreRequisitesAsync())
                 .ReturnsAsync(_preRequisiteRepository);
 
+            _stubTrainingRepository.Setup(iTrainingRepository => iTrainingRepository.HaveUsersAppliedForTrainingAsync(It.IsAny<int>()))
+                .ReturnsAsync((int trainingId) =>
+                {
+                    return _applicationRepository.Any(app => app.TrainingId == trainingId);
+                });
+
+            _stubTrainingRepository.Setup(iTrainingRepository => iTrainingRepository.DeleteTrainingAsync(It.IsAny<int>()))
+                .ReturnsAsync((int trainingId) =>
+                {
+                    var trainingItem = _trainingRepository.FirstOrDefault(t => t.Id == trainingId);
+                    // Delete in training and in TrainingPreRequisites
+                    bool arePreRequisitesDeleted = _trainingPreRequisiteRepository.RemoveAll(preReq => preReq.TrainingId == trainingId) > 0;
+                    bool isTrainingDeleted = _trainingRepository.Remove(trainingItem);
+
+                    if (arePreRequisitesDeleted && isTrainingDeleted)
+                    {
+                        return true;
+                    }
+                    return false;
+                });
+
+            _stubTrainingRepository.Setup(iTrainingRepository => iTrainingRepository.AddTrainingAsync(It.IsAny<Training>(), It.IsAny<string>()))
+                .ReturnsAsync((Training training, string preRequisiteIds) =>
+                {
+                    _trainingRepository.Add(training);
+                    string[] stringArray = preRequisiteIds.Split(',').Select(x => x.Trim()).ToArray();
+                    int[] trainingPreRequisites = stringArray.Select(int.Parse).ToArray();
+
+                    foreach (int i in trainingPreRequisites)
+                    {
+                        _trainingPreRequisiteRepository.Add(new TrainingPreRequisite { TrainingId = training.Id, PreRequisiteId = i });
+                    }
+                    return true;
+                });
+
+            _stubTrainingRepository.Setup(iTrainingRepository => iTrainingRepository.UpdateTrainingAsync(It.IsAny<Training>(), It.IsAny<string>()))
+                .ReturnsAsync((Training training, string preRequisiteIds) =>
+                {
+                    var trainingToUpdate = _trainingRepository.FirstOrDefault(t => t.Id == training.Id);
+                    if (trainingToUpdate != null)
+                    {
+                        trainingToUpdate.Id = training.Id;
+                        trainingToUpdate.TrainingName = training.TrainingName;
+                        trainingToUpdate.Description = training.Description;
+                        trainingToUpdate.TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime;
+                        trainingToUpdate.DeadlineOfApplication = training.DeadlineOfApplication;
+                        trainingToUpdate.Capacity = training.Capacity;
+                        trainingToUpdate.DepartmentId = training.DepartmentId;
+                        trainingToUpdate.IsDeadlineExpired = training.IsDeadlineExpired;
+
+                        bool arePreRequisitesDeleted = _trainingPreRequisiteRepository.RemoveAll(preReq => preReq.TrainingId == training.Id) > 0;
+                        string[] stringPreReqIds = preRequisiteIds.Split(',').ToArray();
+                        int[] intPreReqIds = stringPreReqIds.Select(int.Parse).ToArray();
+                        foreach (int id in intPreReqIds)
+                        {
+                            _trainingPreRequisiteRepository.Add(new TrainingPreRequisite { TrainingId = training.Id, PreRequisiteId = id });
+                        }
+                        return true;
+                    }
+                    return false;
+                });
+
             _trainingService = new TrainingService(_stubTrainingRepository.Object);
         }
 
@@ -159,8 +224,9 @@ namespace SkillsLabAssignment_TestProject
             var expectedTrainings = new List<TrainingDTO>
             {
                 CreateTrainingDTO(1, "Training 1", "Description of Training 1", DateTime.Now.Date.AddDays(4d), DateTime.Now.Date.AddDays(1d), 5, "Product and Technology", false),
+                CreateTrainingDTO(6, "Training 6", "Description of Training 6", DateTime.Now.Date.AddDays(20d), DateTime.Now.Date.AddDays(10d), 5, "Product and Technology", false),
                 CreateTrainingDTO(2, "Training 2", "Description of Training 2", DateTime.Now.Date.AddDays(10d), DateTime.Now.Date.AddDays(4d), 10, "Customer Support", false),
-                CreateTrainingDTO(5, "Training 5", "Description of Training 5", DateTime.Now.Date.AddDays(20d), DateTime.Now.Date.AddDays(10d), 5, "Services", false),
+                CreateTrainingDTO(5, "Training 5", "Description of Training 5", DateTime.Now.Date.AddDays(20d), DateTime.Now.Date.AddDays(10d), 5, "Services", false)
             };
 
             // Act
@@ -234,6 +300,112 @@ namespace SkillsLabAssignment_TestProject
                 Assert.AreEqual(expectedPreRequisites[i].Name, actualPreRequisites[i].Name);
                 Assert.AreEqual(expectedPreRequisites[i].PreRequisiteDescription, actualPreRequisites[i].PreRequisiteDescription);
             }
+        }
+
+        [Test]
+        public async Task DeleteTrainingAsync_ShouldNotDeleteTrainingFromRepository_WhenUserHasAppliedForTraining()
+        {
+            // Arrange
+            int trainingId = 1;
+            int initialTrianingRepoCount = _trainingRepository.Count;
+            int initialTrainingPreRequisiteCount = _trainingPreRequisiteRepository.Count;
+
+
+            // Act
+            var result = await _trainingService.DeleteTrainingAsync(trainingId);
+            int afterDeleteTrainingRepoCount = _trainingRepository.Count;
+            int afterDeleteTrainingPreRequisiteRepoCount = _trainingPreRequisiteRepository.Count;
+            int trainingPreRequisiteCount = _trainingPreRequisiteRepository.Where(t => t.TrainingId == trainingId).Count();
+
+            // Assert
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(initialTrianingRepoCount, afterDeleteTrainingRepoCount);
+            Assert.AreEqual(initialTrainingPreRequisiteCount, afterDeleteTrainingPreRequisiteRepoCount);
+            Assert.AreEqual("Employees have applied for this training.", result.Message);
+        }
+
+        [Test]
+        public async Task DeleteTrainingAsync_ShouldDeleteTrainingFromRepository_WhenUserHasNotAppliedForTraining()
+        {
+            // Arrange
+            int trainingId = 6;
+            int initialTrianingRepoCount = _trainingRepository.Count;
+            int initialTrainingPreRequisiteCount = _trainingPreRequisiteRepository.Count;
+            int trainingPreRequisiteCount = _trainingPreRequisiteRepository.Where(t => t.TrainingId == trainingId).Count();
+
+            // Act
+            var result = await _trainingService.DeleteTrainingAsync(trainingId);
+            int afterDeleteTrainingRepoCount = _trainingRepository.Count;
+            int afterDeleteTrainingPreRequisiteCount = _trainingPreRequisiteRepository.Count;
+
+            // Assert
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(initialTrianingRepoCount - 1, afterDeleteTrainingRepoCount);
+            Assert.AreEqual(initialTrainingPreRequisiteCount - trainingPreRequisiteCount, afterDeleteTrainingPreRequisiteCount);
+            Assert.AreEqual("Training deleted successfully.", result.Message);
+        }
+
+        [Test]
+        public async Task SaveTrainingAsync_ShouldAddTraining_WhenIsUpdateIsFalse()
+        {
+            // Arrange
+            var training = CreateTraining(7, "Training 7", "Description of training 7", DateTime.Now.Date.AddDays(10d), DateTime.Now.Date.AddDays(5d), 5, 2, false);
+            var preRequisiteIds = "1, 2, 4";
+            string[] preReqsIds = preRequisiteIds.Split(',').ToArray();
+            var isUpdate = false;
+            var initialTrainingRepoCount = _trainingRepository.Count;
+            var initialTrainingPreRequisiteCount = _trainingPreRequisiteRepository.Count;
+
+
+            // Act
+            var result = await _trainingService.SaveTrainingAsync(training, preRequisiteIds, isUpdate);
+            var afterAddTrainingRepoCount = _trainingRepository.Count;
+            var afterAddTrainingPreRequisiteRepoCount = _trainingPreRequisiteRepository.Count;
+
+            // Assert
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(initialTrainingRepoCount + 1, afterAddTrainingRepoCount);
+            Assert.AreEqual(initialTrainingPreRequisiteCount + preReqsIds.Length, afterAddTrainingPreRequisiteRepoCount);
+            Assert.AreEqual("Training added successfully.", result.Message);
+        }
+
+        [Test]
+        public async Task SaveTrainingAsync_ShouldUpdateTraining_WhenIsUpdateIsTrue()
+        {
+            // Arrange
+            var training = CreateTraining(6, "Training 6", "Description of training 6 with new description for testing", DateTime.Now.Date.AddDays(12d), DateTime.Now.Date.AddDays(-1d), 5, 2, true);
+            var preRequisiteIds = "1, 2, 5";
+            var isUpdate = true;
+            var initialTrainingRepoCount = _trainingRepository.Count;
+            var initialTrainingPreRequisiteCount = _trainingPreRequisiteRepository.Count;
+
+            // Act
+            var result = await _trainingService.SaveTrainingAsync(training, preRequisiteIds, isUpdate);
+            var updatedTraining = _trainingRepository.FirstOrDefault(t => t.Id == training.Id);
+
+            // Assert
+            Assert.IsTrue(result.Success);
+            AssertTraining(training, updatedTraining);
+            Assert.AreEqual(initialTrainingRepoCount, _trainingRepository.Count);
+            Assert.AreEqual(initialTrainingPreRequisiteCount, _trainingPreRequisiteRepository.Count);
+            Assert.AreEqual("Training updated successfully.", result.Message);
+        }
+
+        [Test]
+        public async Task SaveTrainingAsync_ShouldNotUpdateTraining_WhenIsUpdateInvalidIdIsUsed()
+        {
+            // Arrange
+            var training = CreateTraining(7, "Training 7", "Description of training 7 with new description for testing", DateTime.Now.Date.AddDays(12d), DateTime.Now.Date.AddDays(-1d), 5, 2, true);
+            var preRequisiteIds = "1, 2, 5";
+            var isUpdate = true;
+
+            // Act
+            var result = await _trainingService.SaveTrainingAsync(training, preRequisiteIds, isUpdate);
+            var updatedTraining = _trainingRepository.FirstOrDefault(t => t.Id == training.Id);
+
+            // Assert
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("An error occurred while updating training.", result.Message);
         }
 
         #region PRIVATE HELPER METHOD
@@ -333,6 +505,18 @@ namespace SkillsLabAssignment_TestProject
                     Assert.AreEqual(expected.PreRequisites[i].PreRequisiteDescription, actual.PreRequisites[i].PreRequisiteDescription);
                 }
             }
+        }
+
+        private void AssertTraining(Training expected, Training actual)
+        {
+            Assert.AreEqual(expected.Id, actual.Id);
+            Assert.AreEqual(expected.TrainingName, actual.TrainingName);
+            Assert.AreEqual(expected.Description, actual.Description);
+            Assert.AreEqual(expected.TrainingCourseStartingDateTime, actual.TrainingCourseStartingDateTime);
+            Assert.AreEqual(expected.DeadlineOfApplication, actual.DeadlineOfApplication);
+            Assert.AreEqual(expected.Capacity, actual.Capacity);
+            Assert.AreEqual(expected.DepartmentId, actual.DepartmentId);
+            Assert.AreEqual(expected.IsDeadlineExpired, actual.IsDeadlineExpired);
         }
         #endregion
     }
