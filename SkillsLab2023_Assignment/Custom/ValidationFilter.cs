@@ -11,8 +11,8 @@ namespace SkillsLab2023_Assignment.Custom
         {
             if (!filterContext.Controller.ViewData.ModelState.IsValid)
             {
-                var model = filterContext.Controller.ViewData.ModelState;
-                var error = GetErrors(model);
+                var modelState = filterContext.Controller.ViewData.ModelState;
+                var error = GetErrors(modelState);
                 filterContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 filterContext.Result = new JsonResult
                 {
@@ -25,7 +25,7 @@ namespace SkillsLab2023_Assignment.Custom
             }
         }
 
-        private static object GetErrors(ModelStateDictionary modelState)
+        private static Dictionary<string, List<string>> GetErrors(ModelStateDictionary modelState)
         {
             var errors = new Dictionary<string, List<string>>();
             foreach (var entry in modelState)

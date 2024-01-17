@@ -141,13 +141,20 @@ namespace DAL.Repositories.ApplicationRepository
             SqlParameter[] parameters = _dbCommand.GetSqlParametersFromObject(new { ApplicationId = applicationId });
             Func<IDataReader, ApplicationDocumentDTO> mapFunction = reader =>
             {
-                return new ApplicationDocumentDTO
+                AttachmentInfoDTO attachmentInfo = new AttachmentInfoDTO
                 {
                     AttachmentId = (int)reader["AttachmentId"],
+                    PreRequisiteName = reader["Name"].ToString(),
+                    PreRequisiteDescription = reader["PreRequisiteDescription"].ToString()
+                };
+                return new ApplicationDocumentDTO
+                {
+                    //AttachmentId = (int)reader["AttachmentId"],
                     File = reader["File"] as byte[],
                     FileName = reader["FileName"].ToString(),
-                    PreRequisiteName = reader["Name"].ToString(),
-                    PreRequisiteDescription = reader["PreRequisiteDescription"].ToString(),
+                    //PreRequisiteName = reader["Name"].ToString(),
+                    //PreRequisiteDescription = reader["PreRequisiteDescription"].ToString(),
+                    AttachmentInfoDTO = attachmentInfo
                 };
             };
             var result = await _dbCommand.ExecuteSelectQueryAsync(GET_APPLICATION_DOCUMENT_QUERY, parameters, mapFunction);

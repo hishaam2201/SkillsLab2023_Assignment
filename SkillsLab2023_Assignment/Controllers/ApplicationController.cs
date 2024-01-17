@@ -26,20 +26,21 @@ namespace SkillsLab2023_Assignment.Controllers
         }
 
         [HttpPost, CustomAuthorization(RoleEnum.Employee)]
-        public async Task<JsonResult> Enroll(short trainingId, string trainingName, List<DocumentUploadViewModel> files)
+        public async Task<JsonResult> Enroll(EnrollViewModel enrollViewModel)
         {
-            UserDTO userInformation = SessionManager.CurrentUser; 
+            UserDTO userInformation = SessionManager.CurrentUser;
 
-            List<DocumentUploadDTO> enrollmentDataList =
-                files != null && files.Any()
-                    ? files.ToDocumentUploadWithPreRequisites(trainingId, trainingName)
-                    : new List<DocumentUploadDTO> { new DocumentUploadDTO { TrainingId = trainingId, TrainingName = trainingName } };
+            List<DocumentUploadDTO> enrollmentDataList = enrollViewModel.Files != null && enrollViewModel.Files.Any()
+                    ? enrollViewModel.Files.ToDocumentUploadWithPreRequisites(enrollViewModel.TrainingId, enrollViewModel.TrainingName)
+                    : new List<DocumentUploadDTO> { new DocumentUploadDTO { TrainingId = enrollViewModel.TrainingId, TrainingName = enrollViewModel.TrainingName } };
 
+            string dashboardAction = Extensions.GetDashboardAction(SessionManager.CurrentUser.RoleId);
             OperationResult result = await _applicationService.ProcessEmployeeApplicationAsync(userInformation, enrollmentDataList);
-            return Json(new { 
-                success = result.Success, 
-                message = result.Message, 
-                redirectUrl = result.Success ? Url.Action("EmployeeDashboard", "Home") : null 
+            return Json(new
+            {
+                success = result.Success,
+                message = result.Message,
+                redirectUrl = result.Success ? Url.Action(dashboardAction, "Home") : null
             });
         }
 
@@ -47,38 +48,32 @@ namespace SkillsLab2023_Assignment.Controllers
         public async Task<JsonResult> ViewDocuments(int applicationId)
         {
             OperationResult result = await _applicationService.GetApplicationDocumentAsync(applicationId);
-
             if (result.Success)
             {
-                var listOfData = (result.ListOfData).ToList();
-                var documents = (List<ApplicationDocumentDTO>)listOfData[0];
+                var documents = result.ListOfData as List<ApplicationDocumentDTO>;
                 SessionManager.Attachments = documents;
-
                 return Json(new
                 {
-                    success = result?.Success ?? false,
-                    Attachments = (List<AttachmentInfoDTO>)listOfData[1]
+                    success = result.Success,
+                    Attachments = documents.Select(d => d.AttachmentInfoDTO).ToList()
                 });
             }
-            else
+            return Json(new
             {
-                return Json(new
-                {
-                    success = result?.Success ?? false,
-                    message = result?.Message
-                });
-            }
+                success = result.Success,
+                message = result.Message
+            });
         }
 
         [HttpPost]
         public async Task<JsonResult> ApproveApplication(int applicationId)
         {
             string managerName = $"{SessionManager.CurrentUser.FirstName} {SessionManager.CurrentUser.LastName}";
-            bool isApproved = await _applicationService.ApproveApplicationAsync(applicationId, managerName);
+            OperationResult result = await _applicationService.ApproveApplicationAsync(applicationId, managerName);
             return Json(new
             {
-                success = isApproved,
-                message = isApproved ? "Application successfully approved" : "Could not approve application"
+                success = result.Success,
+                message = result.Message
             });
         }
 
@@ -86,18 +81,18 @@ namespace SkillsLab2023_Assignment.Controllers
         public async Task<JsonResult> DeclineApplication(int applicationId, string message)
         {
             string managerName = $"{SessionManager.CurrentUser.FirstName} {SessionManager.CurrentUser.LastName}";
-            bool isDeclined = await _applicationService.DeclineApplicationAsync(applicationId, managerName, message);
+            OperationResult result = await _applicationService.DeclineApplicationAsync(applicationId, managerName, message);
             return Json(new
             {
-                success = isDeclined,
-                message = isDeclined ? "Application successfully declined" : "Could not decline application"
+                success = result.Success,
+                message = result.Message
             });
         }
 
         [HttpGet]
         public async Task<ActionResult> DownloadAttachment(int attachmentId)
         {
-            ApplicationDocumentDTO document = SessionManager.Attachments.FirstOrDefault(doc => doc.AttachmentId == attachmentId);
+            ApplicationDocumentDTO document = SessionManager.Attachments.FirstOrDefault(doc => doc.AttachmentInfoDTO.AttachmentId == attachmentId);
 
             if (document == null || document.File == null || document.File.Length == 0)
                 return Json(new { success = false, message = "No file found to download" });

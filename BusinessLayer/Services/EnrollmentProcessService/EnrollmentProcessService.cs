@@ -95,7 +95,7 @@ namespace BusinessLayer.Services.EnrollmentProcessService
                         declined++;
                     }
                 }
-                _backgroundJobLogger.LogInformation($"{selected} employee(s) have been selected for the training {trainingDTO.TrainingName}.\n " +
+                _backgroundJobLogger.LogInformation($"{selected} employee(s) have been selected for the training {trainingDTO.TrainingName}.\n" +
                     $"{declined} employee(s) have been declined for the training due to availability of seats.");
             }
         }
