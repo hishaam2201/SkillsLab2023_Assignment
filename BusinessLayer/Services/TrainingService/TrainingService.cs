@@ -65,7 +65,7 @@ namespace BusinessLayer.Services.TrainingService
 
         public async Task<OperationResult> DeleteTrainingAsync(int trainingId)
         {
-            if (await AreUsersSelectedForTrainingAsync(trainingId))
+            if (await HaveUsersAppliedForTrainingAsync(trainingId))
             {
                 return new OperationResult
                 {
@@ -82,9 +82,9 @@ namespace BusinessLayer.Services.TrainingService
         }
 
         // Private Helper Method
-        private async Task<bool> AreUsersSelectedForTrainingAsync(int trainingId)
+        private async Task<bool> HaveUsersAppliedForTrainingAsync(int trainingId)
         {
-            return await _trainingRepository.AreUsersSelectedForTrainingAsync(trainingId);
+            return await _trainingRepository.HaveUsersAppliedForTrainingAsync(trainingId);
         }
     }
 }

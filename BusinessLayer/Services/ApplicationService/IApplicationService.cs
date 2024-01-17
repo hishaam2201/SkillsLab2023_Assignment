@@ -9,8 +9,8 @@ namespace BusinessLayer.Services.ApplicationService
     {
         Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId);
         Task<OperationResult> GetApplicationDocumentAsync(int applicationId);
-        Task<bool> ApproveApplicationAsync(int applicationId, string managerName);
-        Task<bool> DeclineApplicationAsync(int applicationId, string managerName, string message);
+        Task<OperationResult> ApproveApplicationAsync(int applicationId, string managerName);
+        Task<OperationResult> DeclineApplicationAsync(int applicationId, string managerName, string message);
         Task<OperationResult> ProcessEmployeeApplicationAsync(UserDTO userInformation, List<DocumentUploadDTO> enrollmentDataList);
         Task<IEnumerable<UserApplicationDTO>> GetApplicationByUserId(short userId);
     }

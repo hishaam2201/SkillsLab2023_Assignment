@@ -398,3 +398,32 @@ Timestamp: 1/16/2024 1:13:53 PM
 1 employee(s) have been selected for the training Testing Application Submission 1.
  0 employee(s) have been declined for the training due to availability of seats.
 "---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/16/2024 8:33:40 PM
+No employees found to select for the training Testing Application Submission 1.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/16/2024 8:33:40 PM
+No employees found to select for the training Testing Application Submission 1.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/16/2024 8:33:40 PM
+No employees found to select for the training Testing training id.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/16/2024 8:33:40 PM
+No employees found to select for the training Testing training id.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/16/2024 8:33:40 PM
+No employees found to select for the training Testing training id.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/17/2024 1:22:58 PM
+1 employee(s) have been selected for the training Testing Application Submission 6.
+0 employee(s) have been declined for the training due to availability of seats.
+"---------------------------------------------------------";
+---------------------------------------------------------
+Timestamp: 1/17/2024 1:22:58 PM
+No employees found to select for the training Testing a flow #2.
+"---------------------------------------------------------";

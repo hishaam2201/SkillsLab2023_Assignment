@@ -440,8 +440,11 @@ function populateDepartmentOptions(departmentSelectElement, departments, current
 }
 
 function deleteTraining(button, trainingId) {
-    fetch(`/Training/Delete?trainingId=${trainingId}`, {
-        method: 'POST'
+    var formData = new FormData()
+    formData.append("trainingId", trainingId)
+    fetch(`/Training/Delete`, {
+        method: 'POST',
+        body: formData
     })
         .then(response => response.json())
         .then(data => {

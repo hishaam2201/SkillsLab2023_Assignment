@@ -31,16 +31,14 @@ namespace SkillsLab2023_Assignment.Controllers
             return View(listOfTrainings);
         }
 
-        [HttpPost]
-        [CustomAuthorization(RoleEnum.Employee)]
+        [HttpPost, CustomAuthorization(RoleEnum.Employee)]
         public async Task<ActionResult> TrainingDetails(int trainingId)
         {
             TrainingDTO trainingDTO = await _trainingService.GetTrainingByIdAsync(trainingId);
             return View(trainingDTO);
         }
 
-        [HttpPost]
-        [CustomAuthorization(RoleEnum.Administrator)]
+        [HttpPost, CustomAuthorization(RoleEnum.Administrator)]
         public async Task<JsonResult> GetTrainingById(int trainingId)
         {
             TrainingDTO trainingDTO = await _trainingService.GetTrainingByIdAsync(trainingId);
@@ -49,8 +47,7 @@ namespace SkillsLab2023_Assignment.Controllers
                     : Json(new { success = false, message = "Training not found." });
         }
 
-        [HttpGet]
-        [CustomAuthorization(RoleEnum.Administrator)]
+        [HttpGet, CustomAuthorization(RoleEnum.Administrator)]
         public async Task<JsonResult> GetAllPreRequisites()
         {
             OperationResult result = await _trainingService.GetAllPreRequisitesAsync();
@@ -61,8 +58,7 @@ namespace SkillsLab2023_Assignment.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        [CustomAuthorization(RoleEnum.Administrator)]
+        [HttpPost, CustomAuthorization(RoleEnum.Administrator)]
         public async Task<JsonResult> AddTraining(TrainingViewModel trainingViewModel)
         {
             Training training = trainingViewModel.ToTraining();
@@ -74,8 +70,7 @@ namespace SkillsLab2023_Assignment.Controllers
             });
         }
 
-        [HttpPost]
-        [CustomAuthorization(RoleEnum.Administrator)]
+        [HttpPost, CustomAuthorization(RoleEnum.Administrator)]
         public async Task<JsonResult> UpdateTraining(EditTrainingViewModel editTrainingViewModel)
         {
             Training training = editTrainingViewModel.ToTraining();
@@ -87,8 +82,7 @@ namespace SkillsLab2023_Assignment.Controllers
             });
         }
 
-        [HttpPost]
-        [CustomAuthorization(RoleEnum.Administrator)]
+        [HttpPost ,CustomAuthorization(RoleEnum.Administrator)]
         public async Task<JsonResult> Delete(int trainingId)
         {
             OperationResult result = await _trainingService.DeleteTrainingAsync(trainingId);

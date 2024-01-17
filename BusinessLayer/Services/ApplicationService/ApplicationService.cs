@@ -24,7 +24,7 @@ namespace BusinessLayer.Services.ApplicationService
             return await _applicationRepository.GetApplicationByUserIdAsync(userId);
         }
 
-        public async Task<bool> ApproveApplicationAsync(int applicationId, string managerName)
+        public async Task<OperationResult> ApproveApplicationAsync(int applicationId, string managerName)
         {
             var (isApproved, result) = await _applicationRepository.ApproveApplicationAsync(applicationId);
             if (isApproved)
@@ -40,12 +40,15 @@ namespace BusinessLayer.Services.ApplicationService
 #pragma warning disable CS4014
                 EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
 #pragma warning restore CS4014
-                return true;
             }
-            return false;
+            return new OperationResult
+            {
+                Success = isApproved,
+                Message = isApproved ? "Application approved successfully" : "Could not approve application"
+            }; ;
         }
 
-        public async Task<bool> DeclineApplicationAsync(int applicationId, string managerName, string message)
+        public async Task<OperationResult> DeclineApplicationAsync(int applicationId, string managerName, string message)
         {
             var (isDeclined, result) = await _applicationRepository.DeclineApplicationAsync(applicationId, message);
             if (isDeclined)
@@ -62,37 +65,24 @@ namespace BusinessLayer.Services.ApplicationService
 #pragma warning disable CS4014
                 EmailSender.SendEmailAsync(subject, body, emailDTO.Email);
 #pragma warning restore CS4014
-                return true;
             }
-            return false;
+            return new OperationResult
+            {
+                Success = isDeclined,
+                Message = isDeclined ? "Application successfully declined" : "Could not decline application"
+            };
         }
 
         public async Task<OperationResult> GetApplicationDocumentAsync(int applicationId)
         {
             var documents = (await _applicationRepository.GetApplicationDocumentAsync(applicationId)).ToList();
-            if (documents != null && documents.Any())
+            bool areDocumentsNotNull = documents != null && documents.Any();
+            return new OperationResult
             {
-                List<AttachmentInfoDTO> attachmentInfoList = documents.Select(doc => new AttachmentInfoDTO
-                {
-                    AttachmentId = doc.AttachmentId,
-                    PreRequisiteName = doc.PreRequisiteName,
-                    PreRequisiteDescription = doc.PreRequisiteDescription
-                }).ToList();
-
-                return new OperationResult
-                {
-                    Success = true,
-                    ListOfData = new List<object> { documents, attachmentInfoList }
-                };
-            }
-            else
-            {
-                return new OperationResult
-                {
-                    Success = false,
-                    Message = "No documents found."
-                };
-            }
+                Success = areDocumentsNotNull,
+                Message = areDocumentsNotNull ? "" : "No documents found",
+                ListOfData = documents
+            };
         }
 
         public async Task<IEnumerable<ApplicationDTO>> GetApplicationsAsync(short managerId)

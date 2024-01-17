@@ -173,7 +173,7 @@ namespace DAL.Repositories.TrainingRepository
             return await _dbCommand.ExecuteTransactionAsync(new SqlCommand(DELETE_TRAINING_QUERY), parameters);
         }
 
-        public async Task<bool> AreUsersSelectedForTrainingAsync(int trainingId)
+        public async Task<bool> HaveUsersAppliedForTrainingAsync(int trainingId)
         {
             const string IS_ANY_USER_SELECTED_FOR_TRAINING =
                 @"SELECT 1 FROM [Application] WHERE TrainingId = @TrainingId";

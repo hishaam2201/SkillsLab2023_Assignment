@@ -299,6 +299,8 @@
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Custom\CustomAuthorizationAttribute.cs" />
     <Compile Include="Custom\CustomHandleErrorAttribute.cs" />
+    <Compile Include="Custom\FileExtensionAttribute.cs" />
+    <Compile Include="Custom\FileSizeAttribute.cs" />
     <Compile Include="Custom\SessionManager.cs" />
     <Compile Include="Custom\UserSessionAttribute.cs" />
     <Compile Include="Custom\ValidationFilter.cs" />
@@ -310,6 +312,7 @@
     <Compile Include="Mapper\UserMapper.cs" />
     <Compile Include="Models\DocumentUploadViewModel.cs" />
     <Compile Include="Models\EditTrainingViewModel.cs" />
+    <Compile Include="Models\EnrollViewModel.cs" />
     <Compile Include="Models\TrainingViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />

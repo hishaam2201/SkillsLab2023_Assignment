@@ -197,7 +197,7 @@ namespace DAL.Repositories.EnrollmentProcessRepository
             catch (Exception ex)
             {
                 _logger.LogError(ex, Guid.NewGuid());
-                throw;
+                return default;
             }
         }
 
