@@ -6,79 +6,98 @@
 <link href="~/Content/app/Login-Register.css" rel="stylesheet" />
 <script defer src="~/Scripts/app/Register.js"></script>
 
-
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card mt-5">
-            <div class="card-body">
-                <h2 class="card-title text-center">Register</h2>
-                <!-- Register Form -->
-                <form id="registrationForm" method="post" onsubmit="return false;" novalidate>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="firstName" required>
-                            <div class="invalid-feedback"> First Name field is required</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" required>
-                            <div class="invalid-feedback"> Last Name field is required</div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="mobileNumber" class="form-label">Mobile Number</label>
-                            <input style="-moz-appearance: textfield;" type="text" pattern="\d{8}" class="form-control" id="mobileNumber" required>
-                            <div class="invalid-feedback">Please enter a valid Mobile Number</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="nationalIdentityCard" class="form-label">NIC Number</label>
-                            <input type="text" pattern="[A-Z]\d{12}[A-Z\d]" class="form-control" id="nationalIdentityCard" required>
-                            <div class="invalid-feedback">Please enter a valid NIC number</div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="department" class="form-label">Department</label>
-                            <select id="department" class="form-select" aria-label="Select Department" required>
-                            </select>
-                            <div class="invalid-feedback">Department field is required</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="manager" class="form-label">Manager</label>
-                            <select id="manager" class="form-select" aria-label="Select Your Manager" required>
-                            </select>
-                            <div class="invalid-feedback">Manager field is required</div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="john.doe@example.com" required>
-                        <div class="invalid-feedback">Please enter a valid email address</div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" required>
-                                <div class="invalid-feedback">Password field is required</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="confirmPassword" required>
-                                <div class="invalid-feedback">Confirm Password field is required</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col text-center mb-3">
-                        <input class="btn btn-primary" type="submit" value="Sign Up" />
-                    </div>
-                    <div class="text-center mb-3">
-                        Already have an account? <a href="/Account/Login">Login</a>
-                    </div>
-                </form>
-            </div>
+        <img src="~/Images/register.svg" alt="Regitser Image" />
+    </div>
+    <div class="col-md-6 align-self-center">
+        <div class="text-center">
+            <h2>Create an account!</h2>
+            <p style="font-size: 14px;">All fields are required</p>
         </div>
+        <!-- Register Form -->
+        <form id="registrationForm" method="post" onsubmit="return false;" novalidate>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="firstName" placeholder="john" required>
+                        <label for="firstName">First Name</label>
+                        <div class="invalid-feedback"> First Name field is required</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="lastName" placeholder="doe" required>
+                        <label for="lastName">Last Name</label>
+                        <div class="invalid-feedback"> Last Name field is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input style="-moz-appearance: textfield;" type="text" pattern="\d{8}" class="form-control" id="mobileNumber" placeholder="51111111" required>
+                        <label for="mobileNumber">Mobile Number</label>
+                        <div class="invalid-feedback">Please enter a valid Mobile Number</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" pattern="[A-Z]\d{12}[A-Z\d]" class="form-control" id="nationalIdentityCard" placeholder="H3332723847374" required>
+                        <label for="nationalIdentityCard">NIC Number</label>
+                        <div class="invalid-feedback">Please enter a valid NIC number</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select id="department" class="form-select" aria-label="Select Department" required>
+                        </select>
+                        <label for="department">Department</label>
+                        <div class="invalid-feedback">Department field is required</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select id="manager" class="form-select" aria-label="Select Your Manager" required>
+                        </select>
+                        <label for="manager">Manager</label>
+                        <div class="invalid-feedback">Manager field is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="email" placeholder="john.doe@example.com" required>
+                    <label for="email">Email</label>
+                    <div class="invalid-feedback">Please enter a valid email address</div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                            <label for="password">Password</label>
+                            <div class="invalid-feedback">Password field is required</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
+                            <label for="confirmPassword">Confirm Password</label>
+                            <div class="invalid-feedback">Confirm Password field is required</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col text-center mb-3">
+                <input class="btn btn-primary px-5" type="submit" value="Sign Up" />
+            </div>
+            <div class="text-center mb-3">
+                Already have an account? <a href="/Account/Login">Login</a>
+            </div>
+        </form>
     </div>
 </div>

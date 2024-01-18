@@ -14,8 +14,8 @@ using System.Web.Mvc;
 
 namespace SkillsLab2023_Assignment.Controllers
 {
-    [ValidationFilter]
     [UserSession]
+    [ValidationFilter]
     [CustomAuthorization(RoleEnum.Manager)]
     public class ApplicationController : Controller
     {

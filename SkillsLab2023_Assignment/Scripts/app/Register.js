@@ -1,4 +1,7 @@
 (function () {
+    var managerSelectElement = document.getElementById('manager')
+    managerSelectElement.innerHTML = '<option selected disabled value="">Select your Manager</option>'
+
     getAllDepartments()
     const registrationForm = document.getElementById('registrationForm')
     registrationForm.addEventListener('submit', event => {
@@ -9,9 +12,7 @@
         else {
             submitRegistrationForm();
         }
-
         registrationForm.classList.add('was-validated')
-
     }, false)
 })()
 

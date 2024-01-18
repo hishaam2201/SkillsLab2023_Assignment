@@ -73,30 +73,34 @@ function populateViewModal(attachmentInfoList) {
     modalBody.innerHTML = '';
 
     attachmentInfoList.forEach(function (attachmentInfo) {
-        var rowDiv = document.createElement('div');
-        rowDiv.classList.add('row', 'p-2');
+        var containerDiv = document.createElement('div');
+        containerDiv.className = 'container'
+        var rowDiv = document.createElement('div')
+        rowDiv.classList.add('row', 'align-items-center', 'mb-3')
 
         var preRequisiteDiv = document.createElement('div');
-        preRequisiteDiv.className = 'col-md-9';
+        preRequisiteDiv.classList.add('col-md-11')
 
         var preRequisiteParagraph = document.createElement('p');
+        preRequisiteParagraph.classList.add('align-self-center', 'mb-0')
         preRequisiteParagraph.innerHTML = `<strong>${attachmentInfo.PreRequisiteName}:</strong> ${attachmentInfo.PreRequisiteDescription}`;
 
         preRequisiteDiv.appendChild(preRequisiteParagraph);
 
         var buttonDiv = document.createElement('div');
-        buttonDiv.classList.add("col-md-3", "text-center")
+        buttonDiv.classList.add("col-md-1", "text-center")
 
-        var viewButton = document.createElement('a');
-        viewButton.href = `/Application/DownloadAttachment?attachmentId=${attachmentInfo.AttachmentId}`; // Downloading file
-        viewButton.className = 'btn btn-primary';
-        viewButton.textContent = 'View Document';
-        buttonDiv.appendChild(viewButton);
+        var viewDocumentLink = document.createElement('a');
+        viewDocumentLink.href = `/Application/DownloadAttachment?attachmentId=${attachmentInfo.AttachmentId}`; // Downloading file
+        viewDocumentLink.className = 'btn btn-primary';
+        viewDocumentLink.innerHTML = '<i class="fa-solid fa-download"></i>';
+        buttonDiv.appendChild(viewDocumentLink);
 
         rowDiv.appendChild(preRequisiteDiv);
         rowDiv.appendChild(buttonDiv);
+        containerDiv.appendChild(rowDiv)
 
-        modalBody.appendChild(rowDiv);
+        modalBody.appendChild(containerDiv);
     })
 }
 

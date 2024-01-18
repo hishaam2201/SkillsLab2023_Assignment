@@ -28,7 +28,7 @@ else
                     <th>Application Status</th>
                     <th>Training Name</th>
                     <th>Training Department</th>
-                    <th>DateTime of Application</th>
+                    <th>Training Start Date Time</th>
                     <th>Decline Reason</th>
                 </tr>
             </thead>
@@ -58,7 +58,7 @@ else
                         </td>
                         <td>@application.TrainingName</td>
                         <td>@application.TrainingDepartment</td>
-                        <td>@application.ApplicationDateTime.ToString("f")</td>
+                        <td>@application.TrainingStartDateTime.ToString("f")</td>
                         <td>
                             <button data-bs-toggle="modal" data-bs-target="#declineMessageModal" type="button"
                                     class="btn btn-labeled btn-outline-danger decline-btn" data-decline-reason="@application.DeclineReason"

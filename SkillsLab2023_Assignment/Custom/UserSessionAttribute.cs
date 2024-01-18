@@ -6,7 +6,7 @@ namespace SkillsLab2023_Assignment.Custom
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (filterContext.HttpContext.Session["CurrentUser"] == null 
+            if (filterContext.HttpContext.Session["CurrentUser"] == null
                 || filterContext.HttpContext.Session["UserRole"] == null)
             {
                 filterContext.Result = new RedirectResult("~/Account/Login");

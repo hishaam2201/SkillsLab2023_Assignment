@@ -408,6 +408,7 @@ namespace SkillsLabAssignment_TestProject
             Assert.AreEqual("An error occurred while updating training.", result.Message);
         }
 
+
         #region PRIVATE HELPER METHOD
         private Training CreateTraining(short id, string trainingName, string description, DateTime trainingStartDateTime, DateTime deadlineOfApplication,
             int capacity, byte departmentId, bool isDeadlineExpired)

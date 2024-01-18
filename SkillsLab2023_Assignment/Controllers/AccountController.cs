@@ -52,6 +52,9 @@ namespace SkillsLab2023_Assignment.Controllers
         [HttpGet]
         public async Task<ActionResult> ChooseRole()
         {
+            if (SessionManager.Email == null)
+                return RedirectToAction("Login", "Account");
+
             string email = SessionManager.Email;
             List<UserRoleDTO> userRoles = (await _userService.GetUserRolesAsync(email)).ToList();
             return View(userRoles);

@@ -7,31 +7,32 @@
 <script defer src="~/Scripts/app/Login.js"></script>
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card mt-5">
-            <div class="card-body">
-                <h2 class="card-title text-center">Login</h2>
-                <!-- Login Form -->
-                <form id="loginForm" method="post" onsubmit="return false;" novalidate>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="email" required>
-                        <div class="invalid-feedback">Please enter a valid email</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" required>
-                        <div class="invalid-feedback">Password field is required</div>
-                    </div>
-                    <div class="col text-center">
-                        <input type="submit" class="btn btn-primary" value="Submit" />
-                    </div>
-                    <div class="my-3 text-center">
-                        Do not have an account? <a href="/Account/Register">Sign Up</a>
-                    </div>
-                </form>
-            </div>
+    <div class="col-md-6 align-self-center order-md-0 order-1">
+        <div class="text-center">
+            <h2>Log in</h2>
+            <p style="font-size: 14px;">All fields are required</p>
         </div>
+        <!-- Login Form -->
+        <form id="loginForm" method="post" onsubmit="return false;" novalidate>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="email" placeholder="john@doe.com" required>
+                <label for="email">Email address</label>
+                <div class="invalid-feedback">Please enter a valid email</div>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password" placeholder="Password" required>
+                <label for="password">Password</label>
+                <div class="invalid-feedback">Password field is required</div>
+            </div>
+            <div class="col text-center">
+                <input type="submit" class="btn btn-primary px-5" value="Submit" />
+            </div>
+            <div class="my-3 text-center">
+                Do not have an account? <a href="/Account/Register">Sign Up</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6 order-md-1 order-0">
+        <img src="~/Images/login-animate.svg" alt="Login Image" />
     </div>
 </div>

@@ -19,7 +19,7 @@ namespace BusinessLayer.Services.UserService
         public async Task<OperationResult> AuthenticateLoginCredentialsAsync(string email, string password)
         {
             OperationResult emailResult = await CheckLoginValuesInUseAsync(EMAIL_PROPERTY, email, "Email is not registered");
-            if (emailResult.Success) 
+            if (emailResult.Success)
             {
                 PasswordDTO passwordDTO = await _userRepository.GetUserHashedPasswordAndSaltAsync(email);
                 if (passwordDTO != null)

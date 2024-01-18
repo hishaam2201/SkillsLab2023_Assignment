@@ -23,7 +23,7 @@ namespace DAL.Repositories.TrainingRepository
             List<TrainingDTO> trainingDTOs = new List<TrainingDTO>();
             const string GET_ALL_UNAPPLIED_TRAININGS_QUERY = @"
                                 SELECT t.* FROM Training AS t
-                                WHERE 
+                                WHERE
 	                                t.IsDeadlineExpired = @IsDeadlineExpired
 	                                AND NOT EXISTS (
 		                                SELECT 1 FROM [Application] AS a
@@ -43,7 +43,7 @@ namespace DAL.Repositories.TrainingRepository
             {
                 trainingDTOs.Add(new TrainingDTO
                 {
-                    TrainingId = (short)training.Id,
+                    TrainingId = training.Id,
                     TrainingName = training.TrainingName,
                     DeadlineOfApplication = training.DeadlineOfApplication,
                     Capacity = training.Capacity,
@@ -58,7 +58,7 @@ namespace DAL.Repositories.TrainingRepository
             Training training = await _dbCommand.GetByIdAsync(trainingId);
             return new TrainingDTO
             {
-                TrainingId = (short)training.Id,
+                TrainingId = training.Id,
                 TrainingName = training.TrainingName,
                 Description = training.Description,
                 DeadlineOfApplication = training.DeadlineOfApplication,
@@ -80,7 +80,7 @@ namespace DAL.Repositories.TrainingRepository
 
                 trainingDTOs.Add(new TrainingDTO
                 {
-                    TrainingId = (short)training.Id,
+                    TrainingId = training.Id,
                     TrainingName = training.TrainingName,
                     Description = training.Description,
                     TrainingCourseStartingDateTime = training.TrainingCourseStartingDateTime,

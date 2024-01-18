@@ -352,6 +352,9 @@
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\App_logo.png" />
+    <Content Include="Images\login-animate.svg" />
+    <Content Include="Images\register.svg" />
     <Content Include="Scripts\app\Admin.js" />
     <Content Include="Scripts\app\ChooseRole.js" />
     <Content Include="Scripts\app\Details.js" />

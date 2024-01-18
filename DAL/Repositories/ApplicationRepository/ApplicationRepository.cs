@@ -130,7 +130,6 @@ namespace DAL.Repositories.ApplicationRepository
 
         public async Task<IEnumerable<ApplicationDocumentDTO>> GetApplicationDocumentAsync(int applicationId)
         {
-
             const string GET_APPLICATION_DOCUMENT_QUERY =
                 @"SELECT du.Id AS AttachmentId, du.[File], pr.[Name], pr.PreRequisiteDescription, du.[FileName]
                   FROM DocumentUpload AS du
@@ -149,11 +148,8 @@ namespace DAL.Repositories.ApplicationRepository
                 };
                 return new ApplicationDocumentDTO
                 {
-                    //AttachmentId = (int)reader["AttachmentId"],
                     File = reader["File"] as byte[],
                     FileName = reader["FileName"].ToString(),
-                    //PreRequisiteName = reader["Name"].ToString(),
-                    //PreRequisiteDescription = reader["PreRequisiteDescription"].ToString(),
                     AttachmentInfoDTO = attachmentInfo
                 };
             };
@@ -164,12 +160,12 @@ namespace DAL.Repositories.ApplicationRepository
         public async Task<IEnumerable<UserApplicationDTO>> GetApplicationByUserIdAsync(short userId)
         {
             const string GET_USER_APPLICATION_QUERY =
-                @"SELECT a.ApplicationStatus, t.TrainingName, d.DepartmentName AS TrainingDepartment, a.DeclineReason, a.ApplicationDateTime
+                @"SELECT a.ApplicationStatus, t.TrainingName, d.DepartmentName AS TrainingDepartment, a.DeclineReason, t.TrainingCourseStartingDateTime
                   FROM [Application] AS a
                   INNER JOIN [User] AS u ON u.Id = a.UserId
                   INNER JOIN Training AS t ON t.Id = a.TrainingId
                   INNER JOIN Department AS d ON d.Id = t.DepartmentId
-                  WHERE u.Id = @UserId
+                  WHERE u.Id = @UserId AND GETDATE() <= t.TrainingCourseStartingDateTime
                   ORDER BY
                   CASE a.ApplicationStatus
                         WHEN 'Selected' THEN 1
@@ -188,7 +184,7 @@ namespace DAL.Repositories.ApplicationRepository
                     TrainingName = reader["TrainingName"].ToString(),
                     TrainingDepartment = reader["TrainingDepartment"].ToString(),
                     DeclineReason = reader["DeclineReason"] != DBNull.Value ? reader["DeclineReason"].ToString() : null,
-                    ApplicationDateTime = (DateTime)reader["ApplicationDateTime"]
+                    TrainingStartDateTime = (DateTime)reader["TrainingCourseStartingDateTime"]
                 };
             }
             return await _dbCommand.ExecuteSelectQueryAsync(GET_USER_APPLICATION_QUERY, parameters, mapFunction);
